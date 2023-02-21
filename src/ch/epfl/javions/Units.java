@@ -4,8 +4,8 @@ public final class Units {
     private Units() {
     }
 
-    private static final double CENTI = 1e-2;
-    private static final double KILO = 1e+3;
+    public static final double CENTI = 1e-2;
+    public static final double KILO = 1e+3;
 
     public static final class Angle {
         public static final double RADIAN = 1;
