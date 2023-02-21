@@ -35,14 +35,33 @@ public final class Units {
         public static final double KILOMETER_PER_HOUR = Length.KILOMETER / Time.HOUR;
     }
 
+    /**
+     * Converts a value in a unit to a value in another
+     * @param value the value to be converted
+     * @param fromUnit the original unit of value
+     * @param toUnit the final unit of value
+     * @return value in the final unit
+     */
     public static double convert(double value, double fromUnit, double toUnit) {
         return value * (toUnit / fromUnit);
     }
 
+    /**
+     * converts from any unit to a basic unit (Radians, Meters, Seconds)
+     * @param value value to be converted
+     * @param fromUnit the original unit of value
+     * @return value in basic unit
+     */
     public static double convertFrom(double value, double fromUnit) {
         return convert(value, fromUnit, 1); // is it better to use 'value*(1/fromUnit)'? TODO
     }
 
+    /**
+     * converts to any unit from a basic unit (Radians, Meters, Seconds)
+     * @param value value to be converted
+     * @param toUnit the final unit of value
+     * @return value in the given unit
+     */
     public static double convertTo(double value, double toUnit) {
         return convert(value, 1, toUnit);
     }

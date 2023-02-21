@@ -11,16 +11,30 @@ public record GeoPos(int longitudeT32, int latitudeT32)
         return Math.scalb(-1,30) <= latitudeT32 && latitudeT32 <= Math.scalb(1,30);
     }
 
+    /**
+     * @return longitude in radians
+     */
     public double longitude(){
         return Units.convertFrom(this.longitudeT32, Units.Angle.T32);
     }
 
+    /**
+     * @return latitude in radians
+     */
     public double latitude(){
             return Units.convertFrom(this.latitudeT32, Units.Angle.T32);
     }
+
+    /**
+     * @return longitude in degrees
+     */
     public double longitudeDEGREE(){
         return Units.convert(this.longitudeT32, Units.Angle.T32, Units.Angle.DEGREE);
     }
+
+    /**
+     * @return latitude in degrees
+     */
     public double latitudeDEGREE(){
         return Units.convert(this.latitudeT32, Units.Angle.T32, Units.Angle.DEGREE);
     }
