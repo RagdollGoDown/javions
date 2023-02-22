@@ -2,8 +2,9 @@ package ch.epfl.javions;
 
 public record GeoPos(int longitudeT32, int latitudeT32)
 {
+    static final int POWER_2_WITH_30 = 1_073_741_824;
     public GeoPos{
-        if (isValidLatitudeT32(latitudeT32)) throw new IllegalArgumentException();
+        if (!isValidLatitudeT32(latitudeT32)) throw new IllegalArgumentException();
     }
 
     /**
@@ -12,7 +13,7 @@ public record GeoPos(int longitudeT32, int latitudeT32)
      * @return boolean
      */
     public static boolean isValidLatitudeT32(int latitudeT32){
-        return Math.scalb(-1,30) <= latitudeT32 && latitudeT32 <= Math.scalb(1,30);
+        return -POWER_2_WITH_30 <= latitudeT32 && latitudeT32 <= POWER_2_WITH_30;
     }
 
     /**

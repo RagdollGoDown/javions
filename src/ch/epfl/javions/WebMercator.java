@@ -23,6 +23,6 @@ public final class WebMercator {
      */
     public static double y(int zoomLevel, double latitude){
         double tanOfLatitude = Math.tan(latitude);
-        return Math.scalb(Math2.asinh(tanOfLatitude) / (2 * Math.PI) + 0.5,8+zoomLevel);
+        return Math.scalb(- Math2.asinh(tanOfLatitude) / (2 * Math.PI) + 0.5,8+zoomLevel);
     }
 }

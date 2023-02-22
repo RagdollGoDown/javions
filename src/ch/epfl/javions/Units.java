@@ -18,9 +18,9 @@ public final class Units {
         public static final double METER = 1;
         public static final double CENTIMETER = CENTI * METER;
         public static final double KILOMETER = KILO * METER;
-        public static final double INCH = METER * 39.3701;
-        public static final double FOOT = METER * 3.280841666667;
-        public static final double NAUTICAL_MILE = METER / 1852;
+        public static final double INCH = CENTIMETER * 2.54;
+        public static final double FOOT = INCH * 12;
+        public static final double NAUTICAL_MILE = METER * 1852;
     }
 
     public static final class Time {
@@ -43,7 +43,7 @@ public final class Units {
      * @return value in the final unit
      */
     public static double convert(double value, double fromUnit, double toUnit) {
-        return value * (toUnit / fromUnit);
+        return value * (fromUnit / toUnit);
     }
 
     /**
