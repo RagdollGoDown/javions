@@ -1,5 +1,8 @@
 package ch.epfl.javions;
 
+import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
 import java.util.HexFormat;
 import java.util.Objects;
 
@@ -40,18 +43,26 @@ public class ByteString {
         }
         return extractedLong;
     }
+    public boolean bytesEquals(byte[] bytes){
+        return Arrays.equals(this.bytes, bytes);
+    }
 
     @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public boolean equals(Object other) {
+        if (other instanceof  ByteString otherByteString){
+            if (otherByteString.bytesEquals(this.bytes)){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Arrays.hashCode(this.bytes);
     }
     @Override
     public String toString() {
-        return super.toString();
+        return HexFormat.of().withUpperCase().formatHex(this.bytes) ;
     }
 }
