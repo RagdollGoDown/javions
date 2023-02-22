@@ -2,6 +2,10 @@ package ch.epfl.javions;
 
 public record GeoPos(int longitudeT32, int latitudeT32)
 {
+    public GeoPos{
+        if (isValidLatitudeT32(latitudeT32)) throw new IllegalArgumentException();
+    }
+
     /**
      * Checks if the the latitude is between -2^30 (-90°) and 2^30 (90°)
      * @param latitudeT32 the latitude checked in T32 format
