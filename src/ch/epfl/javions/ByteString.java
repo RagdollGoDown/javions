@@ -83,12 +83,7 @@ public class ByteString {
      */
     @Override
     public boolean equals(Object other) {
-        if (other instanceof  ByteString otherByteString){
-            if (otherByteString.bytesEquals(this.bytes)){
-                return true;
-            }
-        }
-        return false;
+        return other instanceof  ByteString otherByteString && otherByteString.bytesEquals(this.bytes);
     }
 
     /**
