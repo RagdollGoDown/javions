@@ -13,4 +13,11 @@ class AircraftRegistrationTest {
         var expected = "HB-JDC";
         assertEquals(actual, expected);
     }
+
+    @Test
+    void testEmptyString() {
+        assertThrows(IllegalArgumentException.class , () -> {
+            new AircraftRegistration("");
+        });
+    }
 }

@@ -32,4 +32,11 @@ class IcaoAddressTest {
         });
     }
 
+    @Test
+    void testEmptyString() {
+        assertThrows(IllegalArgumentException.class , () -> {
+            new IcaoAddress("");
+        });
+    }
+
 }

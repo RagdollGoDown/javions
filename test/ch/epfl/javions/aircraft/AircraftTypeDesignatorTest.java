@@ -13,4 +13,10 @@ class AircraftTypeDesignatorTest {
         var expected = "A20N";
         assertEquals(actual, expected);
     }
+    @Test
+    void testEmptyString() {
+        assertDoesNotThrow(() -> {
+            new AircraftTypeDesignator("");
+        });
+    }
 }
