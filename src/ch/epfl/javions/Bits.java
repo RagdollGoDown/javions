@@ -33,4 +33,7 @@ public final class Bits {
         long mask = (1L << index);
         return (value & mask) >>> index == 1;
     }
+
+
+
 }
