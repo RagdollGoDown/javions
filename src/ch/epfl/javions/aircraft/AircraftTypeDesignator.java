@@ -1,7 +1,8 @@
 package ch.epfl.javions.aircraft;
 
-import java.util.regex.Pattern;
-public class AircraftTypeDesignator extends AircraftString {
+import ch.epfl.javions.ChaineContrainte;
+
+public class AircraftTypeDesignator extends ChaineContrainte {
     public AircraftTypeDesignator(String string){
         super(string,"[A-Z0-9]{2,4}");
     }

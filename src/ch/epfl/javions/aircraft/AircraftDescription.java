@@ -1,8 +1,8 @@
 package ch.epfl.javions.aircraft;
 
-import java.util.regex.Pattern;
+import ch.epfl.javions.ChaineContrainte;
 
-public class AircraftDescription extends AircraftString{
+public class AircraftDescription extends ChaineContrainte {
     public AircraftDescription(String string){
         super(string,"[ABDGHLPRSTV-][0123468][EJPT-]");
     }

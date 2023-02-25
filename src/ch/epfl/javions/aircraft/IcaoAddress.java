@@ -1,7 +1,8 @@
 package ch.epfl.javions.aircraft;
-import java.util.regex.Pattern;
 
-public class IcaoAddress extends  AircraftString{
+import ch.epfl.javions.ChaineContrainte;
+
+public class IcaoAddress extends ChaineContrainte {
     public IcaoAddress(String string) {
         super(string,"[0-9A-F]{6}");
     }
