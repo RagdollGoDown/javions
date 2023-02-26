@@ -24,7 +24,6 @@ public final class Crc24 {
                 int b = Bits.testBit(octet, i)? 1 : 0;
                 crc = ((crc<<1) | b) ^ table[Bits.testBit(crc, N-1)? 1 : 0];
             }
-            System.out.println("crc:" + crc);
         }
         for (int i = 0; i < N; i++) {
             crc = ((crc<<1)) ^ table[Bits.testBit(crc, N-1)? 1 : 0];
