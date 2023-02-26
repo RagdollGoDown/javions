@@ -18,10 +18,10 @@ class Crc24Test {
             int c = Integer.parseInt(cS, 16); // == 0x035DB8
 
             byte[] mAndC = HexFormat.of().parseHex(mS + cS);
-            assertEquals(0, crc24.crc_bitwise(Crc24.GENERATOR, mAndC, 24));
+            assertEquals(0, crc24.crc_bitwiseTest(Crc24.GENERATOR, mAndC, 24));
 
             byte[] mOnly = HexFormat.of().parseHex(mS);
-            assertEquals(c, crc24.crc_bitwise(Crc24.GENERATOR, mOnly, 24));
+            assertEquals(c, crc24.crc_bitwiseTest(Crc24.GENERATOR, mOnly, 24));
         }
     }
     @Test

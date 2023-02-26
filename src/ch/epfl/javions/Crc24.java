@@ -13,7 +13,10 @@ public final class Crc24 {
     public static int crc_bitwiseTest(int generator, int value, int N){
         return crc_bitwise(generator, value, N);
     }
-    public static int crc_bitwise(int generator, byte[] value, int N) {
+    public static int crc_bitwiseTest(int generator, byte[] value, int N){
+        return crc_bitwise(generator, value, N);
+    }
+    private static int crc_bitwise(int generator, byte[] value, int N) {
         int crc = 0;
         int[] table = {0, generator};
         for (byte octet : value) {
@@ -21,8 +24,9 @@ public final class Crc24 {
                 int b = Bits.testBit(octet, i)? 1 : 0;
                 crc = ((crc<<1) | b) ^ table[Bits.testBit(crc, N-1)? 1 : 0];
             }
+            System.out.println("crc:" + crc);
         }
-        for (int i = 0; i < 24; i++) {
+        for (int i = 0; i < N; i++) {
             crc = ((crc<<1)) ^ table[Bits.testBit(crc, N-1)? 1 : 0];
         }
         return Bits.extractUInt(crc,0,N);
@@ -50,7 +54,7 @@ public final class Crc24 {
     public int crc(byte[] bytes) {
         int crc = 0;
         for (byte octet : bytes) {
-            crc = ((crc<<8) | octet) ^ this.table[Bits.extractUInt(crc,N-8,8)];
+            crc = ((crc<<8) | Byte.toUnsignedInt(octet)) ^ this.table[Bits.extractUInt(crc,N-8,8)];
         }
         for (int i = 0; i < N / 8; i++) {
             crc = (crc<<8) ^ this.table[Bits.extractUInt(crc,N-8,8)];
@@ -61,8 +65,7 @@ public final class Crc24 {
     private int[] buildTable(int generator){
         int[] table = new int[256];
         for (int i = 0; i < 256; i++) {
-            byte[] value = {(byte)i};
-            table[i] = crc_bitwise(generator, value, N);
+            table[i] = crc_bitwise(generator, i, N);
         }
         return table;
     }
