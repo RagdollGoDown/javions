@@ -1,7 +1,5 @@
 package ch.epfl.javions.aircraft;
 
-import ch.epfl.javions.WakeTurbulenceCategory;
-
 import java.util.Objects;
 
 public class AircraftData {
