@@ -15,7 +15,13 @@ public final class AircraftDatabase {
         this.fileName = fileName;
     }
 
-    public AircraftData get(IcaoAddress address) throws IOException,NullPointerException {
+    /**
+     * Finds a plane using the IcaoAddress and returns it's AircraftData
+     * @param address the IcaoAddress of the plane
+     * @return the AircraftData of the plane
+     * @throws IOException if there are any problems when reading the files
+     */
+    public AircraftData get(IcaoAddress address) throws IOException {
         String file = getClass().getResource(fileName).getFile();
         String addressString = address.toString();
 
