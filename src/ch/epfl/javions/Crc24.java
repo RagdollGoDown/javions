@@ -10,9 +10,7 @@ public final class Crc24 {
         this.table = buildTable(generator);
     }
     //TODO remove, only keep for the tests
-    public static int crc_bitwiseTest(int generator, int value, int N){
-        return crc_bitwise(generator, value, N);
-    }
+    public static int crc_bitwiseTest(int generator, int value, int N){ return crc_bitwise(generator, value, N);}
     public static int crc_bitwiseTest(int generator, byte[] value, int N){
         return crc_bitwise(generator, value, N);
     }
@@ -30,23 +28,19 @@ public final class Crc24 {
         }
         return Bits.extractUInt(crc,0,N);
     }
-    private static int crc_bitwise(int generator, long value, int N){
-        //assert value <= 0xFF;
-        value = value << N;
+    private static int crc_bitwise(int generator, int value, int N){
+        assert value << N >>> N == value; //prevent overflow
         int crc = 0;
         int[] table = {0, generator};
-        //System.out.println("generator: " + table[1]);
-        for (int i = Integer.SIZE - 1 ; i>=0; i--)
+        for (int i = Integer.SIZE - N ; i>=0; i--)
         {
             int b = Bits.testBit(value, i)? 1 : 0;
-            //System.out.println("==========================");
-            //System.out.println("crc: " + Integer.toString(crc, 2));
-            //System.out.println("b: " + b);
-            //System.out.println("crc with b: " + Integer.toString(((crc<<1) | b),2));
-            //System.out.println("operation: " + (Bits.testBit(crc, N-1) ? "xor" : "pass"));
             crc = ((crc<<1) | b) ^ table[Bits.testBit(crc, N-1)? 1 : 0];
-            //System.out.println("New crc: " + Integer.toString(crc,2));
-
+        }
+        for (int i = N - 1 ; i>=0; i--)
+        {
+            int b = Bits.testBit(value, i)? 1 : 0;
+            crc = (crc<<1) ^ table[Bits.testBit(crc, N-1)? 1 : 0];
         }
         return Bits.extractUInt(crc,0,N);
     }
@@ -64,11 +58,9 @@ public final class Crc24 {
     private int[] buildTable(int generator){
         int[] table = new int[256];
         for (int i = 0; i < 256; i++) {
-            table[i] = crc_bitwise(generator, i, N);
+            byte[] b = {(byte)i};
+            table[i] = crc_bitwise(generator, b, N);
         }
         return table;
     }
-
-
-
 }

@@ -44,8 +44,6 @@ class Crc24Test {
         var expected3 = 0b1;
         assertEquals(expected3, actual31);
         assertEquals(0, actual32);
-
-
     }
     @Test
     void crc() {

@@ -23,7 +23,7 @@ public class SamplesDecoder {
 
     public int readBatch(short[] batch) throws IOException {
         if (batch.length != batchSize) throw new IllegalArgumentException();
-        //TODO metter les erreurs
+        //TODO mettre les erreurs
 
         //On a besoin de savoir combien de byte qui peuvent être lu
         //pour savoir si on retourne batchsize ou le nombre lu de short
@@ -31,8 +31,17 @@ public class SamplesDecoder {
 
         //batch correspond au nombre de short normalement
         //donc on a besoin de deux fois ça dans le stream
-        stream.readNBytes(readBytes,0,batchSize*2);
+        int nReadBytes = stream.readNBytes(readBytes,0,batchSize*2) ;
 
+        assert (nReadBytes%2) == 0;
+
+        for (int i = 0; i < nReadBytes; i+=2) {
+            batch[i/2] = (short)(((Byte.toUnsignedInt(readBytes[i+1])<<8) | Byte.toUnsignedInt(readBytes[i])) - 2048);
+        }
+
+        return nReadBytes / 2;
+
+        /*
         short tempByte = 0;
 
         //on utilise j comme index pour aller de deux en deux
