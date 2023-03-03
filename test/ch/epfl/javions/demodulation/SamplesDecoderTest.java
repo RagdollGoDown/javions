@@ -16,7 +16,7 @@ class SamplesDecoderTest {
     void checkSamplesDecoderTrivial() throws Exception {
         InputStream stream = new FileInputStream("resources/samples.bin");
         int batchSize = 100;
-        SamplesDecoder sd = new ch.epfl.javions.demodulation.SamplesDecoder(stream, batchSize);
+        SamplesDecoder sd = new SamplesDecoder(stream, batchSize);
         short[] batch = new short[100];
         int nElementRead = sd.readBatch(batch);
         short[] expected = {-3, 8, -9, -8, -5, -8, -12, -16, -23, -9};
