@@ -38,31 +38,23 @@ public class PowerComputer {
         }*/
 
         short[] queueOfShorts = new short[8];
-        double tempdouble;
+        double tempdoublePair;
+        double tempdoubleImpair;
 
         for (int i = 2; i < batchSize; i += 2) {
 
             queueOfShorts[i%8] = shorts[i-1];
             queueOfShorts[(i-1)%8] = shorts[i-2];
 
-            tempdouble = 0;
+            tempdoublePair = 0;
+            tempdoubleImpair = 0;
 
             for (int j = 0; j < 4; j++) {
-                 tempdouble += Math.pow(-1,j + 1)*queueOfShorts[(i-j*2+8)%8];
+                 tempdoublePair += Math.pow(-1,j + 1)*queueOfShorts[(i-j*2+8)%8];
+                 tempdoubleImpair += Math.pow(-1,j + 1)*queueOfShorts[(i-j*2+9)%8];
             }
 
-            batch[i/2 - 1] += tempdouble*tempdouble;
-
-            tempdouble = 0;
-
-            for (int j = 0; j < 4; j++) {
-                tempdouble += Math.pow(-1,j + 1)*queueOfShorts[(i-j*2+9)%8];
-            }
-
-            batch[i/2 - 1] += tempdouble*tempdouble;
-
-            //batch[i] = (shorts[2*i-6] - shorts[2*i-4] + shorts[2*i-2] - shorts[2*i])*(shorts[2*i-6] - shorts[2*i-4] + shorts[2*i-2] - shorts[2*i])
-              //      +(shorts[2*i-7] - shorts[2*i-5] + shorts[2*i-3] - shorts[2*i-1])*(shorts[2*i-7] - shorts[2*i-5] + shorts[2*i-3] - shorts[2*i-1]);
+            batch[i/2 - 1] = (int)(tempdoublePair*tempdoublePair + tempdoubleImpair*tempdoubleImpair);
         }
 
         return batchSize;
