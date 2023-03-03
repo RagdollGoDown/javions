@@ -9,16 +9,16 @@ class CallSignTest {
     @Test
     void testToString() {
         CallSign obj = new CallSign("AUFF9W0Z");
-        var actual = obj.toString();
+        var actual = obj.string();
         var expected = "AUFF9W0Z";
-        assertEquals(actual, expected);
+        assertEquals(expected, actual);
     }
 
     @Test
     void testEmptyString() {
         CallSign obj = new CallSign("");
-        var actual = obj.toString();
+        var actual = obj.string();
         var expected = "";
-        assertEquals(actual, expected);
+        assertEquals(expected, actual);
     }
 }

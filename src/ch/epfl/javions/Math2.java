@@ -13,7 +13,7 @@ public final class Math2 {
      * @throws IllegalArgumentException if the minimum is greater (strictly) than the max
      */
     public static int clamp(int min, int v, int max){
-        if (min>max) throw new IllegalArgumentException();
+        Preconditions.checkArgument(min<=max);
         if (v <= min) return min;
         if (v >= max) return max;
         return v;

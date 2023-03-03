@@ -1,9 +1,12 @@
 package ch.epfl.javions.adsb;
 
-import ch.epfl.javions.ChaineContrainte;
+import ch.epfl.javions.Preconditions;
 
-public class CallSign extends ChaineContrainte {
-    public CallSign(String string){
-        super(string,"[A-Z0-9 ]{0,8}");
+import java.util.regex.Pattern;
+
+public record CallSign(String string){
+    private static final Pattern regex = Pattern.compile("[A-Z0-9 ]{0,8}");
+    public CallSign{
+        Preconditions.checkArgument(string.equals("") || regex.matcher(string).matches());
     }
 }

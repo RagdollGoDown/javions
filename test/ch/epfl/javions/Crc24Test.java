@@ -7,6 +7,7 @@ import java.util.HexFormat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class Crc24Test {
+   /*
     @Test
     void crcTestBitwiseBytes(){
         var crc24 = new Crc24(Crc24.GENERATOR);
@@ -44,7 +45,7 @@ class Crc24Test {
         var expected3 = 0b1;
         assertEquals(expected3, actual31);
         assertEquals(0, actual32);
-    }
+    }*/
     @Test
     void crc() {
         var crc24 = new Crc24(Crc24.GENERATOR);

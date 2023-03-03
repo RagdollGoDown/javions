@@ -1,6 +1,7 @@
 package ch.epfl.javions.demodulation;
 
 import ch.epfl.javions.Bits;
+import ch.epfl.javions.Preconditions;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +23,7 @@ public class SamplesDecoder {
     }
 
     public int readBatch(short[] batch) throws IOException {
-        if (batch.length != batchSize) throw new IllegalArgumentException();
+        Preconditions.checkArgument(batch.length == batchSize);
         //TODO mettre les erreurs
 
         //On a besoin de savoir combien de byte qui peuvent être lu

@@ -1,5 +1,7 @@
 package ch.epfl.javions;
 
+import java.util.Arrays;
+
 public final class Crc24 {
     public static final int GENERATOR = 0xFFF409;
     private final int N = 24;
@@ -9,11 +11,11 @@ public final class Crc24 {
     public Crc24(int generator){
         this.table = buildTable(generator);
     }
+    
     //TODO remove, only keep for the tests
-    public static int crc_bitwiseTest(int generator, int value, int N){ return crc_bitwise(generator, value, N);}
-    public static int crc_bitwiseTest(int generator, byte[] value, int N){
-        return crc_bitwise(generator, value, N);
-    }
+    //public static int crc_bitwiseTest(int generator, int value, int N){ return crc_bitwise(generator, value, N);}
+    //public static int crc_bitwiseTest(int generator, byte[] value, int N){return crc_bitwise(generator, value, N);}
+
     private static int crc_bitwise(int generator, byte[] value, int N) {
         int crc = 0;
         int[] table = {0, generator};

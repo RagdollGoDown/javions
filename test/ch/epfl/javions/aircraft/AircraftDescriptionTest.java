@@ -10,7 +10,7 @@ class AircraftDescriptionTest {
     @Test
     void testToString() {
         AircraftDescription AD = new AircraftDescription("L2J");
-        assertEquals("L2J", AD.toString());
+        assertEquals("L2J", AD.string());
     }
 
     @Test

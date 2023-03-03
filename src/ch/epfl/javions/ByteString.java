@@ -58,7 +58,7 @@ public class ByteString {
      */
     public long bytesInRange(int fromIndex, int toIndex){
         Objects.checkFromIndexSize(fromIndex,toIndex-fromIndex,size());
-        if (!(toIndex-fromIndex < Long.SIZE/8)) throw new IllegalArgumentException();
+        Preconditions.checkArgument((toIndex-fromIndex < Long.SIZE/8));
 
         long extractedLong = 0;
         for (int i = fromIndex; i < toIndex; i++) {

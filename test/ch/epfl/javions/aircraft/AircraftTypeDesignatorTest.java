@@ -9,7 +9,7 @@ class AircraftTypeDesignatorTest {
     @Test
     void testToString() {
         AircraftTypeDesignator obj = new AircraftTypeDesignator("A20N");
-        var actual = obj.toString();
+        var actual = obj.string();
         var expected = "A20N";
         assertEquals(actual, expected);
     }

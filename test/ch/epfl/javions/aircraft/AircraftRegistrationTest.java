@@ -9,7 +9,7 @@ class AircraftRegistrationTest {
     @Test
     void testToString() {
         AircraftRegistration obj = new AircraftRegistration("HB-JDC");
-        var actual = obj.toString();
+        var actual = obj.string();
         var expected = "HB-JDC";
         assertEquals(actual, expected);
     }

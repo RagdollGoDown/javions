@@ -16,7 +16,7 @@ public final class Bits {
      * @throws IndexOutOfBoundsException if the range covered is out of the long's bounds
      */
     public static int extractUInt(long value, int start, int size) {
-        if (size <= 0 || size >= Integer.SIZE) throw new IllegalArgumentException();
+        Preconditions.checkArgument(!(size <= 0 || size >= Integer.SIZE));
         Objects.checkFromIndexSize(start, size, Long.SIZE);
         return (int) (value << (Long.SIZE - (start + size)) >>> (start + Long.SIZE - (start + size)));
     }

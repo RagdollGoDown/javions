@@ -1,6 +1,8 @@
 package ch.epfl.javions.aircraft;
 
-import ch.epfl.javions.ChaineContrainte;
+import ch.epfl.javions.Preconditions;
+
+import java.util.regex.Pattern;
 
 public class AircraftDescription extends ChaineContrainte {
     public AircraftDescription(String string){

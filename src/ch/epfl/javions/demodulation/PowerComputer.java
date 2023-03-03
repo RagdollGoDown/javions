@@ -12,7 +12,7 @@ public class PowerComputer {
     short[] shorts;
 
     public PowerComputer(InputStream stream, int batchSize){
-        if (batchSize % 8 != 0 && batchSize <= 0) throw new IllegalArgumentException();
+        Preconditions.checkArgument(!(batchSize % 8 != 0 && batchSize <= 0));
 
         this.stream = stream;
         this.batchSize = batchSize;

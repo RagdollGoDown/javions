@@ -4,7 +4,7 @@ public record GeoPos(int longitudeT32, int latitudeT32)
 {
     static final int POWER_2_WITH_30 = 1_073_741_824;
     public GeoPos{
-        if (!isValidLatitudeT32(latitudeT32)) throw new IllegalArgumentException();
+        Preconditions.checkArgument(isValidLatitudeT32(latitudeT32));
     }
 
     /**
