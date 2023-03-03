@@ -17,4 +17,5 @@ class PowerComputerTest {
         PowerComputer powerComputer = new ch.epfl.javions.demodulation.PowerComputer(inputStream, batchSize);
         int readBatchSize = powerComputer.readBatch(batch);
     }
+
 }

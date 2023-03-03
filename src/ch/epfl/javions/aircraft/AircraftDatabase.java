@@ -1,6 +1,8 @@
 
 package ch.epfl.javions.aircraft;
 
+import ch.epfl.javions.ByteString;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipFile;
@@ -22,8 +24,10 @@ public final class AircraftDatabase {
      * @throws IOException if there are any problems when reading the files
      */
     public AircraftData get(IcaoAddress address) throws IOException {
-        String file = getClass().getResource(fileName).getFile();
-        String addressString = address.toString();
+        String file = fileName;
+        String addressString = address.string();
+
+        int addressHex = Integer.parseInt(addressString, 16);
 
         String selectedLine = "";
 
@@ -32,20 +36,28 @@ public final class AircraftDatabase {
              Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
              BufferedReader bufferedReader = new BufferedReader(reader)) {
 
-            while ((selectedLine = bufferedReader.readLine()) != null){
-                if (selectedLine.startsWith(addressString)) {
-                    System.out.println(selectedLine);
-                    break;
+            //iterate through lines
+            while ((selectedLine = bufferedReader.readLine()) != null) {
+                // if possibly pass on our searched address
+                if (Integer.parseInt(selectedLine.substring(0,6),16) >= addressHex) {
+
+                    // if it is our address, else return null
+                    if (selectedLine.startsWith(addressString)) {
+
+                        String[] aircraftDatabaseStrings = selectedLine.split(",", -1);
+                        return new AircraftData(
+                                new AircraftRegistration(aircraftDatabaseStrings[1]),
+                                new AircraftTypeDesignator(aircraftDatabaseStrings[2]),
+                                aircraftDatabaseStrings[3],
+                                new AircraftDescription(aircraftDatabaseStrings[4]),
+                                WakeTurbulenceCategory.of(aircraftDatabaseStrings[5])
+                        );
+                    } else {
+                        return null;
+                    }
                 }
             }
         }
-
-        String[] aircraftDatabaseStrings = selectedLine.split(",",6);
-
-        return new AircraftData(new AircraftRegistration(aircraftDatabaseStrings[1]),
-                new AircraftTypeDesignator(aircraftDatabaseStrings[2]),
-                aircraftDatabaseStrings[3],
-                new AircraftDescription(aircraftDatabaseStrings[4]),
-                WakeTurbulenceCategory.of(aircraftDatabaseStrings[5]));
+        return null;
     }
 }

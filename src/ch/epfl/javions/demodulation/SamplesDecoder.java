@@ -39,7 +39,6 @@ public class SamplesDecoder {
         for (int i = 0; i < nReadBytes; i+=2) {
             batch[i/2] = (short)(((Byte.toUnsignedInt(readBytes[i+1])<<8) | Byte.toUnsignedInt(readBytes[i])) - 2048);
         }
-
         return nReadBytes / 2;
     }
 }
