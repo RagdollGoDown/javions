@@ -14,10 +14,17 @@ class PowerWindowTest {
     final static int[] lot4size256 = {4, 49, 1037, 9377, 21445, 31509, 36737, 16930, 4453, 2353, 936, 89, 388, 3985, 10953, 24858, 32418, 31586, 31784, 30280, 28610, 23204, 16960, 6497, 2866, 325, 178, 225, 73, 170, 68, 90, 1189, 7034, 17221, 33169, 43444, 38245, 31365, 31469, 24916, 22052, 14373, 4250, 2069, 1732, 680, 801, 557, 26, 365, 313, 1189, 5800, 17450, 33466, 38897, 22321, 8138, 2098, 260, 325, 778, 7229, 16904, 27274, 28368, 13253, 4580, 2929, 657, 148, 269, 5525, 21037, 39625, 47720, 47268, 44761, 38288, 36650, 24525, 13753, 3573, 962, 882, 725, 4736, 13793, 22265, 33832, 31813, 14548, 3785, 394, 340, 90, 18, 202, 157, 1429, 1450, 3961, 11525, 17393, 28225, 28048, 14810, 4420, 1640, 146, 317, 2704, 8125, 19897, 31338, 36104, 40501, 36181, 38146, 35977, 28925, 18500, 6416, 1970, 153, 193, 701, 601, 221, 13, 185, 3028, 9028, 18769, 31181, 36097, 35405, 33169, 36441, 37498, 33172, 20008, 7012, 1908, 512, 73, 872, 6121, 15845, 28946, 28772, 14482, 3716, 554, 725, 490, 197, 410, 328, 373, 449, 2581, 10865, 19573, 34625, 32689, 26794, 29156, 27658, 33538, 27121, 12149, 5265, 2276, 890, 125, 1105, 8905, 17680, 33265, 24050, 13060, 4225, 1476, 1682, 1381, 1189, 725, 32, 265, 178, 2900, 10705, 17725, 28180, 20753, 10984, 4265, 2410, 1450, 298, 2813, 14641, 23732, 35802, 35594, 31954, 33921, 31720, 33749, 25810, 12170, 5108, 881, 1369, 233, 2308, 10280, 22664, 33761, 30809, 19053, 4018, 1073, 244, 1802, 3978, 20450, 33050, 44993, 30689, 7888, 1609, 160, 562, 16, 1970, 10205, 20213, 37034, 24973, 9832, 3425, 2465, 1985, 370, 410, 13, 52, 29, 68, 1089, 8104, 19769, 34597};
 
     @Test
+    void PowerWindowConstructorException() throws IOException {
+        InputStream stream = new FileInputStream("resources/samples.bin");
+        assertThrows(IllegalArgumentException.class, () -> new PowerWindow(stream, -1));
+       assertDoesNotThrow(() -> new PowerWindow(stream, 0));
+
+    }
+    @Test
     void PowerWindowTrivial1() throws IOException {
         InputStream stream = new FileInputStream("resources/samples.bin");
         int windowSize = 100;
-        PowerWindow pw = new PowerWindow(stream, windowSize);;
+        PowerWindow pw = new PowerWindow(stream, windowSize);
         int[] expected = {73, 292, 65, 745, 98, 4226, 12244, 25722, 36818, 23825};
         for (int i = 0; i < expected.length; i++) {
             assertEquals(expected[i], pw.get(i));
@@ -39,7 +46,7 @@ class PowerWindowTest {
     void PowerWindowAdvanceN() throws IOException {
         InputStream stream = new FileInputStream("resources/samples.bin");
         int windowSize = 100;
-        PowerWindow pw = new PowerWindow(stream, windowSize);;
+        PowerWindow pw = new PowerWindow(stream, windowSize);
         int[] expected = {73, 292, 65, 745, 98, 4226, 12244, 25722, 36818, 23825};
         assertEquals(73, pw.get(0));
         pw.advanceBy(2);
@@ -114,15 +121,15 @@ class PowerWindowTest {
     }
 
     @Test
-    void PowerWindowGettingValuesWithTwoWindows() throws IOException {
+    void PowerWindowGettingValuesWithTwoLots() throws IOException {
         // The batch size has to be changed to effectively execute those tests (to 2<<8)
         InputStream stream = new FileInputStream("resources/samples.bin");
         int windowSize = 256;
-        int[] expected = {80,90};
+        int[] expected = {80,73};
         PowerWindow pw = new PowerWindow(stream, windowSize);
 
         assertEquals(expected[0], pw.get(255));
-        pw.advanceBy(1);
+        pw.advanceBy(4);
         assertEquals(expected[1], pw.get(255));
     }
 
