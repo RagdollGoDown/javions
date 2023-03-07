@@ -22,6 +22,27 @@ class PowerComputerTest {
         assertEquals(batchSize, nElementRead);
     }
     @Test
+    void checkPowerComputerMultiple() throws Exception{
+        InputStream stream = new FileInputStream("resources/samples.bin");
+        int batchSize = 5;
+        PowerComputer pc = new PowerComputer(stream, batchSize);
+        int[] batch = new int[batchSize];
+        int[] expected = {73, 292, 65, 745, 98, 4226, 12244, 25722, 36818, 23825};
+        pc.readBatch(batch);
+        for (int i = 0; i < batchSize; i++) {
+            assertEquals(expected[i], batch[i]);
+        }
+        pc.readBatch(batch);
+        //first 3 not equal
+        for (int i = 0; i < 3 ; i++) {
+            assertNotEquals(expected[i+batchSize], batch[i]);
+        }
+        for (int i = 0; i < batchSize-3 ; i++) {
+            assertNotEquals(expected[i+batchSize], batch[i]);
+        }
+    }
+
+    @Test
     void checkPowerComputerEmpty() throws Exception{
         byte[] bytes = {};
         InputStream stream = new ByteArrayInputStream(bytes);
@@ -68,7 +89,6 @@ class PowerComputerTest {
         int batchSize = 100;
         PowerComputer pc = new PowerComputer(stream, batchSize);
         int[] batch = new int[batchSize];
-        System.out.println("test for zero");
         pc.readBatch(batch);
         assertNotEquals(0, batch[batchSize-1]);
     }

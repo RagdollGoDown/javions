@@ -5,6 +5,8 @@ import ch.epfl.javions.Preconditions;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
+import java.sql.SQLOutput;
+import java.util.Arrays;
 
 public class PowerWindow {
     private final static int CONSTANT_BATCHSIZE = 1<<8;
@@ -32,12 +34,19 @@ public class PowerWindow {
 
 
         nByteInLot1 =  powerComputer.readBatch(lot1);
+        System.out.println(Arrays.toString(lot1));
         nByteInLot2 = powerComputer.readBatch(lot2);
+        System.out.println(Arrays.toString(lot2));
+        System.out.println(lot2[0]);
     }
 
     private void addPosition(int p) throws IOException {
         if (position + p >= CONSTANT_BATCHSIZE){
-            int skip = p / CONSTANT_BATCHSIZE;
+            System.out.println("Generate new");
+            int skip = 0;
+            if (position + p >= 2*CONSTANT_BATCHSIZE){
+                skip = (p / CONSTANT_BATCHSIZE) - 2;
+            }
             generateNewLots(skip, p);
         }
         this.position = (position + p) % CONSTANT_BATCHSIZE;
@@ -48,19 +57,27 @@ public class PowerWindow {
     private void checkForLotTablesUpdate(){
     }
     private void generateNewLots (int skip, int p) throws IOException {
+        System.out.println("Skip: " + skip);
         long numberOfBytesToSkip = ((long) CONSTANT_BATCHSIZE) * 4 * skip;
-        long n = stream.skip(numberOfBytesToSkip) / 4;
+        long n = stream.skip(numberOfBytesToSkip);
+        System.out.println("n: "+ n);
+        System.out.println("numb: "+ numberOfBytesToSkip);
         if (n!=numberOfBytesToSkip){
+            System.out.println("Everything skipped");
             nByteInLot1 = 0;
             nByteInLot2 = 0;
             return;
         }
-        if (position + skip * CONSTANT_BATCHSIZE + p >= 2*CONSTANT_BATCHSIZE){
+        if (position + p >= 2*CONSTANT_BATCHSIZE){
+            System.out.println("->Skip: "+skip);
             nByteInLot1 =  powerComputer.readBatch(lot1);
             nByteInLot2 = powerComputer.readBatch(lot2);
         }
         else{
+            System.out.println("classic lot generation");
+            int[] tmp_list = this.lot1;
             this.lot1 =  this.lot2;
+            this.lot2 = tmp_list;
             nByteInLot2 = powerComputer.readBatch(this.lot2);
         }
     }
