@@ -4,8 +4,9 @@ import ch.epfl.javions.Preconditions;
 
 import java.util.regex.Pattern;
 
-public class AircraftDescription extends ChaineContrainte {
-    public AircraftDescription(String string){
-        super(string,"[ABDGHLPRSTV-][0123468][EJPT-]", true);
+public record AircraftDescription(String string) {
+    private static final Pattern regex = Pattern.compile("[ABDGHLPRSTV-][0123468][EJPT-]");
+    public AircraftDescription {
+        Preconditions.checkArgument(string.equals("") || regex.matcher(string).matches());
     }
 }

@@ -1,10 +1,13 @@
 package ch.epfl.javions.aircraft;
 
-import ch.epfl.javions.ChaineContrainte;
+import ch.epfl.javions.Preconditions;
 
-public class IcaoAddress extends ChaineContrainte {
-    public IcaoAddress(String string) {
-        super(string,"[0-9A-F]{6}", false);
+import java.util.regex.Pattern;
+
+public record IcaoAddress(String string) {
+    private static final Pattern regex = Pattern.compile("[0-9A-F]{6}");
+    public IcaoAddress {
+        Preconditions.checkArgument(regex.matcher(string).matches());
     }
 }
 

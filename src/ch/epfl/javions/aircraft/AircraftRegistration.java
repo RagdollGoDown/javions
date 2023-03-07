@@ -1,6 +1,6 @@
 package ch.epfl.javions.aircraft;
 
-import ch.epfl.javions.ChaineContrainte;
+import ch.epfl.javions.Preconditions;
 
 import java.util.regex.Pattern;
 

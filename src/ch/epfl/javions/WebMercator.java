@@ -10,7 +10,6 @@ public final class WebMercator {
      * @return the calculated value
      */
     public static double x(int zoomLevel, double longitude){
-        //TODO demander si ça va de faire comme ça et non la méthode avec les tours
         return Math.scalb(longitude / (2 * Math.PI) + 0.5,8+zoomLevel);
     }
 

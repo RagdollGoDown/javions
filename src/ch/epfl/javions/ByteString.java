@@ -1,7 +1,5 @@
 package ch.epfl.javions;
 
-import org.junit.jupiter.api.Test;
-
 import java.util.Arrays;
 import java.util.HexFormat;
 import java.util.Objects;

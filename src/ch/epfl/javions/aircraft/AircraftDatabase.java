@@ -32,7 +32,7 @@ public final class AircraftDatabase {
         String selectedLine = "";
 
         try (ZipFile zipFile = new ZipFile(file);
-             InputStream stream = zipFile.getInputStream(zipFile.getEntry("14.csv"));
+             InputStream stream = zipFile.getInputStream(zipFile.getEntry(addressString.substring(4) + ".csv"));
              Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
              BufferedReader bufferedReader = new BufferedReader(reader)) {
 
