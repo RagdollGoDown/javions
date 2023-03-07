@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.security.KeyStore;
 
 public class PowerWindow {
-    private final static int CONSTANT_BATCHSIZE = 1<<16;
+    private final static int CONSTANT_BATCHSIZE = 1<<8;
 
     private final InputStream stream;
     private final PowerComputer powerComputer;
@@ -28,6 +28,8 @@ public class PowerWindow {
         lot1 = new int[CONSTANT_BATCHSIZE];
         lot2 = new int[CONSTANT_BATCHSIZE];
         position = 0;
+
+
         nByteInLot1 =  powerComputer.readBatch(lot1);
         nByteInLot2 = powerComputer.readBatch(lot2);
     }
@@ -35,7 +37,7 @@ public class PowerWindow {
     private void addPosition(int p) throws IOException {
         if (position + p >= CONSTANT_BATCHSIZE){
             int skip = p / CONSTANT_BATCHSIZE;
-            generateNewLots(skip);
+            generateNewLots(skip, p);
         }
         this.position = (position + p) % CONSTANT_BATCHSIZE;
     }
@@ -44,7 +46,7 @@ public class PowerWindow {
 
     private void checkForLotTablesUpdate(){
     }
-    private void generateNewLots (int skip) throws IOException {
+    private void generateNewLots (int skip, int p) throws IOException {
         long numberOfBytesToSkip = ((long) CONSTANT_BATCHSIZE) * 4 * skip;
         long n = stream.skip(numberOfBytesToSkip) / 4;
         if (n!=numberOfBytesToSkip){
@@ -52,8 +54,14 @@ public class PowerWindow {
             nByteInLot2 = 0;
             return;
         }
-        this.lot1 =  this.lot2;
-        nByteInLot2 = powerComputer.readBatch(this.lot2);
+        if (position + skip * CONSTANT_BATCHSIZE + p >= 2*CONSTANT_BATCHSIZE){
+            nByteInLot1 =  powerComputer.readBatch(lot1);
+            nByteInLot2 = powerComputer.readBatch(lot2);
+        }
+        else{
+            this.lot1 =  this.lot2;
+            nByteInLot2 = powerComputer.readBatch(this.lot2);
+        }
     }
     public void advance() throws IOException{
         addPosition(1);
@@ -63,9 +71,11 @@ public class PowerWindow {
     }
     public int get(int i){
         Preconditions.checkArgument(0<=i && i< windowSize);
-        if ((position + i) <= lot1.length){
+        if ((position + i) < lot1.length){
+            System.out.println("premier lot");
             return lot1[position+i];
         }else{
+            System.out.println("2eme lot");
             return lot2[i - (lot1.length - position)];
         }
     }

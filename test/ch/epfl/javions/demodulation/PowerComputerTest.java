@@ -2,9 +2,7 @@ package ch.epfl.javions.demodulation;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -64,5 +62,14 @@ class PowerComputerTest {
             pc.readBatch(batch);
         });
     }
-
+    @Test
+    void lastNotZero() throws IOException {
+        InputStream stream = new FileInputStream("resources/samples.bin");
+        int batchSize = 100;
+        PowerComputer pc = new PowerComputer(stream, batchSize);
+        int[] batch = new int[batchSize];
+        System.out.println("test for zero");
+        pc.readBatch(batch);
+        assertNotEquals(0, batch[batchSize-1]);
+    }
 }
