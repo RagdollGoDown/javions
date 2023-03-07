@@ -6,11 +6,10 @@ package ch.epfl.sigcheck;
 // pour cette étape du projet sont corrects.
 
 import ch.epfl.javions.aircraft.IcaoAddress;
-import org.junit.jupiter.api.Test;
 
 final class SignatureChecks_2 {
     private SignatureChecks_2() {}
-/*
+
     void checkCrc24() throws Exception {
         v01 = new ch.epfl.javions.Crc24(v02);
         v02 = ch.epfl.javions.Crc24.GENERATOR;
@@ -78,11 +77,8 @@ final class SignatureChecks_2 {
         v09 = v14.typeDesignator();
         v12 = v14.wakeTurbulenceCategory();
     }
-*/
-    @Test
+
     void checkAircraftDatabase() throws Exception {
-        v10 = new IcaoAddress("407814");
-        v05 = "407814";
         v15 = new ch.epfl.javions.aircraft.AircraftDatabase(v05);
         v14 = v15.get(v10);
     }

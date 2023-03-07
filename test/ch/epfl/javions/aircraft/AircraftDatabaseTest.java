@@ -2,6 +2,8 @@ package ch.epfl.javions.aircraft;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class AircraftDatabaseTest {
@@ -10,7 +12,7 @@ class AircraftDatabaseTest {
     void checkAircraftDatabaseGet() throws Exception {
         String icaoAddressString = "14F114";
         IcaoAddress icaoAddress = new IcaoAddress(icaoAddressString);
-        AircraftDatabase aircraftDatabase = new AircraftDatabase("/aircraft.zip");
+        AircraftDatabase aircraftDatabase = new AircraftDatabase("resources/aircraft.zip");
 
         var actual = aircraftDatabase.get(icaoAddress);
         var expected = new AircraftData(new AircraftRegistration("RA-61716"),
@@ -26,7 +28,7 @@ class AircraftDatabaseTest {
     void checkAircraftDatabaseGetWhenArgsAreNull() throws Exception {
         String icaoAddressString = "31D914";
         IcaoAddress icaoAddress = new IcaoAddress(icaoAddressString);
-        AircraftDatabase aircraftDatabase = new AircraftDatabase("/aircraft.zip");
+        AircraftDatabase aircraftDatabase = new AircraftDatabase("resources/aircraft.zip");
 
         var actual = aircraftDatabase.get(icaoAddress);
         var expected = new AircraftData(new AircraftRegistration("I-B375"),
@@ -36,5 +38,14 @@ class AircraftDatabaseTest {
                 WakeTurbulenceCategory.UNKNOWN);
 
         assertEquals(actual.toString(),expected.toString());
+    }
+
+    @Test
+    void checkAircraftDatabaseGetWhenFileIsWrong() {
+        String icaoAddressString = "31D914";
+        IcaoAddress icaoAddress = new IcaoAddress(icaoAddressString);
+        AircraftDatabase aircraftDatabase = new AircraftDatabase("/aircraft/resources.zip");
+
+        assertThrows(IOException.class,() -> aircraftDatabase.get(icaoAddress));
     }
 }

@@ -39,6 +39,7 @@ public class PowerComputer {
         double tempDoublePair;
         double tempDoubleImpair;
 
+        System.out.println(numberOfSamples/2 + " number of samples");
         for (int i = 2; i < numberOfSamples ; i += 2) {
 
             queueOfShorts[i%8] = shorts[i-1];

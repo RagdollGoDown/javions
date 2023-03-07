@@ -21,6 +21,7 @@ public class PowerWindow {
     private int[] lot2;
 
     public PowerWindow(InputStream stream, int windowSize) throws IOException {
+        Preconditions.checkArgument(windowSize <= CONSTANT_BATCHSIZE);
         powerComputer = new PowerComputer(stream,CONSTANT_BATCHSIZE);
         this.stream = stream;
         this.windowSize = windowSize;
