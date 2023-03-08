@@ -17,8 +17,8 @@ class PowerWindowTest {
     void PowerWindowConstructorException() throws IOException {
         InputStream stream = new FileInputStream("resources/samples.bin");
         assertThrows(IllegalArgumentException.class, () -> new PowerWindow(stream, -1));
-       assertDoesNotThrow(() -> new PowerWindow(stream, 0));
-
+        assertThrows(IllegalArgumentException.class, () -> new PowerWindow(stream, 0));
+        assertThrows(IllegalArgumentException.class, () -> new PowerWindow(stream, 1<<9));
     }
     @Test
     void PowerWindowTrivial1() throws IOException {
