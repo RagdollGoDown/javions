@@ -7,13 +7,41 @@ import java.io.InputStream;
 
 public final class AdsbDemodulator {
 
-    private PowerWindow powerWindow;
+    private final PowerWindow powerWindow;
 
     public AdsbDemodulator(InputStream samplesStream) throws IOException {
         powerWindow = new PowerWindow(samplesStream,1200);
     }
 
     public RawMessage nextMessage() throws IOException{
+
+        byte DF = 0;
+
+        //avancer dans la fenêtre jusqu'à trouver un résultat valide
+        while (RawMessage.size(DF) == 0){
+            int preambleIndex = findNextPreambleIndexInWindow(0,powerWindow.get(0),0);
+            powerWindow.advanceBy(preambleIndex);
+
+            for (int i = 0; i < 8; i++) {
+                // formule 2.3.3
+                DF += powerWindow.get(80 + 10 * i) < powerWindow.get(85+10 * i) ? 0 : 1;
+
+                DF = (byte) (DF << 1);
+            }
+        }
+
+        //completer le reste du message
+        byte[] bytes = new byte[13];
+        bytes[0] = DF;
+
+        for (int k = 1; k < 11; k++) {
+            for (int j = 0; j < 8; j++) {
+                // formule 2.3.3
+                bytes[k] += powerWindow.get(80 + 10 * k * 8 + j) < powerWindow.get(85+10 * k * 8 + j) ? 0 : 1;
+                bytes[k] = (byte) (bytes[k] << 1);
+            }
+        }
+
         return null;
     }
 

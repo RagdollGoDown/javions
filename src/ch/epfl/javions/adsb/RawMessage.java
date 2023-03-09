@@ -61,10 +61,18 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
     }
 
     /**
+     * Extracts the ME of the message in bytes 4 to 10
+     * @return the payload bytes in long format
+     */
+    public long payload(){
+        return bytes.bytesInRange(4,11);
+    }
+
+    /**
      * Extracts the type code from the ME of the message in bytes 4 to 10
      * @return the typeCode of the message using the static typeCode method
      */
     public int typeCode(){
-        return RawMessage.typeCode(bytes.bytesInRange(4,11));
+        return RawMessage.typeCode(payload());
     }
 }
