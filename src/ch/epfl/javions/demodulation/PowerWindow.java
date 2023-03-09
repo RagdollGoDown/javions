@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.security.KeyStore;
 import java.sql.SQLOutput;
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 public class PowerWindow {
     private final static int CONSTANT_BATCHSIZE = 1<<8;
@@ -26,6 +27,7 @@ public class PowerWindow {
         Preconditions.checkArgument(windowSize <= CONSTANT_BATCHSIZE && windowSize > 0);
         powerComputer = new PowerComputer(stream,CONSTANT_BATCHSIZE);
         this.stream = stream;
+
         this.windowSize = windowSize;
 
         lot1 = new int[CONSTANT_BATCHSIZE];
@@ -36,8 +38,6 @@ public class PowerWindow {
         nByteInLot1 =  powerComputer.readBatch(lot1);
         System.out.println(Arrays.toString(lot1));
         nByteInLot2 = powerComputer.readBatch(lot2);
-        System.out.println(Arrays.toString(lot2));
-        System.out.println(lot2[0]);
     }
 
     private void addPosition(int p) throws IOException {
@@ -80,6 +80,7 @@ public class PowerWindow {
             this.lot2 = tmp_list;
             nByteInLot2 = powerComputer.readBatch(this.lot2);
         }
+        System.out.println(Arrays.toString(lot2));
     }
     public void advance() throws IOException{
         addPosition(1);
@@ -91,7 +92,7 @@ public class PowerWindow {
         Preconditions.checkArgument(0<=i && i< windowSize);
         if ((position + i) < lot1.length){
             System.out.println("premier lot");
-            return lot1[position+i];
+             return lot1[position+i];
         }else{
             System.out.println("2eme lot");
             return lot2[i - (lot1.length - position)];
