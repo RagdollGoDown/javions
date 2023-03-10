@@ -1,11 +1,11 @@
 package ch.epfl.javions.demodulation;
 
-import ch.epfl.javions.Bits;
+
 import ch.epfl.javions.Preconditions;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+
 
 public class SamplesDecoder {
 

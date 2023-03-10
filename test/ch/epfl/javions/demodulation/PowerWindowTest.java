@@ -112,11 +112,10 @@ class PowerWindowTest {
 
     @Test
     void PowerWindowLotChangementWithSkipTooMuch() throws IOException {
-        // The batch size has to be changed to effectively execute those tests (to 2<<8)
         InputStream stream = new FileInputStream("resources/samples.bin");
         int windowSize = 100;
         PowerWindow pw = new PowerWindow(stream, windowSize);
-        pw.advanceBy(9999);
+        pw.advanceBy(1<<25);
         assertEquals(0, pw.get(0));
     }
 
@@ -140,18 +139,63 @@ class PowerWindowTest {
     }
 
     @Test
-    void advance() {
+    void positionTest() throws IOException {
+        InputStream stream = new FileInputStream("resources/samples.bin");
+        int windowSize = 100;
+        PowerWindow pw = new PowerWindow(stream, windowSize);
+        pw.advance();
+        assertEquals(1, pw.position());
+        pw.advanceBy((1 << 8) * 3);
+        assertEquals((1 << 8) * 3 + 1, pw.position());
     }
 
     @Test
-    void advanceBy() {
+    void isFullTrivial() throws IOException {
+        InputStream stream = new FileInputStream("resources/samples.bin");
+        int windowSize = 100;
+        PowerWindow pw = new PowerWindow(stream, windowSize);
+        int[] expected = {73, 292, 65, 745, 98, 4226, 12244, 25722, 36818, 23825};
+        assertEquals(true, pw.isFull());
+    }
+    @Test
+    void isNotFullTrivial() throws IOException {
+        byte[] bytes = {1,2,3,4,5,6,7,8, 1,2,3,4,5,6,7,8, 1,2,3,4,5,6,7,8, 1,2,3,4,5,6,7,8};
+        InputStream stream = new ByteArrayInputStream(bytes);
+        int windowSize = 4;
+        PowerWindow pw = new PowerWindow(stream, windowSize);
+        pw.advanceBy(5);
+        assertEquals(false, pw.isFull());
+    }
+    @Test
+    void isNotFullLimit() throws IOException {
+        byte[] bytes = {1,2,3,4,5,6,7,8, 1,2,3,4,5,6,7,8, 1,2,3,4,5,6,7,8, 1,2,3,4,5,6,7,8};
+        InputStream stream = new ByteArrayInputStream(bytes);
+        int windowSize = 4;
+        PowerWindow pw = new PowerWindow(stream, 4);
+        pw.advanceBy(4);
+        assertEquals(true, pw.isFull());
+        pw.advance();
+        assertEquals(false, pw.isFull());
+    }
+    @Test
+    void getLimitSout() throws IOException {
+        byte[] bytes = {1,2,3,4,5,6,7,8, 1,2,3,4,5,6,7,8, 1,2,3,4,5,6,7,8, 1,2,3,4,5,6,7,8};
+        InputStream stream = new ByteArrayInputStream(bytes);
+        int windowSize = 4;
+        PowerWindow pw = new PowerWindow(stream, windowSize);
+        pw.advanceBy(1<<20);
+        System.out.println(pw.get(windowSize-1));
+        pw.advance();
+        System.out.println(pw.get(windowSize-1));
     }
 
     @Test
-    void get() {
-    }
-
-    @Test
-    void isFull() {
+    void getErrorsTrivial() throws IOException {
+        InputStream stream = new FileInputStream("resources/samples.bin");
+        int windowSize = 100;
+        PowerWindow pw = new PowerWindow(stream, windowSize);
+        assertThrows(IllegalArgumentException.class, () -> pw.get(-1));
+        assertThrows(IllegalArgumentException.class, () -> pw.get(windowSize));
+        assertDoesNotThrow(() -> pw.get(windowSize-1));
     }
 }
