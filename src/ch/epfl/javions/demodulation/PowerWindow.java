@@ -135,7 +135,7 @@ public class PowerWindow {
      * @return
      */
     public int get(int i){
-        Preconditions.checkArgument(0<=i && i< windowSize);
+        if (!(0<=i && i < windowSize)) throw new IndexOutOfBoundsException();
         if ((position + i) < lot1.length){
              return lot1[position+i];
         }else{

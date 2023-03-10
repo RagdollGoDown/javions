@@ -13,7 +13,7 @@ class AdsbDemodulatorTest {
 
     @Test
     void nextMessage() throws IOException {
-        String f = "samples_20230304_1442.bin";
+        String f = "resources/samples_20230304_1442.bin";
         try (InputStream s = new FileInputStream(f)) {
             AdsbDemodulator d = new AdsbDemodulator(s);
             RawMessage m;
@@ -21,7 +21,7 @@ class AdsbDemodulatorTest {
             System.out.println(d.nextMessage());
             /*
             while ((m = d.nextMessage()) != null)
-                System.out.println(m);
+                System.out.println(m);*/
         }
     }
 }

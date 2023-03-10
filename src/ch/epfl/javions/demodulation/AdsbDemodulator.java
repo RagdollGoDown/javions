@@ -20,11 +20,26 @@ public final class AdsbDemodulator {
     public RawMessage nextMessage() throws IOException{
 
         byte DF = 0;
+        int resultatCrc24 = 1;
+        int preambleIndex = 0;
+
+        byte[] bytes = new byte[14];
+
+        int left=0;
+        int middle=0;
+        int right=0;
 
         //avancer dans la fenêtre jusqu'à trouver un résultat valide
-        while (RawMessage.size(DF) == 0){
-            int preambleIndex = findNextPreambleIndexInWindow(0,powerWindow.get(0),0);
-            powerWindow.advanceBy(preambleIndex);
+        while (RawMessage.size(DF) == 0 || resultatCrc24 != 0){
+            do {
+                left = middle;
+                middle = right;
+                right = sumOfPics(1);
+
+                powerWindow.advance();
+                ++preambleIndex;
+            }while (left >= middle || right >= middle ||
+                    !preambleValleyChecker(middle,0));
 
             for (int i = 0; i < 8; i++) {
                 // formule 2.3.3
@@ -49,40 +64,7 @@ public final class AdsbDemodulator {
 
         }
 
-        //completer le reste du message
-        byte[] bytes = new byte[13];
-        bytes[0] = DF;
-
-        for (int k = 1; k < 11; k++) {
-            for (int j = 0; j < 8; j++) {
-                // formule 2.3.3
-                bytes[k] += powerWindow.get(80 + 10 * k * 8 + j) < powerWindow.get(85+10 * k * 8 + j) ? 0 : 1;
-                bytes[k] = (byte) (bytes[k] << 1);
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Finds the next preamble in the window recursively using the conditions in 2.3.2
-     * @param previousMiddle the last value to be checked now the p,-1 value
-     * @param previousRight the last p,+1 value that is now being check as p,0
-     * @param indexInWindow the position of the middle/p,0 value in the window
-     * @return the position of the next preamble in the window
-     */
-    private int findNextPreambleIndexInWindow(int previousMiddle,int previousRight,int indexInWindow){
-        int newLeft = previousMiddle;
-        int newMiddle = previousRight;
-        int newRight = sumOfPics(indexInWindow+1);
-
-        if (newLeft < newMiddle && newRight < newMiddle &&
-                preambleValleyChecker(newMiddle,indexInWindow)) {
-
-            return indexInWindow;
-        }
-
-        return findNextPreambleIndexInWindow(newMiddle,newRight,indexInWindow+1);
+        return RawMessage.of(powerWindow.position() * 100, bytes);
     }
 
     /**
