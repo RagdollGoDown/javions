@@ -13,6 +13,12 @@ public class SamplesDecoder {
     private int batchSize;
     private byte[] readBytes;
 
+
+    /**
+     * Decode a little endian array of bytes into a short array
+     * @param stream stream to decode
+     * @param batchSize size of the batch
+     */
     public SamplesDecoder(InputStream stream, int batchSize){
         if (batchSize < 0) throw new IllegalArgumentException();
         if (stream == null) throw new NullPointerException();
@@ -22,9 +28,16 @@ public class SamplesDecoder {
         this.stream = stream;
     }
 
+    /**
+     * Read bytes from the stream
+     * @param batch array to fill
+     * @return number of bytes read
+     * @throws IOException
+     * @throws IllegalArgumentException if batch length is not equal to batchsize
+     */
     public int readBatch(short[] batch) throws IOException {
         Preconditions.checkArgument(batch.length == batchSize);
-        //TODO mettre les erreurs
+
 
         //On a besoin de savoir combien de byte qui peuvent être lu
         //pour savoir si on retourne batchsize ou le nombre lu de short

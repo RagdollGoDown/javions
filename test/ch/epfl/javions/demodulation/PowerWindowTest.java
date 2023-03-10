@@ -65,7 +65,7 @@ class PowerWindowTest {
     }
     @Test
     void PowerWindowLotChangementWithAdvanceN() throws IOException {
-        // The batch size has to be changed to effectively execute those tests (to 2<<8)
+        // The batch size has to be changed to effectively execute those tests (to 1<<8)
         InputStream stream = new FileInputStream("resources/samples.bin");
         int windowSize = 100;
         PowerWindow pw = new PowerWindow(stream, windowSize);
@@ -74,7 +74,7 @@ class PowerWindowTest {
     }
     @Test
     void PowerWindowLotChangementWithSkip0() throws IOException {
-        // The batch size has to be changed to effectively execute those tests (to 2<<8)
+        // The batch size has to be changed to effectively execute those tests (to 1<<8)
         InputStream stream = new FileInputStream("resources/samples.bin");
         int windowSize = 100;
         PowerWindow pw = new PowerWindow(stream, windowSize);
@@ -83,7 +83,7 @@ class PowerWindowTest {
     }
     @Test
     void PowerWindowLotChangementWithSkip1_1() throws IOException {
-        // The batch size has to be changed to effectively execute those tests (to 2<<8)
+        // The batch size has to be changed to effectively execute those tests (to 1<<8)
         InputStream stream = new FileInputStream("resources/samples.bin");
         int windowSize = 100;
         PowerWindow pw = new PowerWindow(stream, windowSize);
@@ -92,7 +92,7 @@ class PowerWindowTest {
     }
     @Test
     void PowerWindowLotChangementWithSkip1_2() throws IOException {
-        // The batch size has to be changed to effectively execute those tests (to 2<<8)
+        // The batch size has to be changed to effectively execute those tests (to 1<<8)
         InputStream stream = new FileInputStream("resources/samples.bin");
         int windowSize = 100;
         PowerWindow pw = new PowerWindow(stream, windowSize);
@@ -102,7 +102,7 @@ class PowerWindowTest {
     }
     @Test
     void PowerWindowLotChangementWithSkip1_limit() throws IOException {
-        // The batch size has to be changed to effectively execute those tests (to 2<<8)
+        // The batch size has to be changed to effectively execute those tests (to 1<<8)
         InputStream stream = new FileInputStream("resources/samples.bin");
         int windowSize = 100;
         PowerWindow pw = new PowerWindow(stream, windowSize);
@@ -121,7 +121,7 @@ class PowerWindowTest {
 
     @Test
     void PowerWindowGettingValuesWithTwoLots() throws IOException {
-        // The batch size has to be changed to effectively execute those tests (to 2<<8)
+        // The batch size has to be changed to effectively execute those tests (to 1<<8)
         InputStream stream = new FileInputStream("resources/samples.bin");
         int windowSize = 256;
         int[] expected = {80,73};
@@ -198,8 +198,8 @@ class PowerWindowTest {
         InputStream stream = new FileInputStream("resources/samples.bin");
         int windowSize = 100;
         PowerWindow pw = new PowerWindow(stream, windowSize);
-        assertThrows(IllegalArgumentException.class, () -> pw.get(-1));
-        assertThrows(IllegalArgumentException.class, () -> pw.get(windowSize));
+        assertThrows(IndexOutOfBoundsException.class, () -> pw.get(-1));
+        assertThrows(IndexOutOfBoundsException.class, () -> pw.get(windowSize));
         assertDoesNotThrow(() -> pw.get(windowSize-1));
     }
 }

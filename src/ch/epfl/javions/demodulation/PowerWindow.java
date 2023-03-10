@@ -46,7 +46,11 @@ public class PowerWindow {
         nByteInLot2 = powerComputer.readBatch(lot2);
     }
 
-
+    /**
+     * add p to the position
+     * @param p
+     * @throws IOException
+     */
     private void addPosition(int p) throws IOException {
         if (position + p >= CONSTANT_BATCHSIZE){
             int skip = 0;
@@ -58,10 +62,28 @@ public class PowerWindow {
         this.positionInStream += p;
         this.position = (position + p) % CONSTANT_BATCHSIZE;
     }
+
+    /**
+     * returns the current position of the window relative to the beginning of the power value stream,
+     * which is initially 0 and is incremented with each call engagement of the window position
+     * @return the current position of the window relative to the beginning of the power value stream
+     */
     public long position(){
         return positionInStream;
     }
+
+    /**
+     *
+     * @return the size of the window
+     */
     public int size(){return windowSize;}
+
+    /**
+     * generate new lot
+     * @param skip number of lot to skip (don't need to calculate de powercomputer
+     * @param p the added to the old position
+     * @throws IOException
+     */
 
     private void generateNewLots (int skip, int p) throws IOException {
         int numberOfBytesToSkip = CONSTANT_BATCHSIZE * 4 * skip;
@@ -89,12 +111,29 @@ public class PowerWindow {
             nByteInLot2 = powerComputer.readBatch(this.lot2);
         }
     }
+
+    /**
+     * Advance the windows of 1 position
+     * @throws IOException
+     */
     public void advance() throws IOException{
         addPosition(1);
     }
+
+    /**
+     * Advance the windows of an n position
+     * @param offset
+     * @throws IOException
+     */
     public void advanceBy(int offset) throws  IOException{
         addPosition(offset);
     }
+
+    /**
+     * get element at the position i of the window
+     * @param i
+     * @return
+     */
     public int get(int i){
         Preconditions.checkArgument(0<=i && i< windowSize);
         if ((position + i) < lot1.length){
@@ -103,6 +142,11 @@ public class PowerWindow {
             return lot2[i - (lot1.length - position)];
         }
     }
+
+    /**
+     *
+     * @return true if the window is full of element
+     */
     public boolean isFull(){
         return nByteInLot1 + nByteInLot2 >= position + windowSize;
     }

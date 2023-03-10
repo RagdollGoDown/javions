@@ -17,6 +17,9 @@ class AdsbDemodulatorTest {
         try (InputStream s = new FileInputStream(f)) {
             AdsbDemodulator d = new AdsbDemodulator(s);
             RawMessage m;
+ 
+            System.out.println(d.nextMessage());
+            /*
             while ((m = d.nextMessage()) != null)
                 System.out.println(m);
         }

@@ -1,16 +1,20 @@
 package ch.epfl.javions.demodulation;
 
+import ch.epfl.javions.Crc24;
 import ch.epfl.javions.adsb.RawMessage;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 public final class AdsbDemodulator {
 
     private final PowerWindow powerWindow;
+    private final Crc24 crc24;
 
     public AdsbDemodulator(InputStream samplesStream) throws IOException {
         powerWindow = new PowerWindow(samplesStream,1200);
+        this.crc24 = new Crc24(Crc24.GENERATOR);
     }
 
     public RawMessage nextMessage() throws IOException{
@@ -25,9 +29,24 @@ public final class AdsbDemodulator {
             for (int i = 0; i < 8; i++) {
                 // formule 2.3.3
                 DF += powerWindow.get(80 + 10 * i) < powerWindow.get(85+10 * i) ? 0 : 1;
-
                 DF = (byte) (DF << 1);
             }
+
+            //completer le reste du message
+            bytes[0] = DF;
+
+            for (int k = 1; k < 14; k++) {
+                for (int j = 0; j < 8; j++) {
+                    // formule 2.3.3
+                    bytes[k] += powerWindow.get(80 + 10 * k * 8 + j) < powerWindow.get(85+10 * k * 8 + j) ? 0 : 1;
+                    bytes[k] = (byte) (bytes[k] << 1);
+                }
+            }
+            resultatCrc24 = crc24.crc(bytes);
+            if (powerWindow.position() * 100 %10000000 == 0){
+                System.out.println(powerWindow.position());
+            }
+
         }
 
         //completer le reste du message
@@ -70,7 +89,7 @@ public final class AdsbDemodulator {
      * Sees if the possible preamble verifies the condition of the valleys
      * @return true if there is and false if there isn't
      */
-    private boolean preambleValleyChecker(int sumOfPicsChecked,int indexInWindow){
+    private boolean preambleValleyChecker(int sumOfPicsChecked, int indexInWindow){
         return  sumOfPicsChecked >= 2 * sumOfValleys(indexInWindow);
     }
 
