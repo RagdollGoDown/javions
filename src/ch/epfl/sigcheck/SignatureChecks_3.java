@@ -7,7 +7,7 @@ package ch.epfl.sigcheck;
 
 final class SignatureChecks_3 {
     private SignatureChecks_3() {}
-/*
+
     void checkSamplesDecoder() throws Exception {
         v01 = new ch.epfl.javions.demodulation.SamplesDecoder(v02, v03);
         v03 = v01.readBatch(v04);
@@ -36,5 +36,5 @@ final class SignatureChecks_3 {
     int[] v06;
     ch.epfl.javions.demodulation.PowerWindow v07;
     boolean v08;
-    long v09;*/
+    long v09;
 }

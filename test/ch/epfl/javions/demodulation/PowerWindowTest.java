@@ -18,7 +18,7 @@ class PowerWindowTest {
         InputStream stream = new FileInputStream("resources/samples.bin");
         assertThrows(IllegalArgumentException.class, () -> new PowerWindow(stream, -1));
         assertThrows(IllegalArgumentException.class, () -> new PowerWindow(stream, 0));
-        assertThrows(IllegalArgumentException.class, () -> new PowerWindow(stream, 1<<9));
+        assertThrows(IllegalArgumentException.class, () -> new PowerWindow(stream, 1<<16 + 1));
     }
     @Test
     void PowerWindowTrivial1() throws IOException {
@@ -135,7 +135,11 @@ class PowerWindowTest {
 
 
     @Test
-    void size() {
+    void sizeTest() throws IOException {
+        InputStream stream = new FileInputStream("resources/samples.bin");
+        int windowSize = 100;
+        PowerWindow pw = new PowerWindow(stream, windowSize);
+        assertEquals(100, pw.size());
     }
 
     @Test
