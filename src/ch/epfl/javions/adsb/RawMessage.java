@@ -6,11 +6,16 @@ import ch.epfl.javions.Crc24;
 import ch.epfl.javions.Preconditions;
 import ch.epfl.javions.aircraft.IcaoAddress;
 
+import javax.swing.*;
+import java.util.Arrays;
+
 public record RawMessage(long timeStampNs, ByteString bytes) {
     public static final int LENGTH = 14;
+    private final static Crc24 crc24 = new Crc24(Crc24.GENERATOR);
 
     public RawMessage{
         Preconditions.checkArgument(timeStampNs >= 0 && bytes.size() == LENGTH);
+
     }
 
     /**
@@ -21,9 +26,8 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
      */
     public static RawMessage of(long timeStampNs, byte[] bytes){
         ByteString adsbMessage = new ByteString(bytes);
-        int crc24 = (int)adsbMessage.bytesInRange(11,13);
-
-        return new RawMessage(timeStampNs, crc24 == 0  ? adsbMessage : null);
+        int crc = crc24.crc(Arrays.copyOfRange(bytes, 11, 13));
+        return crc == 0  ? new RawMessage(timeStampNs, adsbMessage):null;
     }
 
     /**
