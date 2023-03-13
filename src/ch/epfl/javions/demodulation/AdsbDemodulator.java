@@ -34,11 +34,13 @@ public final class AdsbDemodulator {
                 middle = right;
                 right = sumOfPics(1);
                 powerWindow.advance();
-                if (powerWindow.position() == 80962 ){
+                if (powerWindow.position() == 8096 ){
                     System.out.println(left);
+
                     System.out.println(middle);
                     System.out.println(right);
                     System.out.println(preambleValleyChecker(middle,0));
+                    System.out.println(sumOfValleys(1));
                 }
             }while (left >= middle || right >= middle ||
                     !preambleValleyChecker(middle,0));

@@ -20,7 +20,7 @@ class AdsbDemodulatorTest {
 
 
             while ((m = d.nextMessage()) != null){
-                //System.out.println(m);
+                System.out.println(m);
             }
         }
     }

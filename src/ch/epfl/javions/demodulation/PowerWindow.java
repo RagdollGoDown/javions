@@ -150,4 +150,5 @@ public class PowerWindow {
     public boolean isFull(){
         return nByteInLot1 + nByteInLot2 >= position + windowSize;
     }
+
 }
