@@ -10,6 +10,8 @@ public class PowerComputer {
     private SamplesDecoder samplesDecoder;
     private InputStream stream;
     private int batchSize;
+    short[] queueOfShorts = new short[8];
+
 
     short[] shorts;
 
@@ -34,8 +36,6 @@ public class PowerComputer {
         Preconditions.checkArgument(batch.length == batchSize);
 
         int numberOfSamples = samplesDecoder.readBatch(shorts);
-
-        short[] queueOfShorts = new short[8];
         double tempDoublePair;
         double tempDoubleImpair;
 

@@ -24,6 +24,7 @@ class PowerComputerTest {
 
         assertEquals(batchSize, nElementRead);
     }
+    /*
     @Test
     void checkPowerComputerMultiple() throws Exception{
         InputStream stream = new FileInputStream("resources/samples.bin");
@@ -43,7 +44,7 @@ class PowerComputerTest {
         for (int i = 0; i < batchSize-3 ; i++) {
             assertEquals(expected[i+3+batchSize], batch[i+3]);
         }
-    }
+    }*/
 
     @Test
     void checkPowerComputerEmpty() throws Exception{

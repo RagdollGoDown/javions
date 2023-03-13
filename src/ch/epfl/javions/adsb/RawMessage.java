@@ -26,7 +26,7 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
      */
     public static RawMessage of(long timeStampNs, byte[] bytes){
         ByteString adsbMessage = new ByteString(bytes);
-        int crc = crc24.crc(Arrays.copyOfRange(bytes, 11, 13));
+        int crc = crc24.crc(bytes);
         return crc == 0  ? new RawMessage(timeStampNs, adsbMessage):null;
     }
 

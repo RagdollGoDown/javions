@@ -46,6 +46,15 @@ public class PowerWindow {
         nByteInLot2 = powerComputer.readBatch(lot2);
     }
 
+    private void addPosition() throws IOException {
+        if (position == lot1.length - 1){
+            generateNewLots();
+            position = 0;
+        }
+        this.positionInStream += 1;
+        this.position += 1;
+    }
+
     /**
      * add p to the position
      * @param p
@@ -62,6 +71,7 @@ public class PowerWindow {
         this.positionInStream += p;
         this.position = (position + p) % CONSTANT_BATCHSIZE;
     }
+
 
     /**
      * returns the current position of the window relative to the beginning of the power value stream,
@@ -93,7 +103,6 @@ public class PowerWindow {
         for (int i = 0; i < skip; i++) {
             n += stream.readNBytes(buffer,0, CONSTANT_BATCHSIZE * 4);
         }
-
         if (n!=numberOfBytesToSkip){
             Arrays.fill(lot1,0);
             Arrays.fill(lot2,0);
@@ -108,8 +117,16 @@ public class PowerWindow {
             int[] tmp_list = this.lot1;
             this.lot1 =  this.lot2;
             this.lot2 = tmp_list;
+            nByteInLot1 = nByteInLot2;
             nByteInLot2 = powerComputer.readBatch(this.lot2);
         }
+    }
+    private void generateNewLots() throws IOException {
+        int[] tmp_list = this.lot1;
+        this.lot1 =  this.lot2;
+        this.lot2 = tmp_list;
+        nByteInLot1 = nByteInLot2;
+        nByteInLot2 = powerComputer.readBatch(this.lot2);
     }
 
     /**
@@ -117,7 +134,7 @@ public class PowerWindow {
      * @throws IOException
      */
     public void advance() throws IOException{
-        addPosition(1);
+        addPosition();
     }
 
     /**
