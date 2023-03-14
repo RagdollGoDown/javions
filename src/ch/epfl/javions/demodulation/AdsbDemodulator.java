@@ -39,9 +39,10 @@ public final class AdsbDemodulator {
         int p = 0;
         //avancer dans la fenêtre jusqu'à trouver un résultat valide
         while (rawMessage == null && powerWindow.isFull()){
-            left = middle;
-            middle = right;
-            right = sumOfPics(1);
+            left = sumOfPics(0);
+            middle = sumOfPics(1);
+            right = sumOfPics(2);
+            powerWindow.advance();
             while (left >= middle ||
                     right >= middle ||
                     !preambleValleyChecker(middle,0)) {

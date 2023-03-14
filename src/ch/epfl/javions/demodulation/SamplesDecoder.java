@@ -20,7 +20,7 @@ public class SamplesDecoder {
      * @param batchSize size of the batch
      */
     public SamplesDecoder(InputStream stream, int batchSize){
-        if (batchSize < 0) throw new IllegalArgumentException();
+        if (batchSize <= 0) throw new IllegalArgumentException();
         if (stream == null) throw new NullPointerException();
 
         this.batchSize = batchSize;

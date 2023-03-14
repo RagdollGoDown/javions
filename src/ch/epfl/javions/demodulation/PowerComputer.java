@@ -46,8 +46,8 @@ public class PowerComputer {
 
             for (int j = 0; j < 4; j++) {
                 if (j%2 == 0){
-                     tempDoublePair += -1*queueOfShorts[(i-j*2+8)%8];
-                     tempDoubleImpair += -1*queueOfShorts[(i-j*2+9)%8];
+                     tempDoublePair -= queueOfShorts[(i-j*2+8)%8];
+                     tempDoubleImpair -= queueOfShorts[(i-j*2+9)%8];
                 }else{
                     tempDoublePair += queueOfShorts[(i-j*2+8)%8];
                     tempDoubleImpair += queueOfShorts[(i-j*2+9)%8];
