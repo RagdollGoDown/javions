@@ -6,13 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class PowerComputer {
-
     private SamplesDecoder samplesDecoder;
     private InputStream stream;
     private int batchSize;
     short[] queueOfShorts = new short[8];
-
-
     short[] shorts;
 
     public PowerComputer(InputStream stream, int batchSize){
@@ -36,8 +33,8 @@ public class PowerComputer {
         Preconditions.checkArgument(batch.length == batchSize);
 
         int numberOfSamples = samplesDecoder.readBatch(shorts);
-        double tempDoublePair;
-        double tempDoubleImpair;
+        int tempDoublePair;
+        int tempDoubleImpair;
 
         for (int i = 2; i < numberOfSamples + 2; i += 2) {
 
@@ -48,10 +45,14 @@ public class PowerComputer {
             tempDoubleImpair = 0;
 
             for (int j = 0; j < 4; j++) {
-                 tempDoublePair += Math.pow(-1,j + 1)*queueOfShorts[(i-j*2+8)%8];
-                 tempDoubleImpair += Math.pow(-1,j + 1)*queueOfShorts[(i-j*2+9)%8];
+                if (j%2 == 0){
+                     tempDoublePair += -1*queueOfShorts[(i-j*2+8)%8];
+                     tempDoubleImpair += -1*queueOfShorts[(i-j*2+9)%8];
+                }else{
+                    tempDoublePair += queueOfShorts[(i-j*2+8)%8];
+                    tempDoubleImpair += queueOfShorts[(i-j*2+9)%8];
+                }
             }
-
             batch[i/2 - 1] = (int)(tempDoublePair*tempDoublePair + tempDoubleImpair*tempDoubleImpair);
         }
         return numberOfSamples/2;

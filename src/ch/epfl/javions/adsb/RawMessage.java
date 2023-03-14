@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 public record RawMessage(long timeStampNs, ByteString bytes) {
     public static final int LENGTH = 14;
-    private final static Crc24 crc24 = new Crc24(Crc24.GENERATOR);
+    private static final Crc24 crc24 = new Crc24(Crc24.GENERATOR);
 
     public RawMessage{
         Preconditions.checkArgument(timeStampNs >= 0 && bytes.size() == LENGTH);

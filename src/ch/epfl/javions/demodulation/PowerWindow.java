@@ -47,12 +47,14 @@ public class PowerWindow {
     }
 
     private void addPosition() throws IOException {
-        if (position == lot1.length - 1){
+        if (position + 1 ==  CONSTANT_BATCHSIZE){
             generateNewLots();
             position = 0;
+        }else{
+            this.position += 1;
         }
         this.positionInStream += 1;
-        this.position += 1;
+
     }
 
     /**
