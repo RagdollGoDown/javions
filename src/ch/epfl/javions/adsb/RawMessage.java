@@ -25,9 +25,13 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
      * @return the RawMessage
      */
     public static RawMessage of(long timeStampNs, byte[] bytes){
-        ByteString adsbMessage = new ByteString(bytes);
         int crc = crc24.crc(bytes);
-        return crc == 0  ? new RawMessage(timeStampNs, adsbMessage):null;
+        if (crc != 0){
+            return null;
+        }else {
+            ByteString adsbMessage = new ByteString(bytes);
+            return new RawMessage(timeStampNs, adsbMessage);
+        }
     }
 
     /**

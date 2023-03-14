@@ -1,5 +1,6 @@
 package ch.epfl.javions.demodulation;
 
+import ch.epfl.javions.Bits;
 import ch.epfl.javions.ByteString;
 import ch.epfl.javions.Crc24;
 import ch.epfl.javions.adsb.RawMessage;
@@ -17,16 +18,25 @@ public final class AdsbDemodulator {
         powerWindow = new PowerWindow(samplesStream,1200);;
     }
 
+    private byte getDF(){
+        byte DF = 0;
+        for (int i = 0; i < 8; i++) {
+            // formule 2.3.3
+            DF = (byte) (DF << 1);
+            DF += powerWindow.get(80 + (10 * i)) < powerWindow.get(85+(10 * i)) ? 0 : 1;
+        }
+        return DF;
+    }
     public RawMessage nextMessage() throws IOException{
         byte DF = 0;
         byte[] bytes = new byte[14];
         int left=0;
         int middle=0;
         int right=0;
-
+        
         RawMessage rawMessage = null;
 
-
+        int p = 0;
         //avancer dans la fenêtre jusqu'à trouver un résultat valide
         while (rawMessage == null && powerWindow.isFull()){
             do {
@@ -34,21 +44,12 @@ public final class AdsbDemodulator {
                 middle = right;
                 right = sumOfPics(1);
                 powerWindow.advance();
-                if (powerWindow.position() == 80960 ){
-                    System.out.println(left);
-                    System.out.println(middle);
-                    System.out.println(right);
-                    System.out.println(preambleValleyChecker(middle,0));
-                    System.out.println(sumOfValleys(1));
-                }
+
             }while (left >= middle || right >= middle ||
                     !preambleValleyChecker(middle,0));
 
-            for (int i = 0; i < 8; i++) {
-                // formule 2.3.3
-                DF += powerWindow.get(80 + 10 * i) < powerWindow.get(85+10 * i) ? 0 : 1;
-                DF = (byte) (DF << 1);
-            }
+            DF = getDF();
+
             if (RawMessage.size(DF) == 0){
                 continue;
             }
@@ -59,17 +60,14 @@ public final class AdsbDemodulator {
             for (int k = 1; k < RawMessage.LENGTH; k++) {
                 for (int j = 0; j < 8; j++) {
                     // formule 2.3.3
-                    bytes[k] += powerWindow.get(80 + 10 * (k * 8 + j)) < powerWindow.get(85 + 10 * (k * 8 + j)) ? 0 : 1;
                     bytes[k] = (byte) (bytes[k] << 1);
+                    bytes[k] += powerWindow.get(80 + 10 * (k * 8 + j)) < powerWindow.get(85 + 10 * (k * 8 + j)) ? 0 : 1;
                 }
             }
-
+            p++;
             rawMessage = RawMessage.of(powerWindow.position() * 100, bytes);
-            if (powerWindow.position() * 100 < 8096300 && powerWindow.position() * 100 > 8096200){
-                System.out.println(rawMessage);
-            }
         }
-        //powerWindow.advanceBy(1200);
+        powerWindow.advanceBy(1200);
         return rawMessage;
     }
 
