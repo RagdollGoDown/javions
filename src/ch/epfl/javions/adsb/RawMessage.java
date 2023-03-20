@@ -8,14 +8,17 @@ import ch.epfl.javions.aircraft.IcaoAddress;
 
 import javax.swing.*;
 import java.util.Arrays;
+import java.util.HexFormat;
 
 public record RawMessage(long timeStampNs, ByteString bytes) {
+    private static final int POSITION_START_ME = 51;
+    private static final int SIZE_ME = 5;
     public static final int LENGTH = 14;
     private static final Crc24 crc24 = new Crc24(Crc24.GENERATOR);
 
     public RawMessage{
-        Preconditions.checkArgument(timeStampNs >= 0 && bytes.size() == LENGTH);
-
+        Preconditions.checkArgument(timeStampNs >= 0);
+        Preconditions.checkArgument(bytes.size() == LENGTH);
     }
 
     /**
@@ -25,6 +28,7 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
      * @return the RawMessage
      */
     public static RawMessage of(long timeStampNs, byte[] bytes){
+
         int crc = crc24.crc(bytes);
         if (crc != 0){
             return null;
@@ -50,7 +54,7 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
      * @return returns the typeCode in the 5 bits
      */
     public static int typeCode(long payload){
-        return (int)((payload << 8) >>> 51);
+        return Bits.extractUInt(payload,POSITION_START_ME,SIZE_ME);
     }
 
     /**
@@ -64,8 +68,7 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
      * @return l'IcaoAddress contained in the bytes 1 to 3
      */
     public IcaoAddress icaoAddress(){
-        //TODO voir s'il faut le garder en attribut privé, parce que là c'est un nouveau à chaque fois
-        return new IcaoAddress(Long.toString(bytes.bytesInRange(1,4)));
+        return new IcaoAddress(Long.toHexString(bytes.bytesInRange(1, 4) + 0x1000000).toUpperCase().substring(1));
     }
 
     /**
