@@ -54,7 +54,7 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
      * @return returns the typeCode in the 5 bits
      */
     public static int typeCode(long payload){
-        return Bits.extractUInt(payload,POSITION_START_ME,SIZE_ME);
+        return Bits.extractUInt(payload, POSITION_START_ME, SIZE_ME);
     }
 
     /**
@@ -64,11 +64,12 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
         return Byte.toUnsignedInt((byte)(bytes.byteAt(0) >>> 3));
     }
 
+
     /**
      * @return l'IcaoAddress contained in the bytes 1 to 3
      */
     public IcaoAddress icaoAddress(){
-        return new IcaoAddress(Long.toHexString(bytes.bytesInRange(1, 4) + 0x1000000).toUpperCase().substring(1));
+        return new IcaoAddress(String.format("%06X", bytes.bytesInRange(1, 4)));
     }
 
     /**

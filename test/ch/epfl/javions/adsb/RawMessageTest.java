@@ -211,7 +211,6 @@ class RawMessageTest {
             var expectedIcaoAddress = new IcaoAddress(icaoAddressString);
             var rawMessage = RawMessage.of(100, messageBytes);
             assertNotNull(rawMessage);
-            System.out.println(rawMessage.icaoAddress());
             assertEquals(expectedIcaoAddress, rawMessage.icaoAddress());
         }
     }
