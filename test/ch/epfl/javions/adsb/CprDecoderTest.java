@@ -16,4 +16,12 @@ class CprDecoderTest {
         GeoPos g = CprDecoder.decodePosition(x0/N_bit,y0/N_bit ,x1/N_bit, y1/N_bit, 1 );
         System.out.println(g);
     }
+
+    @Test
+    void checkThrowsIllegalArgument(){
+        assertThrows(IllegalArgumentException.class,() -> CprDecoder.decodePosition(0,0 ,0, 0, 2 ));
+        assertThrows(IllegalArgumentException.class,() -> CprDecoder.decodePosition(0,0 ,0, 0, -1 ));
+        assertDoesNotThrow(() -> CprDecoder.decodePosition(0,0 ,0, 0, 1 ));
+        assertDoesNotThrow(() -> CprDecoder.decodePosition(0,0 ,0, 0, 0 ));
+    }
 }
