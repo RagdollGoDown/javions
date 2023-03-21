@@ -13,7 +13,7 @@ class CprDecoderTest {
         int x1 = 108865;
         int y1 = 77558;
         double N_bit = (1<<17);
-        GeoPos g = CprDecoder.decodePosition(x0/N_bit,y0/N_bit ,x1/N_bit, y1/N_bit, 1 );
+        GeoPos g = CprDecoder.decodePosition(x0/N_bit,y0/N_bit ,x1/N_bit, y1/N_bit, 0 );
         System.out.println(g);
     }
 

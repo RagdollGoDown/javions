@@ -10,15 +10,24 @@ public final class CprDecoder {
     private static final int N_LATITUDE_ODD = 59;
     private static final int N_BIT_POS = (1 << 17);
 
-    private static double zLambdaEven(double latitude){
-        double latitudeRad = Units.convertTo(latitude, Units.Angle.TURN);
-        double A = Math.acos(1 - (1 - (Math.cos((2*Math.PI)/N_LATITUDE_EVEN))
+    private static double aCalculation (double latitude){
+        double latitudeRad = Units.convertFrom(latitude, Units.Angle.TURN);
+        double A = Math.acos(1.0 - ((1.0 - (Math.cos((2.0*Math.PI)/N_LATITUDE_EVEN)))
                 /(Math.cos(latitudeRad) * Math.cos(latitudeRad))));
+        return A;
+    }
+    private static int zLambdaEven(double latitude){
+        System.out.println("latitude = " + latitude);
+
+
+        System.out.println((2*Math.PI)/N_LATITUDE_EVEN);
+        double A = aCalculation(latitude);
+
         System.out.println("A: " + A);
         if (Double.isNaN(A)){
             return 1;
         }else{
-            return Math.floor((2 * Math.PI) / (A*A));
+            return (int) Math.floor(2* (Math.PI) / A);
         }
     }
     public static GeoPos decodePosition(double x0, double y0, double x1, double y1, int mostRecent){
@@ -33,15 +42,15 @@ public final class CprDecoder {
         System.out.println("latitude0 = " + latitude0);
         System.out.println("latitude1 = " + latitude1);
 
-        double zonesLongitudeEven = zLambdaEven(latitude0);
+        int zonesLongitudeEven = zLambdaEven(latitude0);
 
         System.out.println("zonesLongitudeEven = " + zonesLongitudeEven );
         if (zonesLongitudeEven != zLambdaEven(latitude1)){
             return null;
         }
-        double zonesLongitudeOdd = zonesLongitudeEven - 1;
+        int zonesLongitudeOdd = zonesLongitudeEven - 1;
 
-        double zLong = Math.rint(Math.rint((x0 * zonesLongitudeOdd  - x1 * zonesLongitudeEven)));
+        int zLong =  (int) Math.rint(Math.rint((x0 * zonesLongitudeOdd  - x1 * zonesLongitudeEven)));
 
         double longitude0 = (zLong + x0)/zonesLongitudeEven;
         double longitude1 = (zLong + x1)/zonesLongitudeOdd;
