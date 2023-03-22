@@ -45,6 +45,14 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
     }
 
     private static Character DecodeCharacter(int characterCode){
+        /*
+        if (characterCode == 32 || (48<=characterCode && characterCode<=57)){
+            return (char) characterCode;
+        } else if (1<= characterCode && characterCode<=26) {
+            return (char) (characterCode+64);
+        }else {
+            return null;
+        }*/
         switch (characterCode){
             case 1: return 'A';
             case 2: return 'B';

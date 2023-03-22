@@ -23,6 +23,7 @@ public final class Bits {
 
     /**
      * Checks if a certain bit in a long is equal to 1
+     * ex: for 00010 1 is at position 1
      * @param value the long in question
      * @param index the position of the bit in the long
      * @return true if the bit is equal to and false if it isn't

@@ -6,10 +6,60 @@ import org.junit.jupiter.api.Test;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HexFormat;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class AircraftIdentificationMessageTest {
+    private record RawMessageData(long timeStampNs, String bytes) {}
+    private static final List<RawMessageData> EXPECTED_RAW_MESSAGE_DATA = List.of(
+            new RawMessageData(1499146900L, "8D4D2228234994B7284820323B81"),
+            new RawMessageData(2240535600L, "8F01024C233530F3CF6C60A19669"),
+            new RawMessageData(2698727800L, "8D49529923501439CF1820419C55"),
+            new RawMessageData(3215880100L, "8DA4F23925101331D73820FC8E9F"),
+            new RawMessageData(4103219900L, "8D4B2964212024123E0820939C6F"));
+
+
+    private static List<RawMessage> getListRawMessage(List<RawMessageData> rawMessages){
+        List<RawMessage> result = new ArrayList<>();
+        for (var message : EXPECTED_RAW_MESSAGE_DATA) {
+            var messageBytes = HexFormat.of().parseHex(message.bytes());
+            var expectedPayload = 0L;
+            for (var i = 4; i < 11; i += 1)
+                expectedPayload = (expectedPayload << Byte.SIZE) | Byte.toUnsignedLong(messageBytes[i]);
+            var rawMessage = RawMessage.of(message.timeStampNs(), messageBytes);
+            result.add(rawMessage);
+        }
+        return result;
+    }
+    private static final List<RawMessage>  LIST_RAW_MESSAGE = getListRawMessage(EXPECTED_RAW_MESSAGE_DATA);
+    @Test
+    void category_trivial() {
+        int[] expected = {163, 163, 163, 165, 161};
+        for (int i = 0; i < expected.length; i++) {
+            AircraftIdentificationMessage aircraftIdentificationMessage = AircraftIdentificationMessage.of(LIST_RAW_MESSAGE.get(i));
+            assertEquals(expected[i], aircraftIdentificationMessage.category());
+        }
+    }
+    @Test
+    void callSign_trivial() {
+        String[] expected = {"RYR7JD", "MSC3361", "TAP931", "DAL153", "HBPRO"};
+        for (int i = 0; i < expected.length; i++) {
+            AircraftIdentificationMessage aircraftIdentificationMessage = AircraftIdentificationMessage.of(LIST_RAW_MESSAGE.get(i));
+            assertEquals(expected[i], aircraftIdentificationMessage.callSign().string());
+        }
+    }
+    @Test
+    void icao_trivial() {
+        String[] expected = {"4D2228", "01024C", "495299", "A4F239", "4B2964"};
+        for (int i = 0; i < expected.length; i++) {
+            AircraftIdentificationMessage aircraftIdentificationMessage = AircraftIdentificationMessage.of(LIST_RAW_MESSAGE.get(i));
+            assertEquals(expected[i], aircraftIdentificationMessage.icaoAddress().string());
+        }
+    }
+
 
     private String[] AircraftIdentificationMessagesExpected = {
             """
@@ -43,6 +93,7 @@ class AircraftIdentificationMessageTest {
              category=161,
              callSign=CallSign[string=HBPRO]]"""
     };
+
 
     @Test
     void of() throws IOException {
