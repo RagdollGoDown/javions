@@ -7,7 +7,7 @@ import ch.epfl.javions.aircraft.IcaoAddress;
 public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAddress, int category, CallSign callSign) implements Message {
     private final static int POSITION_START_CA = 48;
     private final static int SIZE_CA = 3;
-    private final static int SIZE_CHARACTER_CODE = 3;
+    private final static int SIZE_CHARACTER_CODE = 6;
 
     public AircraftIdentificationMessage{
         if (icaoAddress == null || callSign == null) throw new NullPointerException();
@@ -16,6 +16,8 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
 
     public static AircraftIdentificationMessage of(RawMessage message){
         long payload = message.payload();
+
+        if (message.typeCode() > 4 || message.typeCode() < 1) return null;
 
         byte bitsDePoidsFort = (byte)(14 - message.typeCode());
         byte champCA = (byte)Bits.extractUInt(payload,POSITION_START_CA, SIZE_CA);
@@ -27,12 +29,14 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
         StringBuilder callsignStringBuilder = new StringBuilder();
 
         for (int i = 0; i < 8; i++) {
-            currentCharacterCode = Bits.extractUInt(payload, POSITION_START_CA + SIZE_CA + i*6, SIZE_CHARACTER_CODE);
+            currentCharacterCode = Bits.extractUInt(payload, (7 - i)*SIZE_CHARACTER_CODE, SIZE_CHARACTER_CODE);
             currentCharacter = DecodeCharacter(currentCharacterCode);
 
+            //s'il retourne null c'est que le character est invalide
             if (currentCharacter == null) return null;
 
-            callsignStringBuilder.append(currentCharacter);
+            //les espaces servent à marquer des endroits vides
+            if (currentCharacter != ' ') callsignStringBuilder.append(currentCharacter);
         }
 
         CallSign callSign = new CallSign(callsignStringBuilder.toString());

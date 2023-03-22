@@ -20,28 +20,28 @@ class AircraftIdentificationMessageTest {
              callSign=CallSign[string=RYR7JD]]""",
             """
             AircraftIdentificationMessage[
-            timeStampNs=2240535600,
-            icaoAddress=IcaoAddress[string=01024C],
-            category=163,
-            callSign=CallSign[string=MSC3361]]""",
+             timeStampNs=2240535600,
+             icaoAddress=IcaoAddress[string=01024C],
+             category=163,
+             callSign=CallSign[string=MSC3361]]""",
             """
             AircraftIdentificationMessage[
-            timeStampNs=2698727800,
-            icaoAddress=IcaoAddress[string=495299],
-            category=163,
-            callSign=CallSign[string=TAP931]]""",
+             timeStampNs=2698727800,
+             icaoAddress=IcaoAddress[string=495299],
+             category=163,
+             callSign=CallSign[string=TAP931]]""",
             """
             AircraftIdentificationMessage[
-            timeStampNs=3215880100,
-            icaoAddress=IcaoAddress[string=A4F239],
-            category=165,
-            callSign=CallSign[string=DAL153]]""",
+             timeStampNs=3215880100,
+             icaoAddress=IcaoAddress[string=A4F239],
+             category=165,
+             callSign=CallSign[string=DAL153]]""",
             """
             AircraftIdentificationMessage[
-            timeStampNs=4103219900,
-            icaoAddress=IcaoAddress[string=4B2964],
-            category=161,
-            callSign=CallSign[string=HBPRO]]"""
+             timeStampNs=4103219900,
+             icaoAddress=IcaoAddress[string=4B2964],
+             category=161,
+             callSign=CallSign[string=HBPRO]]"""
     };
 
     @Test
@@ -50,17 +50,20 @@ class AircraftIdentificationMessageTest {
         try (InputStream s = new FileInputStream(f)) {
             AdsbDemodulator d = new AdsbDemodulator(s);
             RawMessage m;
+            AircraftIdentificationMessage a;
             int i = 0;
+
             while ((m = d.nextMessage()) != null && i < 5){
-
-                if (AircraftIdentificationMessage.of(m) != null){
-
-                    System.out.println(AircraftIdentificationMessage.of(m).toString());
-                    assertTrue(AircraftIdentificationMessage.of(m).toString().equals(AircraftIdentificationMessagesExpected[1]));
-                    i++;
-                }
+                    if ((a = AircraftIdentificationMessage.of(m)) != null){
+                        i++;
+                        System.out.println(a);
+                        //alors le test ne marche pas mais jsp si c'est à cause de comment ils mettent les textes pour le test
+                        assertTrue(AircraftIdentificationMessage.of(m).toString()
+                                .equals(AircraftIdentificationMessagesExpected[1]));
+                    }
             }
             System.out.println(i);
+
         }
     }
 }
