@@ -246,13 +246,11 @@ class AirbornePositionMessageTest {
             AirbornePositionMessage a;
             int i = 0;
 
-            while ((m = d.nextMessage()) != null && i < 5){
+            while ((m = d.nextMessage()) != null){
 
                 if ((a = AirbornePositionMessage.of(m)) != null){
-                    System.out.println(a);
-                    System.out.println(ExpectedAircraftPositionMessages[i]);
                     //alors le test ne marche pas mais jsp si c'est à cause de comment ils mettent les textes pour le test
-                    //assertTrue(a.toString().equals(ExpectedAircraftPositionMessages[i]));
+                    assertEquals(a.toString(),ExpectedAircraftPositionMessages[i]);
                     i++;
                 }
             }

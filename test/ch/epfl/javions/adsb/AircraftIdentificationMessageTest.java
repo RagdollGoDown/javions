@@ -88,14 +88,12 @@ class AircraftIdentificationMessageTest {
             AircraftIdentificationMessage a;
             int i = 0;
 
-            while ((m = d.nextMessage()) != null && i < 5){
-                    if ((a = AircraftIdentificationMessage.of(m)) != null){
-                        i++;
-                        System.out.println(a);
-                        //alors le test ne marche pas mais jsp si c'est à cause de comment ils mettent les textes pour le test
-                        assertTrue(AircraftIdentificationMessage.of(m).toString()
-                                .equals(AircraftIdentificationMessagesExpected[i]));
-                    }
+            while ((m = d.nextMessage()) != null){
+                if ((a = AircraftIdentificationMessage.of(m)) != null){
+                    assertTrue(AircraftIdentificationMessage.of(m).toString()
+                            .equals(AircraftIdentificationMessagesExpected[i]));
+                    i++;
+                }
             }
             System.out.println(i);
         }

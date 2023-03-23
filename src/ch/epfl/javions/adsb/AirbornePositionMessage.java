@@ -102,9 +102,15 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
         return Bits.extractUInt(rawMessage.payload(), 34, 1);
     }
     public static AirbornePositionMessage of(RawMessage rawMessage){
+
         long timeStampNs = rawMessage.timeStampNs();
         IcaoAddress icaoAddress = rawMessage.icaoAddress();
         double altitude = getAltitude(rawMessage);
+
+        if (rawMessage.typeCode() < 9 || rawMessage.typeCode() == 19 || rawMessage.typeCode() > 22){
+            return null;
+        }
+
         if (altitude == -2000){
             return null;
         }
