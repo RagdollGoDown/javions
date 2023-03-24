@@ -24,23 +24,9 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
 
         int category = (bitsDePoidsFort << 4) | champCA;
 
-        int currentCharacterCode;
-        Character currentCharacter;
-        StringBuilder callsignStringBuilder = new StringBuilder();
+        CallSign callSign = decodeCallSing(payload);
 
-        for (int i = 0; i < 8; i++) {
-            currentCharacterCode = Bits.extractUInt(payload, (7 - i)*SIZE_CHARACTER_CODE, SIZE_CHARACTER_CODE);
-            currentCharacter = DecodeCharacter(currentCharacterCode);
-
-            //s'il retourne null c'est que le character est invalide
-            if (currentCharacter == null) return null;
-
-            //les espaces servent à marquer des endroits vides
-            if (currentCharacter != ' ') callsignStringBuilder.append(currentCharacter);
-        }
-
-        CallSign callSign = new CallSign(callsignStringBuilder.toString());
-
+        if (callSign == null) return null;
         return new AircraftIdentificationMessage(message.timeStampNs(),message.icaoAddress(),category,callSign);
     }
 

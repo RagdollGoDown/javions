@@ -100,6 +100,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
     private static int getParity(RawMessage rawMessage){
         return Bits.extractUInt(rawMessage.payload(), 34, 1);
     }
+
     public static AirbornePositionMessage of(RawMessage rawMessage){
 
         long timeStampNs = rawMessage.timeStampNs();
