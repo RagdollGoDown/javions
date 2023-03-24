@@ -10,6 +10,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
     private static final int ALTITUDE_START = 36;
     private static  final int INDEX_Q_ALTITUDE = 4;
     private static final int SIZE_LONG_LAT = 1 << 17;
+    private static final int[] ORDER_ALTITUDE = {9, 3, 10, 4, 11, 5, 6, 0, 7, 1, 8, 2};
 
     public AirbornePositionMessage{
         if (icaoAddress == null) throw new NullPointerException();
@@ -30,10 +31,10 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
         //11 10 09 08 07 06 05 04 03 02 01 00
         //C1 A1 C2 A2 C4 A4 B1 D1 B2 D2 B4 D4
         //D1 D2 D4 A1 A2 A4 B1 B2 B4 C1 C2 C4
-        int[] order = {9, 3, 10, 4, 11, 5, 6, 0, 7, 1, 8, 2};
+
         int sorted = 0;
-        for (int i = 0; i < order.length; i++) {
-            sorted = sorted | ((Bits.testBit(payload, i) ? 1:0) << order[i]);
+        for (int i = 0; i < ORDER_ALTITUDE.length; i++) {
+            sorted = sorted | ((Bits.testBit(payload, i) ? 1:0) << ORDER_ALTITUDE[i]);
         }
         return sorted;
     }
