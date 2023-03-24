@@ -183,17 +183,6 @@ class PowerWindowTest {
         pw.advance();
         assertEquals(false, pw.isFull());
     }
-    @Test
-    void getLimitSout() throws IOException {
-        byte[] bytes = {1,2,3,4,5,6,7,8, 1,2,3,4,5,6,7,8, 1,2,3,4,5,6,7,8, 1,2,3,4,5,6,7,8};
-        InputStream stream = new ByteArrayInputStream(bytes);
-        int windowSize = 4;
-        PowerWindow pw = new PowerWindow(stream, windowSize);
-        pw.advanceBy(1<<20);
-        System.out.println(pw.get(windowSize-1));
-        pw.advance();
-        System.out.println(pw.get(windowSize-1));
-    }
 
     @Test
     void getErrorsTrivial() throws IOException {

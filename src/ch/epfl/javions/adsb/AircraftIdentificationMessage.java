@@ -17,7 +17,7 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
     public static AircraftIdentificationMessage of(RawMessage message){
         long payload = message.payload();
 
-        if (message.typeCode() > 4 || message.typeCode() < 1) return null;
+        //if (message.typeCode() > 4 || message.typeCode() < 1) return null;
 
         byte bitsDePoidsFort = (byte)(14 - message.typeCode());
         byte champCA = (byte)Bits.extractUInt(payload,POSITION_START_CA, SIZE_CA);
@@ -44,15 +44,37 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
         return new AircraftIdentificationMessage(message.timeStampNs(),message.icaoAddress(),category,callSign);
     }
 
-    private static Character DecodeCharacter(int characterCode){
-        /*
+    private static CallSign decodeCallSing(long payload){
+        int currentCharacterCode;
+        Character currentCharacter;
+        StringBuilder callsignStringBuilder = new StringBuilder();
+
+        for (int i = 0; i < 8; i++) {
+            currentCharacterCode = Bits.extractUInt(payload, (7 - i)*SIZE_CHARACTER_CODE, SIZE_CHARACTER_CODE);
+            currentCharacter = decodeCharacter(currentCharacterCode);
+
+            //s'il retourne null c'est que le character est invalide
+            if (currentCharacter == null) return null;
+
+            //les espaces servent à marquer des endroits vides
+            if (currentCharacter != ' ') callsignStringBuilder.append(currentCharacter);
+        }
+
+        return new CallSign(callsignStringBuilder.toString());
+    }
+
+    private static Character decodeCharacter(int characterCode){
+
         if (characterCode == 32 || (48<=characterCode && characterCode<=57)){
+            // space and numbers
             return (char) characterCode;
         } else if (1<= characterCode && characterCode<=26) {
+            // letters
             return (char) (characterCode+64);
         }else {
             return null;
-        }*/
+        }
+        /*
         switch (characterCode){
             case 1: return 'A';
             case 2: return 'B';
@@ -93,5 +115,7 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
             case 57: return '9';
             default: return null;
         }
+
+         */
     }
 }

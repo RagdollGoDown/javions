@@ -210,14 +210,7 @@ class AirbornePositionMessageTest {
             assertEquals(expected[i], airbornePositionMessage.altitude(), 0.01);
         }
     }
-    @Test
-    void altitudeNull(){
-        String value = "8D49529958" + "F6A" + "2E6E15FA352306B";
-        RawMessage rawMessage = RawMessage.of(10, HexFormat.of().parseHex(value));
-        AirbornePositionMessage airbornePositionMessage = AirbornePositionMessage.of(rawMessage);
-        assertEquals(1, airbornePositionMessage.altitude(), 0.01);
 
-    }
     @Test
     void parity_trivial() {
         double[] expected = {0, 0, 1, 0, 0};
@@ -233,6 +226,22 @@ class AirbornePositionMessageTest {
         for (int i = 0; i < expectedX.length; i++) {
             AirbornePositionMessage airbornePositionMessage = AirbornePositionMessage.of(LIST_RAW_MESSAGE.get(i));
             assertEquals(expectedX[i], airbornePositionMessage.icaoAddress().string());
+        }
+    }
+
+    @Test
+    void altitudeErrorTimeStamp(){
+        assertDoesNotThrow(() ->  AirbornePositionMessage.of(RawMessage.of(0, HexFormat.of().parseHex("8D49529958B302E6E15FA352306B"))));
+        assertThrows(IllegalArgumentException.class, () -> AirbornePositionMessage.of(RawMessage.of(-1, HexFormat.of().parseHex("8D49529958B302E6E15FA352306B"))));
+    }
+
+    @Test
+    void altitudeInvalidAltitude(){
+        int[] values = {0b111111101010,0b111111111111, 0b111111111011};
+        for (int v:
+             values) {
+            int res = AirbornePositionMessage.getValueWeirdAlgoAltitude(v);
+            assertEquals(-2000, res);
         }
     }
 
@@ -254,8 +263,6 @@ class AirbornePositionMessageTest {
                     i++;
                 }
             }
-            System.out.println(i);
-
         }
     }
 }

@@ -28,10 +28,6 @@ class CprDecoderTest {
                         .longitudeDEGREE(),
                 CprDecoder.decodePosition(x0/N_bit,y0/N_bit ,x1/N_bit, y1/N_bit, 1 )
                         .latitudeDEGREE()};
-
-        System.out.println(actualForRecent0[0]);
-        System.out.println(actualForRecent0[1]);
-
         //lon 0
         assertEquals(actualForRecent0[0] ,expectedForRecent0[0], Math.pow(10,-6));
         assertEquals(actualForRecent0[1] ,expectedForRecent0[1], Math.pow(10,-6));

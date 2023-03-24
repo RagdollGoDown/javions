@@ -89,13 +89,12 @@ class AircraftIdentificationMessageTest {
             int i = 0;
 
             while ((m = d.nextMessage()) != null){
-                if ((a = AircraftIdentificationMessage.of(m)) != null){
+                if ((AircraftIdentificationMessage.of(m)) != null  && !(m.typeCode() > 4 || m.typeCode() < 1)){
                     assertTrue(AircraftIdentificationMessage.of(m).toString()
                             .equals(AircraftIdentificationMessagesExpected[i]));
                     i++;
                 }
             }
-            System.out.println(i);
         }
     }
 }

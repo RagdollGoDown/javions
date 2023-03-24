@@ -17,13 +17,8 @@ public final class CprDecoder {
         return A;
     }
     private static int zLambdaEven(double latitude){
-        System.out.println("latitude = " + latitude);
-
-
-        System.out.println((2*Math.PI)/N_LATITUDE_EVEN);
         double A = aCalculation(latitude);
-
-        System.out.println("A: " + A);
+        
         if (Double.isNaN(A)){
             return 1;
         }else{
@@ -33,18 +28,13 @@ public final class CprDecoder {
     public static GeoPos decodePosition(double x0, double y0, double x1, double y1, int mostRecent){
         Preconditions.checkArgument(mostRecent == 0 || mostRecent == 1);
 
-        System.out.println("x0 = " + x0 + " ,x1 = " + x1 +" ,y0 = " + y0 +" ,y1 = " + y1);
         double zLat = Math.rint(Math.rint((y0 * N_LATITUDE_ODD  - y1 * N_LATITUDE_EVEN)));
-        System.out.println("Zlat = " + zLat);
+
         double latitude0 = (zLat + y0)/N_LATITUDE_EVEN;
         double latitude1 = (zLat + y1)/N_LATITUDE_ODD;
 
-        System.out.println("latitude0 = " + latitude0);
-        System.out.println("latitude1 = " + latitude1);
-
         int zonesLongitudeEven = zLambdaEven(latitude0);
 
-        System.out.println("zonesLongitudeEven = " + zonesLongitudeEven );
         if (zonesLongitudeEven != zLambdaEven(latitude1)){
             return null;
         }

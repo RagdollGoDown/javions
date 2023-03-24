@@ -51,7 +51,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
      * @param payload
      * @return -2000 if invalid
      */
-    private static int getValueWeirdAlgoAltitude(int payload){
+    public static int getValueWeirdAlgoAltitude(int payload){
         int sorted = getSortedAltitude(payload);
         int strongGroup = decodeGray(Bits.extractUInt(sorted, 3, 9), 9);
         int weakGroup = decodeGray(Bits.extractUInt(sorted, 0, 3), 3);
@@ -73,7 +73,6 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
      * @return -2000 if invalid
      */
     private static double getAltitude(int payload){
-        System.out.println(payload);
         if (Bits.testBit(payload, INDEX_Q_ALTITUDE)){
             int altitude = -1000 + removeQBit(payload) * 25;
             return Units.convert(altitude, Units.Length.FOOT, Units.Length.METER);
@@ -111,9 +110,11 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
             return null;
         }
 
-        if (altitude == -2000){
+        // if invalid altitude = -2000
+        if (Math.abs(altitude + 2000)<1){
             return null;
         }
+
         int parity = getParity(rawMessage);
         double x = getX(rawMessage);
         double y = getY(rawMessage);

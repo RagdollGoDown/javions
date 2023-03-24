@@ -29,7 +29,6 @@ class AdsbDemodulatorTest {
                 i++;
                 //System.out.println(m);
             }
-            System.out.println(i);
         }
     }
     //<editor-fold desc="Expected messages">
