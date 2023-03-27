@@ -5,7 +5,7 @@ import ch.epfl.javions.Preconditions;
 import ch.epfl.javions.Units;
 import ch.epfl.javions.aircraft.IcaoAddress;
 
-public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress, double altitude, int parity, double x, double y) {
+public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress, double altitude, int parity, double x, double y) implements Message {
     private static final int ALTITUDE_SIZE = 12;
     private static final int ALTITUDE_START = 36;
     private static  final int INDEX_Q_ALTITUDE = 4;
