@@ -38,18 +38,22 @@ public final class CprDecoder {
         if (zonesLongitudeEven != zLambdaEven(latitude1)){
             return null;
         }
-        int zonesLongitudeOdd = zonesLongitudeEven - 1;
+        int zonesLongitudeOdd = zonesLongitudeEven > 1 ? zonesLongitudeEven - 1 : 1;
 
         int zLong =  (int) Math.rint(Math.rint((x0 * zonesLongitudeOdd  - x1 * zonesLongitudeEven)));
 
         double longitude0 = (zLong + x0)/zonesLongitudeEven;
         double longitude1 = (zLong + x1)/zonesLongitudeOdd;
 
-        //TODO
-        if (mostRecent == 0){
-            return new GeoPos((int) Units.convert(longitude0, Units.Angle.TURN, Units.Angle.T32), (int)Units.convert(latitude0, Units.Angle.TURN, Units.Angle.T32));
-        }else{
-            return new GeoPos((int) Units.convert(longitude1, Units.Angle.TURN, Units.Angle.T32), (int) Units.convert(latitude1, Units.Angle.TURN, Units.Angle.T32));
+        try {
+            if (mostRecent == 0){
+                return new GeoPos((int) Units.convert(longitude0, Units.Angle.TURN, Units.Angle.T32), (int)Units.convert(latitude0, Units.Angle.TURN, Units.Angle.T32));
+            }else{
+                return new GeoPos((int) Units.convert(longitude1, Units.Angle.TURN, Units.Angle.T32), (int) Units.convert(latitude1, Units.Angle.TURN, Units.Angle.T32));
+            }
+        }
+        catch (IllegalArgumentException e){
+            return null;
         }
     }
 }
