@@ -46,8 +46,8 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
     }
 
     private static double[] groundSpeedAndRotation(long payload, int sousType){
-        int ewCoords = Bits.extractUInt(payload, VEW_START,VEW_VNS_SIZE) * (Bits.testBit(payload,DEW_POSITION) ? 1:-1);
-        int nsCoords = Bits.extractUInt(payload, VNS_START,VEW_VNS_SIZE) * (Bits.testBit(payload,DNS_POSITION) ? 1:-1);
+        int ewCoords = (Bits.extractUInt(payload, VEW_START,VEW_VNS_SIZE)-1) * (Bits.testBit(payload,DEW_POSITION) ? 1:-1);
+        int nsCoords = (Bits.extractUInt(payload, VNS_START,VEW_VNS_SIZE)-1) * (Bits.testBit(payload,DNS_POSITION) ? 1:-1);
 
         double track = Math.atan2(ewCoords,nsCoords);
 
@@ -66,7 +66,7 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
         if (!Bits.testBit(payload, SH_POSITION)){return null;}
 
         double heading = Bits.extractUInt(payload, CAP_START, CAP_SIZE) / CONVERSION_BIT_CAP;
-        double airSpeed = Bits.extractUInt(payload,AIRSPEED_START,AIRSPEED_SIZE);
+        double airSpeed = Bits.extractUInt(payload,AIRSPEED_START,AIRSPEED_SIZE) - 1;
 
         if (sousType == 4){
             return new double[]{airSpeed,heading / 4};

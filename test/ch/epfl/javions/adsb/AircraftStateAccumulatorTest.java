@@ -86,7 +86,6 @@ class AircraftStateAccumulatorTest {
                     a.update(pm);
                 }
             }
-
         }
     }
 }

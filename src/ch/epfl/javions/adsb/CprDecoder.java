@@ -47,9 +47,9 @@ public final class CprDecoder {
 
         try {
             if (mostRecent == 0){
-                return new GeoPos((int) Units.convert(longitude0, Units.Angle.TURN, Units.Angle.T32), (int)Units.convert(latitude0, Units.Angle.TURN, Units.Angle.T32));
+                return new GeoPos((int) Math.rint(Units.convert(longitude0, Units.Angle.TURN, Units.Angle.T32)), (int) Math.rint(Units.convert(latitude0, Units.Angle.TURN, Units.Angle.T32)));
             }else{
-                return new GeoPos((int) Units.convert(longitude1, Units.Angle.TURN, Units.Angle.T32), (int) Units.convert(latitude1, Units.Angle.TURN, Units.Angle.T32));
+                return new GeoPos((int) Math.rint(Units.convert(longitude1, Units.Angle.TURN, Units.Angle.T32)), (int) Math.rint(Units.convert(latitude1, Units.Angle.TURN, Units.Angle.T32)));
             }
         }
         catch (IllegalArgumentException e){
