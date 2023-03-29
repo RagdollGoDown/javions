@@ -2,6 +2,7 @@ package ch.epfl.javions.adsb;
 
 import ch.epfl.javions.Bits;
 import ch.epfl.javions.Preconditions;
+import ch.epfl.javions.Units;
 import ch.epfl.javions.aircraft.IcaoAddress;
 
 public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress, double speed, double trackOrHeading) implements Message{
@@ -55,15 +56,16 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
         int nsCoords = vns * (Bits.testBit(payload,DNS_POSITION) ? -1:1);
 
         double track = Math.atan2(ewCoords,nsCoords);
+        double speed = Units.convert(Math.hypot(nsCoords,ewCoords),Units.Speed.KNOT,Units.Speed.METER_PER_SECOND);
 
         //TODO voir s'il y a une meilleur méthode
         if (track < 0) {track = 2*Math.PI + track;}
 
         if (sousType == 2){
-            return new double[]{Math.hypot(nsCoords,ewCoords),track / 4};
+            return new double[]{speed,track / 4};
         }
         else {
-            return new double[]{Math.hypot(nsCoords,ewCoords),track};
+            return new double[]{speed,track};
         }
     }
 
