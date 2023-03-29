@@ -18,7 +18,7 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
     private final static int SH_POSITION = 42;
     private final static int CAP_START = 32;
     private final static int CAP_SIZE = 10;
-    private final static int CONVERSION_BIT_CAP = 1<<10;
+    private final static int CONVERSION_BIT_CAP = 1024;
     private final static int AIRSPEED_START = 21;
     private final static int AIRSPEED_SIZE = 10;
 
@@ -46,8 +46,13 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
     }
 
     private static double[] groundSpeedAndRotation(long payload, int sousType){
-        int ewCoords = (Bits.extractUInt(payload, VEW_START,VEW_VNS_SIZE)-1) * (Bits.testBit(payload,DEW_POSITION) ? 1:-1);
-        int nsCoords = (Bits.extractUInt(payload, VNS_START,VEW_VNS_SIZE)-1) * (Bits.testBit(payload,DNS_POSITION) ? 1:-1);
+        int vew = Bits.extractUInt(payload, VEW_START,VEW_VNS_SIZE)-1;
+        int vns = Bits.extractUInt(payload, VNS_START,VEW_VNS_SIZE)-1;
+
+        if (vew < 0 || vns < 0) return null;
+
+        int ewCoords = vew * (Bits.testBit(payload,DEW_POSITION) ? -1:1);
+        int nsCoords = vns * (Bits.testBit(payload,DNS_POSITION) ? -1:1);
 
         double track = Math.atan2(ewCoords,nsCoords);
 

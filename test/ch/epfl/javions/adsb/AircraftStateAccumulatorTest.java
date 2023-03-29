@@ -44,7 +44,7 @@ class AircraftStateAccumulatorTest {
 
         @Override
         public void setLastMessageTimeStampNs(long timeStampNs) {
-            System.out.println("timeStampNs : " + timeStampNs);
+            //System.out.println("timeStampNs : " + timeStampNs);
         }
 
         @Override
@@ -59,7 +59,7 @@ class AircraftStateAccumulatorTest {
 
         @Override
         public void setVelocity(double velocity) {
-            //System.out.println("velocity : " + velocity);
+            System.out.println("velocity : " + velocity);
         }
 
         @Override
@@ -81,6 +81,26 @@ class AircraftStateAccumulatorTest {
             while ((m = d.nextMessage()) != null) {
                 if (!m.icaoAddress().equals(expectedAddress)) continue;
 
+                Message pm = MessageParser.parse(m);
+                if (pm != null) {
+                    a.update(pm);
+                }
+            }
+
+            System.out.println("end");
+        }
+    }
+
+    @Test
+    void updateAll() throws IOException {
+        String f = "resources/samples_20230304_1442.bin";
+        try (InputStream s = new FileInputStream(f)) {
+            AdsbDemodulator d = new AdsbDemodulator(s);
+            RawMessage m;
+
+            AircraftStateAccumulator<AircraftState> a =
+                    new AircraftStateAccumulator<>(new AircraftState());
+            while ((m = d.nextMessage()) != null) {
                 Message pm = MessageParser.parse(m);
                 if (pm != null) {
                     a.update(pm);
