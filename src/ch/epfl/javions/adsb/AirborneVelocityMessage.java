@@ -62,7 +62,7 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
         if (track < 0) {track = 2*Math.PI + track;}
 
         if (sousType == 2){
-            return new double[]{speed,track / 4};
+            return new double[]{speed * 4,track};
         }
         else {
             return new double[]{speed,track};
@@ -72,11 +72,13 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
     private static double[] airSpeedAndRotation(long payload, int sousType){
         if (!Bits.testBit(payload, SH_POSITION)){return null;}
 
-        double heading = Bits.extractUInt(payload, CAP_START, CAP_SIZE) / CONVERSION_BIT_CAP;
+        double heading = ((double)  (Bits.extractUInt(payload, CAP_START, CAP_SIZE))) / CONVERSION_BIT_CAP;
+        heading = Units.convert(heading, Units.Angle.TURN, Units.Angle.RADIAN);
+        if (Bits.extractUInt(payload,AIRSPEED_START,AIRSPEED_SIZE) == 0) return null;
         double airSpeed = Bits.extractUInt(payload,AIRSPEED_START,AIRSPEED_SIZE) - 1;
-
+        airSpeed  = Units.convert(airSpeed, Units.Speed.KNOT, Units.Speed.METER_PER_SECOND);
         if (sousType == 4){
-            return new double[]{airSpeed,heading / 4};
+            return new double[]{airSpeed * 4, heading};
         }
         else {
             return new double[]{airSpeed,heading};

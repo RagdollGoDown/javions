@@ -29,7 +29,7 @@ public class AircraftStateAccumulator <T extends AircraftStateSetter>{
                 setStateOnPositionMessage(apb);
             case AirborneVelocityMessage avm ->
                 setStateOnVelocityMessage(avm);
-            default -> System.out.println("unrecognized message");
+            default -> throw new Error("unrecognized message");
         }
     }
 
