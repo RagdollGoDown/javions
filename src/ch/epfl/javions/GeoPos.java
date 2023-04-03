@@ -1,8 +1,22 @@
 package ch.epfl.javions;
 
+
+/**
+ * represents geographic coordinates
+ * @param longitudeT32 (int) the longitude in T32
+ * @param latitudeT32 (int) the latitude in T32
+ * @throws IllegalArgumentException if the T32 value is invalid
+ */
 public record GeoPos(int longitudeT32, int latitudeT32)
 {
     static final int POWER_2_WITH_30 = 1_073_741_824;
+
+    /**
+     * Store
+     * @param longitudeT32 (int) the longitude in T32
+     * @param latitudeT32 (int) the latitude in T32
+     * @throws IllegalArgumentException if the T32 value is invalid
+     */
     public GeoPos{
         Preconditions.checkArgument(isValidLatitudeT32(latitudeT32));
     }

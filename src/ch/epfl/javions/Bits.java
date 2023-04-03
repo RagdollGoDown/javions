@@ -2,9 +2,10 @@ package ch.epfl.javions;
 
 import java.util.Objects;
 
+/**
+ *  Help to manipulate bits
+ */
 public final class Bits {
-    private Bits() {
-    }
 
     /**
      * extracts an int from a long value in a certain range

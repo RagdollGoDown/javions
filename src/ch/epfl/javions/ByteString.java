@@ -4,10 +4,17 @@ import java.util.Arrays;
 import java.util.HexFormat;
 import java.util.Objects;
 
+/**
+ *  Represents a sequence of bytes
+ */
 public class ByteString {
 
     private final byte[] bytes;
 
+    /**
+     * Constructor for ByteString
+     * @param bytes a byte sequence for the class
+     */
     public ByteString(byte[] bytes) {
         this.bytes = bytes.clone();
     }

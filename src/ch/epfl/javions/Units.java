@@ -1,19 +1,21 @@
 package ch.epfl.javions;
 
 public final class Units {
-    private Units() {
-    }
-
     public static final double CENTI = 1e-2;
     public static final double KILO = 1e+3;
 
+    /**
+     * Constants for angles
+     */
     public static final class Angle {
         public static final double RADIAN = 1;
         public static final double TURN = 2 * Math.PI * RADIAN;
         public static final double DEGREE = TURN / 360;
         public static final double T32 = TURN / Math.scalb(1, 32); //divide by 2^32 // Is it better to use 0x1e8L? TODO
     }
-
+    /**
+     * Constants for length
+     */
     public static final class Length {
         public static final double METER = 1;
         public static final double CENTIMETER = CENTI * METER;
@@ -22,13 +24,18 @@ public final class Units {
         public static final double FOOT = INCH * 12;
         public static final double NAUTICAL_MILE = METER * 1852;
     }
-
+    /**
+     * Constants for time
+     */
     public static final class Time {
         public static final double SECOND = 1;
         public static final double MINUTE = SECOND * 60;
         public static final double HOUR = MINUTE * 60;
     }
 
+    /**
+     * Constants for Speed
+     */
     public static final class Speed {
         public static final double METER_PER_SECOND = Length.METER / Time.SECOND;
         public static final double KNOT = Length.NAUTICAL_MILE / Time.HOUR;

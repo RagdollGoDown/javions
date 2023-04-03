@@ -1,7 +1,9 @@
 package ch.epfl.javions;
 
+/**
+ * Some mathematical operation
+ */
 public final class Math2 {
-    private Math2(){}
 
     /**
      * Checks if the value v is confined in the interval [min,max]

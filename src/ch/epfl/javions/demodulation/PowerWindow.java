@@ -6,6 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.Arrays;
+
+/**
+ * Used to browse a big amount of power window's data without ge
+ */
 public class PowerWindow {
     private final static int CONSTANT_BATCHSIZE = 1<<16;
 
@@ -23,6 +27,13 @@ public class PowerWindow {
     private int[] lot1;
     private int[] lot2;
 
+    /**
+     * The constuc
+     * @param stream stream at which the powers are calculated
+     * @param windowSize the size of the windows
+     * @throws IllegalArgumentException is the windowSize is greater than the batchSize or if winsdowsize is smaller than one
+     * @throws IOException
+     */
     public PowerWindow(InputStream stream, int windowSize) throws IOException {
         Preconditions.checkArgument(windowSize <= CONSTANT_BATCHSIZE && windowSize > 0);
 
@@ -46,6 +57,10 @@ public class PowerWindow {
         nByteInLot2 = powerComputer.readBatch(lot2);
     }
 
+    /**
+     * Advance by one
+     * @throws IOException
+     */
     private void addPosition() throws IOException {
         if (position + 1 ==  CONSTANT_BATCHSIZE){
             generateNewLots();
@@ -58,7 +73,7 @@ public class PowerWindow {
     }
 
     /**
-     * add p to the position
+     * Advance by p
      * @param p
      * @throws IOException
      */
@@ -91,7 +106,7 @@ public class PowerWindow {
     public int size(){return windowSize;}
 
     /**
-     * generate new lot
+     * generate new lot, skip lots in the stream if the 'jump' is greater than the window
      * @param skip number of lot to skip (don't need to calculate de powercomputer
      * @param p the added to the old position
      * @throws IOException
@@ -123,6 +138,11 @@ public class PowerWindow {
             nByteInLot2 = powerComputer.readBatch(this.lot2);
         }
     }
+
+    /**
+     * Generate new lots, can be used if the changement of positon is smaller than the windowSize
+     * @throws IOException
+     */
     private void generateNewLots() throws IOException {
         int[] tmp_list = this.lot1;
         this.lot1 =  this.lot2;

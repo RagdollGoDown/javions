@@ -1,5 +1,8 @@
 package ch.epfl.javions;
 
+/**
+ * Project geographic coordinates in the WebMercator projection
+ */
 public final class WebMercator {
 
     /**

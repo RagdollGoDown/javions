@@ -6,7 +6,9 @@ import ch.epfl.javions.Preconditions;
 import java.io.IOException;
 import java.io.InputStream;
 
-
+/**
+ * Transform the bytes from the AirSpy into signed 12-bit samples
+ */
 public class SamplesDecoder {
 
     private InputStream stream;

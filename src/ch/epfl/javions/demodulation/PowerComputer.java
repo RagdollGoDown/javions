@@ -5,13 +5,22 @@ import ch.epfl.javions.Preconditions;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Computing the signal power samples from the signed samples produced by a sample decoder
+ */
 public class PowerComputer {
     private SamplesDecoder samplesDecoder;
     private InputStream stream;
     private int batchSize;
-    short[] queueOfShorts = new short[8];
-    short[] shorts;
+    private short[] queueOfShorts = new short[8];
+    private short[] shorts;
 
+    /**
+     * The constructor of PowerComputer
+     * @param stream stream at which the powers are calculated
+     * @param batchSize the size of the batch
+     * @throws  IllegalArgumentException if the batch size is not divisible by 8 or not greater than 0
+     */
     public PowerComputer(InputStream stream, int batchSize){
         Preconditions.checkArgument(batchSize % 8 == 0 && batchSize > 0);
 

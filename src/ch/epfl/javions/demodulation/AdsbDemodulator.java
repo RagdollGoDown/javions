@@ -10,10 +10,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
+/**
+ * A demodulator for ADS-B messages
+ */
 public final class AdsbDemodulator {
 
     private final PowerWindow powerWindow;
 
+    /**
+     * Constructor of AsbDemodulator
+     * @param samplesStream stream that as to
+     * @throws IOException
+     */
     public AdsbDemodulator(InputStream samplesStream) throws IOException {
         powerWindow = new PowerWindow(samplesStream,1200);;
     }
@@ -21,12 +29,18 @@ public final class AdsbDemodulator {
     private byte getDF(){
         byte DF = 0;
         for (int i = 0; i < 8; i++) {
-            // formule 2.3.3
+            // formula 2.3.3
             DF = (byte) (DF << 1);
             DF += powerWindow.get(80 + (10 * i)) < powerWindow.get(85+(10 * i)) ? 0 : 1;
         }
         return DF;
     }
+
+    /**
+     * Find next ADS-B message of the sample stream passed to the constructor
+     * @return next ADS-B message of the sample stream passed to the constructor
+     * @throws IOException
+     */
     public RawMessage nextMessage() throws IOException{
         byte DF = 0;
         byte[] bytes = new byte[14];
@@ -36,8 +50,7 @@ public final class AdsbDemodulator {
         
         RawMessage rawMessage = null;
 
-        int p = 0;
-        //avancer dans la fenêtre jusqu'à trouver un résultat valide
+        //advance in the window until found a valid result
         while (rawMessage == null && powerWindow.isFull()){
             left = sumOfPics(0);
             middle = sumOfPics(1);
@@ -58,17 +71,16 @@ public final class AdsbDemodulator {
                 continue;
             }
 
-            //completer le reste du message
+            //complete the rest of the message
             bytes[0] = DF;
 
             for (int k = 1; k < RawMessage.LENGTH; k++) {
                 for (int j = 0; j < 8; j++) {
-                    // formule 2.3.3
+                    // formula 2.3.3
                     bytes[k] = (byte) (bytes[k] << 1);
                     bytes[k] += powerWindow.get(80 + 10 * (k * 8 + j)) < powerWindow.get(85 + 10 * (k * 8 + j)) ? 0 : 1;
                 }
             }
-            p++;
             rawMessage = RawMessage.of(powerWindow.position() * 100, bytes);
         }
         powerWindow.advanceBy(1200);
