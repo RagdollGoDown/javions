@@ -22,6 +22,8 @@ public class AircraftStateAccumulator <T extends AircraftStateSetter>{
     }
 
     public void update(Message message){
+        stateSetter.setLastMessageTimeStampNs(message.timeStampNs());
+
         switch (message){
             case AircraftIdentificationMessage aim ->
                 setStateOnIdentifierMessage(aim);
@@ -44,7 +46,7 @@ public class AircraftStateAccumulator <T extends AircraftStateSetter>{
         airbornePositions[apb.parity()] = apb;
 
         if (airbornePositions[(apb.parity() + 1) % 2] != null
-                && airbornePositions[(apb.parity() + 1) % 2].timeStampNs() <= apb.timeStampNs() + TIME_BETWEEN_POSITIONS){
+                && apb.timeStampNs() <= airbornePositions[(apb.parity() + 1) % 2].timeStampNs() + TIME_BETWEEN_POSITIONS){
 
             stateSetter.setPosition(CprDecoder.decodePosition(
                     airbornePositions[0].x(), airbornePositions[0].y(),

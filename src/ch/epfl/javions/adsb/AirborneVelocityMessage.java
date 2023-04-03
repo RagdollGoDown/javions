@@ -35,7 +35,7 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
         //il faut peut-être mettre unsigned int
         int sousType = Bits.extractUInt(payload,SOUS_TYPE_START,SOUS_TYPE_SIZE);
 
-        if (sousType > 4){return null;}
+        if (sousType > 4 || sousType == 0){return null;}
 
         double[] speedAndTrackOrHeading = sousType < 3 ?
                 groundSpeedAndRotation(payload,sousType):airSpeedAndRotation(payload,sousType);
