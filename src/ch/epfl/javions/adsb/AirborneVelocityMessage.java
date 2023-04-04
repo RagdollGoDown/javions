@@ -6,9 +6,8 @@ import ch.epfl.javions.Units;
 import ch.epfl.javions.aircraft.IcaoAddress;
 
 public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress, double speed, double trackOrHeading) implements Message{
-    //TODO trouver sous-type en anglais
-    private final static int SOUS_TYPE_START = 48;
-    private final static int SOUS_TYPE_SIZE = 3;
+    private final static int SUB_TYPE_START = 48;
+    private final static int SUB_TYPE_SIZE = 3;
 
     private final static int DEW_POSITION = 42;
     private final static int VEW_START = 32;
@@ -33,7 +32,7 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
         long payload = message.payload();
 
         //il faut peut-être mettre unsigned int
-        int sousType = Bits.extractUInt(payload,SOUS_TYPE_START,SOUS_TYPE_SIZE);
+        int sousType = Bits.extractUInt(payload, SUB_TYPE_START, SUB_TYPE_SIZE);
 
         if (sousType > 4 || sousType == 0){return null;}
 
