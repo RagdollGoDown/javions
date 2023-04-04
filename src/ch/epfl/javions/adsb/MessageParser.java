@@ -1,5 +1,8 @@
 package ch.epfl.javions.adsb;
 
+/**
+ * Takes a RawMessage and transforms it into
+ */
 public class MessageParser {
 
     private final static int[] AIRBORNE_VELOCITY_TYPECODE = {19};
@@ -7,6 +10,7 @@ public class MessageParser {
     private final static int[] AIRCRAFT_IDENTIFIER_TYPECODE = {1,2,3,4};
 
     private MessageParser(){}
+
 
     public static Message parse(RawMessage rawMessage){
         int typeCode = rawMessage.typeCode();

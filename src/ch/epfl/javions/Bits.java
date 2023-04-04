@@ -7,6 +7,8 @@ import java.util.Objects;
  */
 public final class Bits {
 
+    private Bits(){}
+
     /**
      * extracts an int from a long value in a certain range
      * @param value the long the int is extracted from

@@ -5,6 +5,8 @@ package ch.epfl.javions;
  */
 public final class Math2 {
 
+    private Math2(){}
+
     /**
      * Checks if the value v is confined in the interval [min,max]
      * and if it isn't the case then it will return the nearest border

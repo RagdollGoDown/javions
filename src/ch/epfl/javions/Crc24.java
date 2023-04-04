@@ -15,10 +15,6 @@ public final class Crc24 {
     public Crc24(int generator){
         this.table = buildTable(generator);
     }
-    
-    //TODO remove, only keep for the tests
-    //public static int crc_bitwiseTest(int generator, int value, int N){ return crc_bitwise(generator, value, N);}
-    //public static int crc_bitwiseTest(int generator, byte[] value, int N){return crc_bitwise(generator, value, N);}
 
     /**
      * Calculates the crc24 bit by bit

@@ -4,6 +4,8 @@ public final class Units {
     public static final double CENTI = 1e-2;
     public static final double KILO = 1e+3;
 
+    private Units(){}
+
     /**
      * Constants for angles
      */
@@ -11,7 +13,7 @@ public final class Units {
         public static final double RADIAN = 1;
         public static final double TURN = 2 * Math.PI * RADIAN;
         public static final double DEGREE = TURN / 360;
-        public static final double T32 = TURN / Math.scalb(1, 32); //divide by 2^32 // Is it better to use 0x1e8L? TODO
+        public static final double T32 = TURN / Math.scalb(1, 32);
     }
     /**
      * Constants for length

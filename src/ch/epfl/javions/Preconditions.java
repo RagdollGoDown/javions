@@ -4,6 +4,9 @@ package ch.epfl.javions;
  * Use to test if variables respect a condition
  */
 public final class Preconditions {
+
+    private Preconditions(){}
+
     /**
      * Throw an error if the argument is false
      * @param shouldBeTrue a boolean which has to be true

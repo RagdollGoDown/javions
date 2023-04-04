@@ -5,6 +5,8 @@ package ch.epfl.javions;
  */
 public final class WebMercator {
 
+    private WebMercator(){}
+
     /**
      * uses the formula from section 2.5 to calculate
      * the horizontal position in the map

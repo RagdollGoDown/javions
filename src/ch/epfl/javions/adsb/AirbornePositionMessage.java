@@ -8,7 +8,7 @@ import ch.epfl.javions.aircraft.IcaoAddress;
 /**
  * Contains the altitude and the position of a plane
  * @param timeStampNs the timeStamp of the PositionMessage in nano second (>0)
- * @param icaoAddress the icao adress
+ * @param icaoAddress the icao address
  * @param altitude the altitude
  * @param parity the parity (0 ou 1)
  * @param x position in x (between 0 and 1)
