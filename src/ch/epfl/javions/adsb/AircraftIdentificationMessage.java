@@ -4,16 +4,39 @@ import ch.epfl.javions.Bits;
 import ch.epfl.javions.Preconditions;
 import ch.epfl.javions.aircraft.IcaoAddress;
 
+/**
+ * Represents an ADS-B message of identification and category
+ * @param timeStampNs time Stamp in nanosecond
+ * @param icaoAddress icao adress of the message
+ * @param category category of the message
+ * @param callSign callSign of the message
+ */
+
 public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAddress, int category, CallSign callSign) implements Message {
     private final static int POSITION_START_CA = 48;
     private final static int SIZE_CA = 3;
     private final static int SIZE_CHARACTER_CODE = 6;
 
+    /**
+     * Constructor of AircraftIdentificationMessage
+     * @param timeStampNs time Stamp in nanosecond
+     * @param icaoAddress icao adress of the message
+     * @param category category of the message
+     * @param callSign callSign of the message
+     * @throws NullPointerException if icaoAdress or callSign are null
+     * @throws IllegalArgumentException if timeStampNS is negative
+     */
     public AircraftIdentificationMessage{
         if (icaoAddress == null || callSign == null) throw new NullPointerException();
         Preconditions.checkArgument(timeStampNs >= 0);
     }
 
+    /**
+     * Build an instance of AircraftIdentificationMessage from a RawMessage
+     * @param message a RawMessage
+     * @return an instance of AircraftIdentificationMessage
+     *          null if callSign is invalid
+     */
     public static AircraftIdentificationMessage of(RawMessage message){
         long payload = message.payload();
 
@@ -24,13 +47,20 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
 
         int category = (bitsDePoidsFort << 4) | champCA;
 
-        CallSign callSign = decodeCallSing(payload);
+        CallSign callSign = decodeCallSign(payload);
 
         if (callSign == null) return null;
         return new AircraftIdentificationMessage(message.timeStampNs(),message.icaoAddress(),category,callSign);
     }
 
-    private static CallSign decodeCallSing(long payload){
+
+    /**
+     * Decode the call sign from a payload
+     * @param payload the payload of a RawMessage
+     * @return value of the CallSign
+     *         null if the Character is invalid
+     */
+    private static CallSign decodeCallSign(long payload){
         int currentCharacterCode;
         Character currentCharacter;
         StringBuilder callsignStringBuilder = new StringBuilder();
@@ -39,16 +69,22 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
             currentCharacterCode = Bits.extractUInt(payload, (7 - i)*SIZE_CHARACTER_CODE, SIZE_CHARACTER_CODE);
             currentCharacter = decodeCharacter(currentCharacterCode);
 
-            //s'il retourne null c'est que le character est invalide
+            //if return null the character is invalid
             if (currentCharacter == null) return null;
 
-            //les espaces servent à marquer des endroits vides
+            //spaces are used to mark empty emplacements
             if (currentCharacter != ' ') callsignStringBuilder.append(currentCharacter);
         }
 
         return new CallSign(callsignStringBuilder.toString());
     }
 
+    /**
+     * Gets the character linked to a value
+     * @param characterCode a value
+     * @return the character the value represents
+     *         null if no character has this value
+     */
     private static Character decodeCharacter(int characterCode){
 
         if (characterCode == 32 || (48<=characterCode && characterCode<=57)){

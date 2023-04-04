@@ -31,7 +31,6 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
 
         long payload = message.payload();
 
-        //il faut peut-être mettre unsigned int
         int sousType = Bits.extractUInt(payload, SUB_TYPE_START, SUB_TYPE_SIZE);
 
         if (sousType > 4 || sousType == 0){return null;}

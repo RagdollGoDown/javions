@@ -5,17 +5,31 @@ import ch.epfl.javions.Math2;
 import ch.epfl.javions.Preconditions;
 import ch.epfl.javions.Units;
 
+/**
+ * Represents a CPR position decoder
+ */
 public final class CprDecoder {
     private static final int N_LATITUDE_EVEN = 60;
     private static final int N_LATITUDE_ODD = 59;
     private static final int N_BIT_POS = (1 << 17);
 
+    /**
+     * Find the 'A' value from the latitude
+     * @param latitude  the latitude
+     * @return the 'A' value
+     */
     private static double aCalculation (double latitude){
         double latitudeRad = Units.convertFrom(latitude, Units.Angle.TURN);
         double A = Math.acos(1.0 - ((1.0 - (Math.cos((2.0*Math.PI)/N_LATITUDE_EVEN)))
                 /(Math.cos(latitudeRad) * Math.cos(latitudeRad))));
         return A;
     }
+
+    /**
+     * Find the zLambdaEven from the latitude
+     * @param latitude the latitude
+     * @return the zLambdaEven
+     */
     private static int zLambdaEven(double latitude){
         double A = aCalculation(latitude);
         
@@ -25,6 +39,17 @@ public final class CprDecoder {
             return (int) Math.floor(2* (Math.PI) / A);
         }
     }
+
+    /**
+     * Returns the geographical position corresponding to the given normalized local positions
+     * @param x0 the normalized local longitude of an even message
+     * @param y0 the normalized local latitude of an even message
+     * @param x1 the normalized local longitude of an odd message
+     * @param y1 the normalized local latitude of an odd message
+     * @param mostRecent 0 if the most recent message is the even one, 1 if it is the odd one
+     * @return the decoded position in GeoPos
+     *         null if the position is indeterminate or invalid
+     */
     public static GeoPos decodePosition(double x0, double y0, double x1, double y1, int mostRecent){
         Preconditions.checkArgument(mostRecent == 0 || mostRecent == 1);
 
