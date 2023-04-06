@@ -1,5 +1,7 @@
 package ch.epfl.javions.adsb;
 
+import ch.epfl.javions.GeoPos;
+
 /**
  * The job of this class is to pass parsed messages to a state setter for a specific plane
  * @param <T> the state setter to be set
@@ -74,11 +76,11 @@ public class AircraftStateAccumulator <T extends AircraftStateSetter>{
 
         if (airbornePositions[(apm.parity() + 1) % 2] != null
                 && apm.timeStampNs() <= airbornePositions[(apm.parity() + 1) % 2].timeStampNs() + TIME_BETWEEN_POSITIONS){
-
-            stateSetter.setPosition(CprDecoder.decodePosition(
+            GeoPos position = CprDecoder.decodePosition(
                     airbornePositions[0].x(), airbornePositions[0].y(),
                     airbornePositions[1].x(), airbornePositions[1].y(),
-                    apm.parity()));
+                    apm.parity());
+            if (position != null) stateSetter.setPosition(position);
         }
     }
 

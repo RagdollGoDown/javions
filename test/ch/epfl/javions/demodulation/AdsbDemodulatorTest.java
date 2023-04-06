@@ -412,7 +412,6 @@ class AdsbDemodulatorTest {
 
             int i = 0;
             while ((m = d.nextMessage()) != null){
-                System.out.println(m);
                 assertTrue(m.toString().equals(allMessages[i]));
                 i++;
             }
