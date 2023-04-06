@@ -4,7 +4,7 @@ package ch.epfl.javions.aircraft;
  * Contains the 4 different types of wake turbulence
  *
  * @author André Cadet (359392)
- * @author Emile Schüpbach Cadet (3347505)
+ * @author Emile Schüpbach (3347505)
  */
 public enum WakeTurbulenceCategory {
     LIGHT,

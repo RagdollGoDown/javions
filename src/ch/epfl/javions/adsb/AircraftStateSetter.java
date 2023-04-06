@@ -6,7 +6,7 @@ import ch.epfl.javions.GeoPos;
  *Represents the modifiable state of an aircraft
  *
  * @author André Cadet (359392)
- * @author Emile Schüpbach Cadet (3347505)
+ * @author Emile Schüpbach (3347505)
  */
 public interface AircraftStateSetter {
      /**

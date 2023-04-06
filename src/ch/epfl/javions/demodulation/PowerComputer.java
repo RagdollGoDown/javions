@@ -9,7 +9,7 @@ import java.io.InputStream;
  * Computing the signal power samples from the signed samples produced by a sample decoder
  *
  * @author André Cadet (359392)
- * @author Emile Schüpbach Cadet (3347505)
+ * @author Emile Schüpbach (3347505)
  */
 public class PowerComputer {
     private SamplesDecoder samplesDecoder;

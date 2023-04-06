@@ -15,7 +15,7 @@ import ch.epfl.javions.aircraft.IcaoAddress;
  * @param y position in y (between 0 and 1)
  *
  * @author André Cadet (359392)
- * @author Emile Schüpbach Cadet (3347505)
+ * @author Emile Schüpbach(3347505)
  */
 public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress, double altitude, int parity, double x, double y) implements Message {
     private static final int ALTITUDE_SIZE = 12;

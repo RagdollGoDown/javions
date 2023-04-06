@@ -11,7 +11,7 @@ import java.util.Objects;
  * @param wakeTurbulenceCategory the aircraft's wake turbulence
  *
  * @author André Cadet (359392)
- * @author Emile Schüpbach Cadet (3347505)
+ * @author Emile Schüpbach (3347505)
  */
 public record AircraftData (AircraftRegistration registration,
                             AircraftTypeDesignator typeDesignator,

@@ -7,7 +7,7 @@ package ch.epfl.javions;
  * @param latitudeT32 (int) the latitude in T32
  *
  * @author André Cadet (359392)
- * @author Emile Schüpbach Cadet (3347505)
+ * @author Emile Schüpbach (3347505)
  */
 public record GeoPos(int longitudeT32, int latitudeT32)
 {

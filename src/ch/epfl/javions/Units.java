@@ -4,7 +4,7 @@ package ch.epfl.javions;
  * Contains the units and their conversion rates
  *
  * @author André Cadet (359392)
- * @author Emile Schüpbach Cadet (3347505)
+ * @author Emile Schüpbach (3347505)
  */
 public final class Units {
     public static final double CENTI = 1e-2;

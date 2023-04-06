@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
  * @param string the aircraft registration
  *
  * @author André Cadet (359392)
- * @author Emile Schüpbach Cadet (3347505)
+ * @author Emile Schüpbach (3347505)
  */
 public record AircraftRegistration(String string) {
     private static final Pattern regex = Pattern.compile("[A-Z0-9 .?/_+-]+");

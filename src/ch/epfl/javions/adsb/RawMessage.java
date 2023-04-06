@@ -16,7 +16,7 @@ import java.util.HexFormat;
  * @param bytes the bytes containing the message
  *
  * @author André Cadet (359392)
- * @author Emile Schüpbach Cadet (3347505)
+ * @author Emile Schüpbach (3347505)
  */
 public record RawMessage(long timeStampNs, ByteString bytes) {
     private static final int POSITION_START_ME = 51;

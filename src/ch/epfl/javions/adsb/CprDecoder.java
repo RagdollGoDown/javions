@@ -9,7 +9,7 @@ import ch.epfl.javions.Units;
  * Represents a CPR position decoder
  *
  * @author André Cadet (359392)
- * @author Emile Schüpbach Cadet (3347505)
+ * @author Emile Schüpbach (3347505)
  */
 public final class CprDecoder {
     private static final int N_LATITUDE_EVEN = 60;

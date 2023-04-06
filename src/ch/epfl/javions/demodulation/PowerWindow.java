@@ -11,7 +11,7 @@ import java.util.Arrays;
  * Used to browse a big amount of the stream's data without getting it all at once
  *
  * @author André Cadet (359392)
- * @author Emile Schüpbach Cadet (3347505)
+ * @author Emile Schüpbach (3347505)
  */
 public class PowerWindow {
     private final static int CONSTANT_BATCHSIZE = 1<<16;

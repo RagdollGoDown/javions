@@ -11,7 +11,7 @@ import java.util.zip.ZipFile;
  * Using the file name as a path, the class finds a file and gets information on a specific plane
  *
  * @author André Cadet (359392)
- * @author Emile Schüpbach Cadet (3347505)
+ * @author Emile Schüpbach (3347505)
  */
 public final class AircraftDatabase {
 

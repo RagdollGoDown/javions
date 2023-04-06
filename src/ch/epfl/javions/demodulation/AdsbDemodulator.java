@@ -14,7 +14,7 @@ import java.util.Arrays;
  * A demodulator for ADS-B messages
  *
  * @author André Cadet (359392)
- * @author Emile Schüpbach Cadet (3347505)
+ * @author Emile Schüpbach (3347505)
  */
 public final class AdsbDemodulator {
 

@@ -8,7 +8,7 @@ import java.util.Objects;
  *  Represents a sequence of bytes
  *
  * @author André Cadet (359392)
- * @author Emile Schüpbach Cadet (3347505)
+ * @author Emile Schüpbach (3347505)
  */
 public class ByteString {
 

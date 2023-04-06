@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
  * @param string the description
  *
  * @author André Cadet (359392)
- * @author Emile Schüpbach Cadet (3347505)
+ * @author Emile Schüpbach (3347505)
  */
 public record AircraftDescription(String string) {
     private static final Pattern regex = Pattern.compile("[ABDGHLPRSTV-][0123468][EJPT-]");

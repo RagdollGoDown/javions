@@ -5,7 +5,7 @@ package ch.epfl.javions.adsb;
  * @param <T> the state setter to be set
  *
  * @author André Cadet (359392)
- * @author Emile Schüpbach Cadet (3347505)
+ * @author Emile Schüpbach (3347505)
  */
 public class AircraftStateAccumulator <T extends AircraftStateSetter>{
 

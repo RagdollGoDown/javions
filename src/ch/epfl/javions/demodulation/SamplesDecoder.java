@@ -10,7 +10,7 @@ import java.io.InputStream;
  * Transform the bytes from the AirSpy into signed 12-bit samples
  *
  * @author André Cadet (359392)
- * @author Emile Schüpbach Cadet (3347505)
+ * @author Emile Schüpbach (3347505)
  */
 public class SamplesDecoder {
 

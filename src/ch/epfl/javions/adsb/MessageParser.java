@@ -9,7 +9,7 @@ import java.util.List;
  * can be used to update the information on the plane
  *
  * @author André Cadet (359392)
- * @author Emile Schüpbach Cadet (3347505)
+ * @author Emile Schüpbach (3347505)
  */
 public class MessageParser {
 
