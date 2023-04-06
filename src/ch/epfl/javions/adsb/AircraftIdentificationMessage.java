@@ -10,6 +10,9 @@ import ch.epfl.javions.aircraft.IcaoAddress;
  * @param icaoAddress icao adress of the message
  * @param category category of the message
  * @param callSign callSign of the message
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach Cadet (3347505)
  */
 
 public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAddress, int category, CallSign callSign) implements Message {

@@ -2,6 +2,9 @@ package ch.epfl.javions;
 
 /**
  * Project geographic coordinates in the WebMercator projection
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach Cadet (3347505)
  */
 public final class WebMercator {
 

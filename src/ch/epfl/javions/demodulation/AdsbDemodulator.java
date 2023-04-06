@@ -12,6 +12,9 @@ import java.util.Arrays;
 
 /**
  * A demodulator for ADS-B messages
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach Cadet (3347505)
  */
 public final class AdsbDemodulator {
 
@@ -20,7 +23,7 @@ public final class AdsbDemodulator {
     /**
      * Constructor of AsbDemodulator
      * @param samplesStream stream that as to
-     * @throws IOException
+     * @throws IOException if there are eny problems reading the stream
      */
     public AdsbDemodulator(InputStream samplesStream) throws IOException {
         powerWindow = new PowerWindow(samplesStream,1200);;
@@ -39,7 +42,7 @@ public final class AdsbDemodulator {
     /**
      * Find next ADS-B message of the sample stream passed to the constructor
      * @return next ADS-B message of the sample stream passed to the constructor
-     * @throws IOException
+     * @throws IOException if there are eny problems reading the stream
      */
     public RawMessage nextMessage() throws IOException{
         byte DF = 0;
@@ -50,7 +53,7 @@ public final class AdsbDemodulator {
         
         RawMessage rawMessage = null;
 
-        //advance in the window until found a valid result
+        //advance in the window until we find a valid result
         while (rawMessage == null && powerWindow.isFull()){
             left = sumOfPics(0);
             middle = sumOfPics(1);

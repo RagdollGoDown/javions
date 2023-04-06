@@ -3,6 +3,9 @@ package ch.epfl.javions.adsb;
 /**
  * The job of this class is to pass parsed messages to a state setter for a specific plane
  * @param <T> the state setter to be set
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach Cadet (3347505)
  */
 public class AircraftStateAccumulator <T extends AircraftStateSetter>{
 

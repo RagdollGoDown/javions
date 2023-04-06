@@ -7,6 +7,9 @@ import java.io.InputStream;
 
 /**
  * Computing the signal power samples from the signed samples produced by a sample decoder
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach Cadet (3347505)
  */
 public class PowerComputer {
     private SamplesDecoder samplesDecoder;
@@ -32,7 +35,7 @@ public class PowerComputer {
     }
 
     /**
-     * Compute's the powers using the samples obtained with SamplesDecoder and the formula described in 2.4.6
+     * Computes the powers using the samples obtained with SamplesDecoder and the formula described in 2.4.6
      * @param batch the powers computed
      * @return the number of powers computed
      * @throws IOException if there is an issue when reading the input stream
@@ -45,6 +48,7 @@ public class PowerComputer {
         int tempDoublePair;
         int tempDoubleImpair;
 
+        //cycles through the shorts with a queue holding the last eight values
         for (int i = 2; i < numberOfSamples + 2; i += 2) {
 
             queueOfShorts[i%8] = shorts[i-1];

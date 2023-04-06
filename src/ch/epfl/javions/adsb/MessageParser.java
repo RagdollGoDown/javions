@@ -7,6 +7,9 @@ import java.util.List;
 /**
  * Takes a RawMessage and transforms it into one of the message types that
  * can be used to update the information on the plane
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach Cadet (3347505)
  */
 public class MessageParser {
 
@@ -28,9 +31,11 @@ public class MessageParser {
 
         if (AIRBORNE_VELOCITY_TYPECODE.contains(typeCode)){
             return AirborneVelocityMessage.of(rawMessage);
-        } else if (AIRCRAFT_IDENTIFIER_TYPECODE.contains(typeCode)){
+        }
+        else if (AIRCRAFT_IDENTIFIER_TYPECODE.contains(typeCode)){
             return AircraftIdentificationMessage.of(rawMessage);
-        } else if (AIRBORNE_POSITION_TYPECODE.contains(typeCode)) {
+        }
+        else if (AIRBORNE_POSITION_TYPECODE.contains(typeCode)) {
             return AirbornePositionMessage.of(rawMessage);
         }
         else {return null;}

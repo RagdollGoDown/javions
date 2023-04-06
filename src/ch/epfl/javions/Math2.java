@@ -2,6 +2,9 @@ package ch.epfl.javions;
 
 /**
  * Some mathematical operation
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach Cadet (3347505)
  */
 public final class Math2 {
 
@@ -21,8 +24,6 @@ public final class Math2 {
         if (v <= min) return min;
         if (v >= max) return max;
         return v;
-        // return Math.min(Math.max(v,min), max);
-        // TODO choose the best method
     }
 
     /**

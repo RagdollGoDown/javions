@@ -7,6 +7,9 @@ import java.util.regex.Pattern;
 /**
  * Represents what is called the call sign of an aircraft
  * @param string the string is of the CallSign
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach Cadet (3347505)
  */
 public record CallSign(String string){
     private static final Pattern regex = Pattern.compile("[A-Z0-9 ]{0,8}");

@@ -8,7 +8,10 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 /**
- * Used to browse a big amount of power window's data without ge
+ * Used to browse a big amount of the stream's data without getting it all at once
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach Cadet (3347505)
  */
 public class PowerWindow {
     private final static int CONSTANT_BATCHSIZE = 1<<16;
@@ -28,18 +31,17 @@ public class PowerWindow {
     private int[] lot2;
 
     /**
-     * The constuc
+     * The constructor
      * @param stream stream at which the powers are calculated
      * @param windowSize the size of the windows
      * @throws IllegalArgumentException is the windowSize is greater than the batchSize or if winsdowsize is smaller than one
-     * @throws IOException
+     * @throws IOException if there are any problems reading the stream
      */
     public PowerWindow(InputStream stream, int windowSize) throws IOException {
         Preconditions.checkArgument(windowSize <= CONSTANT_BATCHSIZE && windowSize > 0);
 
         powerComputer = new PowerComputer(stream,CONSTANT_BATCHSIZE);
 
-        // used some time for skipping bytes instead of calculating the power for nothing
         this.stream = stream;
 
         this.windowSize = windowSize;
@@ -59,7 +61,7 @@ public class PowerWindow {
 
     /**
      * Advance by one
-     * @throws IOException
+     * @throws IOException if there are any problems reading the stream
      */
     private void addPosition() throws IOException {
         if (position + 1 ==  CONSTANT_BATCHSIZE){
@@ -74,8 +76,8 @@ public class PowerWindow {
 
     /**
      * Advance by p
-     * @param p
-     * @throws IOException
+     * @param p the amount to advance by
+     * @throws IOException if there are any problems reading the stream
      */
     private void addPosition(int p) throws IOException {
         if (position + p >= CONSTANT_BATCHSIZE){
@@ -89,7 +91,6 @@ public class PowerWindow {
         this.position = (position + p) % CONSTANT_BATCHSIZE;
     }
 
-
     /**
      * returns the current position of the window relative to the beginning of the power value stream,
      * which is initially 0 and is incremented with each call engagement of the window position
@@ -100,7 +101,6 @@ public class PowerWindow {
     }
 
     /**
-     *
      * @return the size of the window
      */
     public int size(){return windowSize;}
@@ -109,14 +109,13 @@ public class PowerWindow {
      * generate new lot, skip lots in the stream if the 'jump' is greater than the window
      * @param skip number of lot to skip (don't need to calculate de powercomputer
      * @param p the added to the old position
-     * @throws IOException
+     * @throws IOException if there are any problems reading the stream
      */
-
     private void generateNewLots (int skip, int p) throws IOException {
         int numberOfBytesToSkip = CONSTANT_BATCHSIZE * 4 * skip;
         int n = 0;
 
-        //if has to skip at least a full lot (skip function doesn't work as intended)
+        //if it needs to skip at least a full lot (stream.skip function doesn't work as intended)
         for (int i = 0; i < skip; i++) {
             n += stream.readNBytes(buffer,0, CONSTANT_BATCHSIZE * 4);
         }
@@ -141,7 +140,7 @@ public class PowerWindow {
 
     /**
      * Generate new lots, can be used if the changement of positon is smaller than the windowSize
-     * @throws IOException
+     * @throws IOException if there are any problems reading the stream
      */
     private void generateNewLots() throws IOException {
         int[] tmp_list = this.lot1;
@@ -153,7 +152,7 @@ public class PowerWindow {
 
     /**
      * Advance the windows of 1 position
-     * @throws IOException
+     * @throws IOException if there are any problems reading the stream
      */
     public void advance() throws IOException{
         addPosition();
@@ -161,8 +160,8 @@ public class PowerWindow {
 
     /**
      * Advance the windows of an n position
-     * @param offset
-     * @throws IOException
+     * @param offset the amount we advance by
+     * @throws IOException if there are any problems reading the stream
      */
     public void advanceBy(int offset) throws  IOException{
         addPosition(offset);
@@ -170,8 +169,8 @@ public class PowerWindow {
 
     /**
      * get element at the position i of the window
-     * @param i
-     * @return
+     * @param i the position of the element
+     * @return the value of the element
      */
     public int get(int i){
         if (!(0<=i && i < windowSize)) throw new IndexOutOfBoundsException();
@@ -183,8 +182,7 @@ public class PowerWindow {
     }
 
     /**
-     *
-     * @return true if the window is full of element
+     * @return true if the window is full of elements
      */
     public boolean isFull(){
         return nByteInLot1 + nByteInLot2 >= position + windowSize;

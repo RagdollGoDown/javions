@@ -7,6 +7,9 @@ import ch.epfl.javions.Units;
 
 /**
  * Represents a CPR position decoder
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach Cadet (3347505)
  */
 public final class CprDecoder {
     private static final int N_LATITUDE_EVEN = 60;
@@ -49,6 +52,7 @@ public final class CprDecoder {
      * @param mostRecent 0 if the most recent message is the even one, 1 if it is the odd one
      * @return the decoded position in GeoPos
      *         null if the position is indeterminate or invalid
+     * @throws IllegalArgumentException if the most recent parity isn't one or zero
      */
     public static GeoPos decodePosition(double x0, double y0, double x1, double y1, int mostRecent){
         Preconditions.checkArgument(mostRecent == 0 || mostRecent == 1);

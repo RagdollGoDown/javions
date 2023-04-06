@@ -11,6 +11,9 @@ import ch.epfl.javions.aircraft.IcaoAddress;
  * @param icaoAddress the Icao Address of the plane being recorded
  * @param speed the speed of the plane in question in meters per second
  * @param trackOrHeading the direction of the plane in radians
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach Cadet (3347505)
  */
 public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress, double speed, double trackOrHeading) implements Message{
     private final static int SUB_TYPE_START = 48;

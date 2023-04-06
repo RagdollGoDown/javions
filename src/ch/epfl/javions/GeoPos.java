@@ -5,7 +5,9 @@ package ch.epfl.javions;
  * represents geographic coordinates
  * @param longitudeT32 (int) the longitude in T32
  * @param latitudeT32 (int) the latitude in T32
- * @throws IllegalArgumentException if the T32 value is invalid
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach Cadet (3347505)
  */
 public record GeoPos(int longitudeT32, int latitudeT32)
 {

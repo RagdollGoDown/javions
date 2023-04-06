@@ -8,6 +8,9 @@ import java.io.InputStream;
 
 /**
  * Transform the bytes from the AirSpy into signed 12-bit samples
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach Cadet (3347505)
  */
 public class SamplesDecoder {
 
@@ -40,12 +43,7 @@ public class SamplesDecoder {
     public int readBatch(short[] batch) throws IOException {
         Preconditions.checkArgument(batch.length == batchSize);
 
-
-        //On a besoin de savoir combien de byte qui peuvent être lu
-        //pour savoir si on retourne batchsize ou le nombre lu de short
-        int shortPouvantEtreLu = stream.available() / 2;
-
-        //batch correspond au nombre de short normalement
+        //batch correspond au nombre de shorts
         //donc on a besoin de deux fois ça dans le stream
         int nReadBytes = stream.readNBytes(readBytes,0,batchSize*2) ;
 

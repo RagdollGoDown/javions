@@ -4,6 +4,9 @@ import java.util.Objects;
 
 /**
  *  Help to manipulate bits
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach Cadet (3347505)
  */
 public final class Bits {
 

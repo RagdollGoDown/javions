@@ -2,6 +2,9 @@ package ch.epfl.javions;
 
 /**
  * Represents a 24-bit CRC calculator
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach Cadet (3347505)
  */
 public final class Crc24 {
     public static final int GENERATOR = 0xFFF409;
