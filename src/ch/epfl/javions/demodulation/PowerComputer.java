@@ -66,7 +66,7 @@ public class PowerComputer {
                     tempDoubleImpair += queueOfShorts[(i-j*2+9)%8];
                 }
             }
-            batch[i/2 - 1] = (int)(tempDoublePair*tempDoublePair + tempDoubleImpair*tempDoubleImpair);
+            batch[i/2 - 1] = tempDoublePair*tempDoublePair + tempDoubleImpair*tempDoubleImpair;
         }
         return numberOfSamples/2;
     }

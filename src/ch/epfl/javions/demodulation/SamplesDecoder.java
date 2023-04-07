@@ -17,6 +17,7 @@ public class SamplesDecoder {
     private InputStream stream;
     private int batchSize;
     private byte[] readBytes;
+    private static final int BIAS_SAMPLE = 2048; //1<<11
 
 
     /**
@@ -50,7 +51,7 @@ public class SamplesDecoder {
         assert (nReadBytes%2) == 0;
 
         for (int i = 0; i < nReadBytes; i+=2) {
-            batch[i/2] = (short)(((Byte.toUnsignedInt(readBytes[i+1])<<8) | Byte.toUnsignedInt(readBytes[i])) - 2048);
+            batch[i/2] = (short)(((Byte.toUnsignedInt(readBytes[i+1])<<Byte.SIZE) | Byte.toUnsignedInt(readBytes[i])) - BIAS_SAMPLE);
         }
         return nReadBytes / 2;
     }

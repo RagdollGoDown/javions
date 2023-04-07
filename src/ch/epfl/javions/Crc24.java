@@ -30,7 +30,7 @@ public final class Crc24 {
         int crc = 0;
         int[] table = {0, generator};
         for (byte octet : value) {
-            for (int i = 7; i >= 0; i--) {
+            for (int i = Byte.SIZE - 1 ; i >= 0; i--) {
                 int b = Bits.testBit(octet, i)? 1 : 0;
                 crc = ((crc<<1) | b) ^ table[Bits.testBit(crc, N-1)? 1 : 0];
             }

@@ -70,7 +70,7 @@ public class ByteString {
 
         long extractedLong = 0;
         for (int i = fromIndex; i < toIndex; i++) {
-            extractedLong = (extractedLong << 8)  | Byte.toUnsignedInt(bytes[i]);
+            extractedLong = (extractedLong << Byte.SIZE)  | Byte.toUnsignedInt(bytes[i]);
         }
         return extractedLong;
     }
