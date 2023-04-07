@@ -14,9 +14,9 @@ import java.io.InputStream;
  */
 public class SamplesDecoder {
 
-    private InputStream stream;
-    private int batchSize;
-    private byte[] readBytes;
+    private final InputStream stream;
+    private final int batchSize;
+    private final byte[] readBytes;
     private static final int BIAS_SAMPLE = 2048; //1<<11
 
 

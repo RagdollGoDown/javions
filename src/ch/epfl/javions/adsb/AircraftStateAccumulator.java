@@ -15,7 +15,7 @@ public class AircraftStateAccumulator <T extends AircraftStateSetter>{
 
     private final T stateSetter;
 
-    private AirbornePositionMessage[] airbornePositions;
+    private final AirbornePositionMessage[] airbornePositions;
 
     /**
      * Constructor for AircraftStateAccumulator

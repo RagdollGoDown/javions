@@ -26,7 +26,7 @@ public class PowerWindow {
     private long nByteInLot1;
     private long nByteInLot2;
 
-    private byte[] buffer;
+    private final byte[] buffer;
     private int[] lot1;
     private int[] lot2;
 

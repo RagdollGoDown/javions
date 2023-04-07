@@ -12,11 +12,11 @@ import java.io.InputStream;
  * @author Emile Schüpbach (3347505)
  */
 public class PowerComputer {
-    private SamplesDecoder samplesDecoder;
-    private InputStream stream;
-    private int batchSize;
-    private short[] queueOfShorts = new short[8];
-    private short[] shorts;
+    private final SamplesDecoder samplesDecoder;
+    private final InputStream stream;
+    private final int batchSize;
+    private final short[] queueOfShorts = new short[8];
+    private final short[] shorts;
 
     /**
      * The constructor of PowerComputer
