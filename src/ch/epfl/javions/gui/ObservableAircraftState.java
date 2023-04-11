@@ -29,6 +29,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
     private DoubleProperty trackOrHeading;
 
     public ObservableAircraftState(IcaoAddress icaoAddress, AircraftData aircraftData){
+        //TODO devrait pouvoir avoir null si les data ne sont pas dans la base de donnée?
         if (aircraftData == null || icaoAddress == null){throw new NullPointerException();}
 
         this.icaoAddress = icaoAddress;
