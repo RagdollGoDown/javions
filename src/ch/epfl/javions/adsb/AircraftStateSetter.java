@@ -27,7 +27,9 @@ public interface AircraftStateSetter {
       */
      void setCallSign(CallSign callSign);
 
-     /**
+    void setCallSign(String callSign);
+
+    /**
       * Set the position
       * @param position the position
       */
