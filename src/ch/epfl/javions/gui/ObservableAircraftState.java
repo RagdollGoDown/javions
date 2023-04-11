@@ -100,11 +100,6 @@ public final class ObservableAircraftState implements AircraftStateSetter {
         this.callSign.set(callSign.string());
     }
 
-    @Override
-    public void setCallSign(String callSign) {
-        this.callSign.set(callSign);
-    }
-
     public ReadOnlyObjectProperty<GeoPos> positionProperty(){
         return position;
     }
