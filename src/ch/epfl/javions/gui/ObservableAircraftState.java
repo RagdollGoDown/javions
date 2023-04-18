@@ -10,6 +10,14 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.Objects;
+
+/**
+ * Holds the acts both as stateSetter and can give the elements if demanded
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach (3347505)
+ */
 public final class ObservableAircraftState implements AircraftStateSetter {
 
     public record AirbornePos(GeoPos position, double altitude){}
@@ -29,10 +37,8 @@ public final class ObservableAircraftState implements AircraftStateSetter {
     private DoubleProperty trackOrHeading;
 
     public ObservableAircraftState(IcaoAddress icaoAddress, AircraftData aircraftData){
-        //TODO devrait pouvoir avoir null si les data ne sont pas dans la base de donnée?
-        if (aircraftData == null || icaoAddress == null){throw new NullPointerException();}
 
-        this.icaoAddress = icaoAddress;
+        this.icaoAddress = Objects.requireNonNull(icaoAddress);
         this.aircraftData = aircraftData;
 
         lastMessageTimeStampNs = new SimpleLongProperty();
@@ -53,10 +59,9 @@ public final class ObservableAircraftState implements AircraftStateSetter {
         if (lastTrajectoryUpdateTimeStamp == lastMessageTimeStampNs.get()){
             modifiableTrajectory.set(modifiableTrajectory.size() - 1, new AirbornePos(position.get(),altitude.get()));
         }
-        else if(modifiableTrajectory.size() == 0
+        else if((modifiableTrajectory.size() == 0
                 || modifiableTrajectory.get(modifiableTrajectory.size() - 1).altitude != altitude.get()
-                || modifiableTrajectory.get(modifiableTrajectory.size() - 1).position.equals(position.get()))
-                {
+                || modifiableTrajectory.get(modifiableTrajectory.size() - 1).position.equals(position.get()))) {
             modifiableTrajectory.add(new AirbornePos(position.get(),altitude.get()));
             lastTrajectoryUpdateTimeStamp = lastMessageTimeStampNs.get();
         }

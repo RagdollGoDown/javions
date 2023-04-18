@@ -9,7 +9,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Keep up to date the states of a set of aircraft according to the messages received from them
@@ -27,6 +29,7 @@ public final class AircraftStateManager {
 
     public AircraftStateManager(String pathAircraftDatabase){
         aircraftDatabase = new AircraftDatabase(pathAircraftDatabase);
+        mapStringIcaoToAircraft = new HashMap<>();
         modifiableKnownPositionAircrafts = FXCollections.observableSet();
         unmodifiableKnownPositionAircrafts = FXCollections.unmodifiableObservableSet(modifiableKnownPositionAircrafts);
         lastMessageNs = 0;
@@ -45,7 +48,7 @@ public final class AircraftStateManager {
      * @param message a Message from an aircraft
      */
     public void updateWithMessage(Message message) {
-        if (message == null) throw new NullPointerException();
+        Objects.requireNonNull(message);
 
         IcaoAddress icaoAddress = message.icaoAddress();
         if (!mapStringIcaoToAircraft.containsKey(icaoAddress)){
@@ -59,7 +62,6 @@ public final class AircraftStateManager {
                 aircraftStateAccumulator = new AircraftStateAccumulator<>(
                         new ObservableAircraftState(message.icaoAddress(), null));
             }
-
             mapStringIcaoToAircraft.put(icaoAddress, aircraftStateAccumulator);
         }
         mapStringIcaoToAircraft.get(icaoAddress).update(message);

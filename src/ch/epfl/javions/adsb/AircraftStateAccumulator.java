@@ -2,6 +2,8 @@ package ch.epfl.javions.adsb;
 
 import ch.epfl.javions.GeoPos;
 
+import java.util.Objects;
+
 /**
  * The job of this class is to pass parsed messages to a state setter for a specific plane
  * @param <T> the state setter to be set
@@ -23,8 +25,7 @@ public class AircraftStateAccumulator <T extends AircraftStateSetter>{
      * @throws NullPointerException if the state setter is null
      */
     public AircraftStateAccumulator(T stateSetter){
-        if (stateSetter == null){throw new NullPointerException();}
-        this.stateSetter = stateSetter;
+        this.stateSetter = Objects.requireNonNull(stateSetter);
 
         airbornePositions = new AirbornePositionMessage[2];
     }

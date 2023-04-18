@@ -5,6 +5,8 @@ import ch.epfl.javions.Preconditions;
 import ch.epfl.javions.Units;
 import ch.epfl.javions.aircraft.IcaoAddress;
 
+import java.util.Objects;
+
 /**
  * Contains the altitude and the position of a plane
  * @param timeStampNs the timeStamp of the PositionMessage in nano second (>0)
@@ -38,7 +40,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
      * @throws  IllegalArgumentException if y is not between 0 and 1
      */
     public AirbornePositionMessage{
-        if (icaoAddress == null) throw new NullPointerException();
+        Objects.requireNonNull(icaoAddress);
         Preconditions.checkArgument(0 <= timeStampNs);
         Preconditions.checkArgument(parity == 0 || parity == 1);
         Preconditions.checkArgument(0<=x && x<1);

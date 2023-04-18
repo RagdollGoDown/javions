@@ -5,6 +5,7 @@ import ch.epfl.javions.ByteString;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.zip.ZipFile;
 
 /**
@@ -18,9 +19,7 @@ public final class AircraftDatabase {
     private String fileName;
 
     public AircraftDatabase(String fileName){
-        if (fileName == null) throw new NullPointerException();
-
-        this.fileName = fileName;
+        this.fileName = Objects.requireNonNull(fileName);
     }
 
     /**

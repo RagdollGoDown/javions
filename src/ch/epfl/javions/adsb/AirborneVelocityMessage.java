@@ -5,6 +5,8 @@ import ch.epfl.javions.Preconditions;
 import ch.epfl.javions.Units;
 import ch.epfl.javions.aircraft.IcaoAddress;
 
+import java.util.Objects;
+
 /**
  * Records the timeStamp, the Icao Address, the speed of the plane and either the track or the heading
  * @param timeStampNs the time at which the message was received in nanoseconds
@@ -42,7 +44,7 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
      * @throws NullPointerException if IcaoAddress is null
      */
     public AirborneVelocityMessage{
-        if (icaoAddress == null) throw new NullPointerException();
+        Objects.requireNonNull(icaoAddress);
         Preconditions.checkArgument(timeStampNs >= 0 && speed >= 0 && trackOrHeading >= 0);
     }
 
