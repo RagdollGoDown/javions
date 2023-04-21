@@ -63,12 +63,14 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
 
         int subType = Bits.extractUInt(payload, SUB_TYPE_START, SUB_TYPE_SIZE);
 
-        if (subType > 4 || subType == 0){return null;}
+        if (subType > 4 || subType == 0){
+            return null;}
 
         double[] speedAndTrackOrHeading = subType < 3 ?
                 groundSpeedAndRotation(payload,subType):airSpeedAndRotation(payload,subType);
 
-        if (speedAndTrackOrHeading == null){return null;}
+        if (speedAndTrackOrHeading == null){
+            return null;}
 
         return new AirborneVelocityMessage(message.timeStampNs(), message.icaoAddress(),
                 speedAndTrackOrHeading[0],speedAndTrackOrHeading[1]);

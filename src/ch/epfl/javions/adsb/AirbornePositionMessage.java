@@ -122,7 +122,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
     /**
      * Get the altitude from a payload
      * @param payload the payload that contains the altitude
-     * @return the altitude int meter or null if invalid
+     * @return the altitude in meters or null if invalid
      */
     private static Double getAltitude(int payload) throws IllegalArgumentException{
         if (Bits.testBit(payload, INDEX_Q_ALTITUDE)){

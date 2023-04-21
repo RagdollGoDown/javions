@@ -35,7 +35,7 @@ public final class AircraftStateManager {
         lastMessageNs = 0;
     }
     public AircraftStateManager() {
-        this("aircraft.zip");
+        this("resources/aircraft.zip");
     }
 
     public ObservableSet<ObservableAircraftState> states() {
@@ -48,7 +48,7 @@ public final class AircraftStateManager {
      * @param message a Message from an aircraft
      */
     public void updateWithMessage(Message message) {
-        Objects.requireNonNull(message);
+        if (message == null) return;
 
         IcaoAddress icaoAddress = message.icaoAddress();
         if (!mapStringIcaoToAircraft.containsKey(icaoAddress)){
@@ -83,6 +83,8 @@ public final class AircraftStateManager {
                 modifiableKnownPositionAircrafts.remove(stateSetterAircraft);
             }
         }
+        modifiableKnownPositionAircrafts.removeAll(statesToRemove);
+
     }
 
     //TODO get ou property?

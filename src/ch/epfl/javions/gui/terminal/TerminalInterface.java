@@ -1,5 +1,6 @@
 package ch.epfl.javions.gui.terminal;
 
+import ch.epfl.javions.Units;
 import ch.epfl.javions.adsb.MessageParser;
 import ch.epfl.javions.adsb.RawMessage;
 import ch.epfl.javions.gui.AircraftStateManager;
@@ -7,6 +8,9 @@ import ch.epfl.javions.gui.ObservableAircraftState;
 
 import java.io.*;
 import java.util.*;
+
+import static java.lang.System.nanoTime;
+import static java.lang.Thread.sleep;
 
 public class TerminalInterface {
     private static final int SIZE_ICAO = 6;
@@ -48,16 +52,24 @@ public class TerminalInterface {
                 new BufferedInputStream(
                         new FileInputStream(pathMessageFile)))){
             byte[] bytes = new byte[RawMessage.LENGTH];
-
+            long timeBegin = nanoTime();
+            System.out.println( timeBegin);
             while (true) {
                 long timeStampNs = s.readLong();
                 int bytesRead = s.readNBytes(bytes, 0, bytes.length);
                 assert bytesRead == RawMessage.LENGTH;
                 RawMessage rawMessage = RawMessage.of(timeStampNs,bytes);
                 aircraftStateManager.updateWithMessage(MessageParser.parse(rawMessage));
+                aircraftStateManager.purge();
+                long currentTime = nanoTime();
+                long sleepTime = (rawMessage.timeStampNs() - (currentTime - timeBegin))/1000000;
+
+                sleep( (sleepTime > 0) ?  sleepTime:0);
                 display();
             }
-        } catch (EOFException e) { /* nothing to do */ }
+        } catch (EOFException e) { /* nothing to do */ } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
     /**
      * Display known position aircraft in terminal
@@ -69,25 +81,23 @@ public class TerminalInterface {
 
     }
     private static String stringBuildLine(ObservableAircraftState observableAircraftState){
-        try {
-            String ICAO = observableAircraftState.address().toString();
-            String indicatif = observableAircraftState.getCallSign();
-            String immat = observableAircraftState.aircraftData().registration().string();
-            String model = observableAircraftState.aircraftData().model();
-            String longitude = String.format("%f", observableAircraftState.getPosition().longitude());
-            String latitude = String.format("%f", observableAircraftState.getPosition().latitude());
-            String altitude = String.format("%f", observableAircraftState.getAltitude());
-            String vitesse = String.format("%f", observableAircraftState.getVelocity());
 
-            return ICAO+ "  " + indicatif+ "  " + immat+ "  " + model+ "  " + longitude + "  " + latitude + "  " + altitude + "  " + vitesse + "\n";
-        }catch (NullPointerException e){
+        String ICAO = observableAircraftState.address().string();
+        String indicatif = String.format("%-8s",observableAircraftState.getCallSign() == null ? "      " : observableAircraftState.getCallSign());
+        String immat = observableAircraftState.aircraftData() == null ? "      "  : observableAircraftState.aircraftData().registration().string();
+        String model = observableAircraftState.aircraftData() == null ? "      "  : observableAircraftState.aircraftData().model();
+        String longitude = String.format("%f", Units.convertTo(observableAircraftState.getPosition().longitude(), Units.Angle.DEGREE));
+        String latitude = String.format("%f",  Units.convertTo(observableAircraftState.getPosition().latitude(), Units.Angle.DEGREE));
+        String altitude = String.format("%f", observableAircraftState.getAltitude());
+        String vitesse = String.format("%f", Units.convert(observableAircraftState.getVelocity(), Units.Speed.METER_PER_SECOND, Units.Speed.KILOMETER_PER_HOUR));
+        String lastTimeStamp = String.format("%dl", observableAircraftState.getLastMessageTimeStampNs());
 
-        }
-        return "y a pas\n";
-
+        return ICAO+ "  " + indicatif+ "  " + immat+ "  " + model+ "  " + longitude + "  " + latitude + "  " +
+                altitude + "  " + vitesse + "\n";
     }
 
     private static String observableSetToString(){
+
         List<ObservableAircraftState> knownPositionAircraft = new ArrayList<>();
         for (ObservableAircraftState aircraftState : aircraftStateManager.getKnownPositionAircrafts()) {
             knownPositionAircraft.add(aircraftState);

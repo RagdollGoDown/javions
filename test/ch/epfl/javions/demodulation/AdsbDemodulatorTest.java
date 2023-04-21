@@ -409,12 +409,12 @@ class AdsbDemodulatorTest {
         try (InputStream s = new FileInputStream(f)) {
             AdsbDemodulator d = new AdsbDemodulator(s);
             RawMessage m;
-
             int i = 0;
             while ((m = d.nextMessage()) != null){
                 assertTrue(m.toString().equals(allMessages[i]));
                 i++;
             }
+            assertTrue(i>5);
         }
     }
     //<editor-fold desc="Expected messages">

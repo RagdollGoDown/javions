@@ -30,30 +30,5 @@ public record IcaoAddress(String string) {
      * @param obj the object to compare
      * @return true if the object is an IcaoAddress and has the same string
      */
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final IcaoAddress other = (IcaoAddress) obj;
-        if (!Objects.equals(this.string, other.string)) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Calculate the hashcode of the instance
-     * @return the hashcode of the instance
-     */
-    @Override
-    public int hashCode() {
-        return string.hashCode();
-    }
-
-
 }
 
