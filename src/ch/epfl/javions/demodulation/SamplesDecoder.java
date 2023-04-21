@@ -5,6 +5,7 @@ import ch.epfl.javions.Preconditions;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
 /**
  * Transform the bytes from the AirSpy into signed 12-bit samples
@@ -26,12 +27,11 @@ public class SamplesDecoder {
      * @param batchSize size of the batch
      */
     public SamplesDecoder(InputStream stream, int batchSize){
-        if (batchSize <= 0) throw new IllegalArgumentException();
-        if (stream == null) throw new NullPointerException();
+        Preconditions.checkArgument(batchSize > 0);
 
         this.batchSize = batchSize;
         this.readBytes = new byte[batchSize*2];
-        this.stream = stream;
+        this.stream = Objects.requireNonNull(stream);
     }
 
     /**
