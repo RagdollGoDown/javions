@@ -9,9 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Keep up to date the states of a set of aircraft according to the messages received from them
@@ -78,9 +76,11 @@ public final class AircraftStateManager {
      * Remove the stateSetterAircraft of the aircraft that no messages has been sent 1 minute before the last message given in the updateWithMessage
      */
     public void purge() {
+        Set<ObservableAircraftState> statesToRemove = new HashSet<>();
+
         for (ObservableAircraftState stateSetterAircraft : modifiableKnownPositionAircrafts) {
             if (stateSetterAircraft.getLastMessageTimeStampNs() <= lastMessageNs - MINUTE_IN_NS){
-                modifiableKnownPositionAircrafts.remove(stateSetterAircraft);
+                statesToRemove.add(stateSetterAircraft);
             }
         }
         modifiableKnownPositionAircrafts.removeAll(statesToRemove);

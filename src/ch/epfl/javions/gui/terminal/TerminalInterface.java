@@ -78,7 +78,9 @@ public class TerminalInterface {
         System.out.println(HEADER);
         System.out.println(observableSetToString());
 
-
+        String CSI = "\u001B[";
+        String CLEAR_SCREEN = CSI + "2J";
+        System.out.print(CLEAR_SCREEN);
     }
     private static String stringBuildLine(ObservableAircraftState observableAircraftState){
 
