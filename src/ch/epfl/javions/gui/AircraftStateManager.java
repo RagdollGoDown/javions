@@ -90,10 +90,8 @@ public final class AircraftStateManager {
     /**
      * @return the set of the AircraftSate where we know the position
      */
-    public ObservableSet<ObservableAircraftState> knownPositionAircraftsProperty(){
+    public ObservableSet<ObservableAircraftState> getKnownPositionAircrafts(){
         return unmodifiableKnownPositionAircrafts;
     }
-
-
 
 }

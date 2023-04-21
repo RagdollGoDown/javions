@@ -27,7 +27,7 @@ public class SamplesDecoder {
      * @param batchSize size of the batch
      */
     public SamplesDecoder(InputStream stream, int batchSize){
-        Preconditions.checkArgument(batchSize < 0);
+        Preconditions.checkArgument(batchSize > 0);
 
         this.batchSize = batchSize;
         this.readBytes = new byte[batchSize*2];
