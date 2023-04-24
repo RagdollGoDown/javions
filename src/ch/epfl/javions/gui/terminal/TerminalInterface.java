@@ -112,7 +112,6 @@ public class TerminalInterface {
         for(ObservableAircraftState aircraftState : knownPositionAircraft){
             sb.append(stringBuildLine(aircraftState));
         }
-
         return sb.toString();
     }
 
