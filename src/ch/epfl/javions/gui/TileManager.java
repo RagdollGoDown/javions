@@ -18,7 +18,7 @@ import java.util.Objects;
 /**
  * Download and store the requested tiles
  */
-public class TileManager {
+public final class TileManager {
     private final static int MAX_TILES_CACHE_MEMORY = 100;
     private final static String PROTOCOL = "https";
     private Path pathTiles;
@@ -26,7 +26,7 @@ public class TileManager {
 
     private final Map<TileId, Image> tiles;
 
-    public record TileId(int zoom, int x, int y){}
+    public static record TileId(int zoom, int x, int y){}
 
     /**
      * Constructor of the TileManager
