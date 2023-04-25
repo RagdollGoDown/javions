@@ -36,7 +36,7 @@ public final class TileManager {
     public TileManager(Path pathTiles, String severTiles){
         this.pathTiles = pathTiles;
         this.serverTiles = severTiles;
-        tiles = new LinkedHashMap<TileId, Image>(MAX_TILES_CACHE_MEMORY, 1f,true){
+        tiles = new LinkedHashMap<TileId, Image>(MAX_TILES_CACHE_MEMORY, 1.1f,true){
             @Override
             protected boolean removeEldestEntry(Map.Entry<TileId, Image> eldest) {
                 return size() > MAX_TILES_CACHE_MEMORY;
@@ -56,6 +56,9 @@ public final class TileManager {
         InputStream streamBytesTile = new ByteArrayInputStream(bytesTile);
         Image tile = new Image(streamBytesTile);
         tiles.put(tileId, tile);
+    }
+    private Image loadFromCache(TileId tileId){
+        return tiles.get(tileId);
     }
     private Path pathTileDir(TileId tileId){
         Path pathZoom = Paths.get(Integer.toString(tileId.zoom));
@@ -88,6 +91,18 @@ public final class TileManager {
         try (OutputStream o = new FileOutputStream(pathTileFile(tileId).toFile())){
             o.write(bytesTile);
         }
+    }
+    private Image loadFromDisk(TileId tileId){
+        try (InputStream i = new FileInputStream(pathTileFile(tileId).toFile())) {
+            storeInCache(tileId, i.readAllBytes());
+        } catch (FileNotFoundException e) {
+            System.out.println("Impossible to find file " + pathTileFile(tileId));
+            return null;
+        } catch (IOException e) {
+            System.out.println("IOException");
+            return null;
+        }
+        return loadFromCache(tileId);
     }
 
     /**
@@ -139,16 +154,25 @@ public final class TileManager {
      */
     public Image imageForTileAt(TileId tileId){
         Objects.requireNonNull(tileId);
+        if (tiles.containsKey(tileId)) {
+            System.out.println("from cache");
+            return loadFromCache(tileId);
+        }else if (Files.exists(pathTileFile(tileId))){
+            System.out.println("from disk");
+            Image image = loadFromDisk(tileId);
+            if (!(image == null)){
+                return image;
+            }
+        }
+
         byte[] bytesTile;
         try{
             bytesTile = downloadTile(tileId);
-            System.out.println("ho");
             store(tileId, bytesTile);
         }catch (IOException e){
-            System.out.println("ha");
             return null;
         }
-        return tiles.get(tileId);
+        return loadFromCache(tileId);
     }
 
     private void load(){
