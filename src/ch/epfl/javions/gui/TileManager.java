@@ -26,7 +26,16 @@ public final class TileManager {
 
     private final Map<TileId, Image> tiles;
 
-    public static record TileId(int zoom, int x, int y){}
+    public static record TileId(int zoom, int x, int y){
+        public static boolean isValid(int zoom, int x, int y){
+            //TODO vérifier tous ce qu'il faut mettre comme condition
+            if (x < 0) return false;
+            if (y < 0) return false;
+            if (zoom < 0) return false;
+
+            return true;
+        }
+    }
 
     /**
      * Constructor of the TileManager

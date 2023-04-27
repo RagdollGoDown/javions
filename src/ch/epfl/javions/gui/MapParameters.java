@@ -32,8 +32,7 @@ public final class MapParameters{
      * @param x the change in the abscissa
      * @param y the change in the ordinate
      */
-    public void scroll(double x, double y){
-        //TODO corriger translation
+    public void changePosition(double x, double y){
         minX.add(x);
         minY.add(y);
     }
@@ -43,8 +42,9 @@ public final class MapParameters{
      * also checks if the new zoom level is in the correct barriers
      * @param z the change in the zoom level
      */
-    public void changeZoomLevel(int z){
-        zoom.set(Math2.clamp(MIN_ZOOM_INCLUDED, zoom.get() + z, MAX_ZOOM_INCLUDED));
+    public void changeZoomLevel(double z){
+        //regarder s'il y a meilleure méthode de round
+        zoom.set(Math2.clamp(MIN_ZOOM_INCLUDED, zoom.get() + (int)Math.round(z), MAX_ZOOM_INCLUDED));
     }
 
     //------------------------getters
