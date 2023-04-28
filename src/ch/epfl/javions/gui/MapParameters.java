@@ -25,6 +25,15 @@ public final class MapParameters{
         this.zoom = new SimpleIntegerProperty(zoom);
         this.minX = new SimpleDoubleProperty(minX);
         this.minY = new SimpleDoubleProperty(minY);
+
+        this.zoom.addListener((o, oV, nV) -> {
+            int z = nV.intValue()-oV.intValue();
+            
+            this.minX.set(
+                    z < 0 ? this.minX.get() / (1<<Math.abs(z)) : this.minX.get() * (1<<z));
+            this.minY.set(
+                    z < 0 ? this.minY.get() / (1<<Math.abs(z)) : this.minY.get() * (1<<z));
+        });
     }
 
     /**
@@ -45,10 +54,12 @@ public final class MapParameters{
      * @param z the change in the zoom level
      */
     public void changeZoomLevel(int z){
-        //regarder s'il y a meilleure méthode de round
-        zoom.set(Math2.clamp(MIN_ZOOM_INCLUDED, zoom.get() + z, MAX_ZOOM_INCLUDED));
-        minX.multiply(2);
-        minY.multiply(2);
+
+        int newZoom = Math2.clamp(MIN_ZOOM_INCLUDED, zoom.get() + z, MAX_ZOOM_INCLUDED);
+
+        if (newZoom == zoom.get()){return;}
+        else {zoom.set(newZoom);}
+
     }
 
     //------------------------getters

@@ -26,12 +26,24 @@ public final class TileManager {
 
     private final Map<TileId, Image> tiles;
 
+    /**
+     * a record that keeps the information about a tile's position in the map
+     * @param zoom the zoom level of the tile
+     * @param x the x coordinate of the tile
+     * @param y the y coordinate of the tile
+     */
     public static record TileId(int zoom, int x, int y){
-        public static boolean isValid(int zoom, int x, int y){
-            //TODO vérifier tous ce qu'il faut mettre comme condition
-            if (x < 0) return false;
-            if (y < 0) return false;
-            if (zoom < 0) return false;
+
+        /**
+         * tells us if the tile is within the bounds of the possible tiles
+         * @param tileId the tile that will be validated
+         * @return true if it is a possible tile
+         */
+        public static boolean isValid(TileId tileId){
+            if (tileId.zoom < 0 || tileId.zoom > 19) return false;
+
+            if (tileId.x < 0 || tileId.x >= 1<<tileId.zoom) return false;
+            if (tileId.y < 0 || tileId.y >= 1<<tileId.zoom) return false;
 
             return true;
         }
