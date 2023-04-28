@@ -14,7 +14,6 @@ import ch.epfl.javions.Units;
 public final class CprDecoder {
     private static final int N_LATITUDE_EVEN = 60;
     private static final int N_LATITUDE_ODD = 59;
-    private static final int N_BIT_POS = (1 << 17);
 
     /**
      * Find the 'A' value from the latitude

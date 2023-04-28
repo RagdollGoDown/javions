@@ -5,6 +5,8 @@ import javafx.application.Platform;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
 public class BaseMapController {
@@ -13,8 +15,7 @@ public class BaseMapController {
 
     private Canvas canvasMap;
     private Pane paneMap;
-
-    private boolean redrawNeeded;
+    private  boolean redrawNeeded;
     public BaseMapController(TileManager tileManager, MapParameters mapParameters){
         this.tileManager = tileManager;
         this.mapParameters = mapParameters;
@@ -36,7 +37,9 @@ public class BaseMapController {
             if (currentTime < minScrollTime.get()) return;
             minScrollTime.set(currentTime + 200);
 
-            mapParameters.changeZoomLevel(e.getDeltaY());
+
+            mapParameters.changeZoomLevel(zoomDelta);
+            redrawOnNextPulse();
         });
 
         paneMap.setOnMouseDragged(e -> {
@@ -44,7 +47,7 @@ public class BaseMapController {
         });
     }
     public Pane pane(){
-        return null;
+        return paneMap;
     }
     public void centerOn(GeoPos pos){
 
@@ -56,15 +59,12 @@ public class BaseMapController {
     }
 
     private void redrawIfNeeded() {
+        System.out.println("   adasd");
         if (!redrawNeeded) return;
+        System.out.println("redrawing");
         redrawNeeded = false;
-
-        drawTiles();
+        Image image = tileManager.imageForTileAt(new TileManager.TileId(17, 67927, 0));
+        System.out.println(image);
+        canvasMap.getGraphicsContext2D().drawImage(image, 0,0);
     }
-
-    private void drawTiles(){
-
-    }
-
-
 }
