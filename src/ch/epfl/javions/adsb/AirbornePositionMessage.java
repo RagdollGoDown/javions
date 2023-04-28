@@ -62,7 +62,8 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
      * @return payload without the index at the position 'Q'
      */
     private static int removeQBit(int payload){
-        return (Bits.extractUInt(payload, INDEX_Q_ALTITUDE + 1, Integer.SIZE - (INDEX_Q_ALTITUDE + 1)) << INDEX_Q_ALTITUDE)
+        return (Bits.extractUInt(payload, INDEX_Q_ALTITUDE + 1,
+                Integer.SIZE - (INDEX_Q_ALTITUDE + 1)) << INDEX_Q_ALTITUDE)
                 | Bits.extractUInt(payload, 0 , INDEX_Q_ALTITUDE);
     }
 
@@ -183,10 +184,6 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
 
         Double altitude = getAltitude(rawMessage);
         if (altitude == null) return null;
-        if (rawMessage.typeCode() < 9 || rawMessage.typeCode() == 19 || rawMessage.typeCode() > 22){
-            return null;
-        }
-
 
         int parity = getParity(rawMessage);
         double x = getX(rawMessage);
