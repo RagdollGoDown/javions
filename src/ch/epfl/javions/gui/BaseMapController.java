@@ -44,6 +44,7 @@ public class BaseMapController {
 
         paneMap.setOnMouseDragged(e -> {
             mapParameters.changePosition(e.getX(), e.getY());
+            redrawOnNextPulse();
         });
     }
     public Pane pane(){

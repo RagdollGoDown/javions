@@ -42,9 +42,11 @@ public final class MapParameters{
      * also checks if the new zoom level is in the correct barriers
      * @param z the change in the zoom level
      */
-    public void changeZoomLevel(double z){
+    public void changeZoomLevel(int z){
         //regarder s'il y a meilleure méthode de round
-        zoom.set(Math2.clamp(MIN_ZOOM_INCLUDED, zoom.get() + (int)Math.round(z), MAX_ZOOM_INCLUDED));
+        zoom.set(Math2.clamp(MIN_ZOOM_INCLUDED, zoom.get() + z, MAX_ZOOM_INCLUDED));
+        minX.multiply(2);
+        minY.multiply(2);
     }
 
     //------------------------getters
