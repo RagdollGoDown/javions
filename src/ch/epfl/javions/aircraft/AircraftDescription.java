@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  * @author Emile Schüpbach (3347505)
  */
 public record AircraftDescription(String string) {
-    private static final Pattern regex = Pattern.compile("[ABDGHLPRSTV-][0123468][EJPT-]");
+    private static final Pattern REGEX = Pattern.compile("[ABDGHLPRSTV-][0123468][EJPT-]");
 
     /**
      * Constructor
@@ -20,6 +20,6 @@ public record AircraftDescription(String string) {
      * @throws IllegalArgumentException if the description isn't empty and doesn't follow the regex conditions
      */
     public AircraftDescription {
-        Preconditions.checkArgument(string.equals("") || regex.matcher(string).matches());
+        Preconditions.checkArgument(string.equals("") || REGEX.matcher(string).matches());
     }
 }

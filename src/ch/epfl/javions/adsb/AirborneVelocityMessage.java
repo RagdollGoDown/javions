@@ -17,7 +17,8 @@ import java.util.Objects;
  * @author André Cadet (359392)
  * @author Emile Schüpbach(3347505)
  */
-public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress, double speed, double trackOrHeading) implements Message{
+public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress, double speed,
+                                      double trackOrHeading) implements Message{
     private final static int SUB_TYPE_START = 48;
     private final static int SUB_TYPE_SIZE = 3;
 

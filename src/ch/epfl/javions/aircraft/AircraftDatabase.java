@@ -16,7 +16,7 @@ import java.util.zip.ZipFile;
  */
 public final class AircraftDatabase {
 
-    private String fileName;
+    private final String fileName;
 
     public AircraftDatabase(String fileName){
         this.fileName = Objects.requireNonNull(fileName);

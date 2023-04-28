@@ -70,6 +70,7 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
         int currentCharacterCode;
         Character currentCharacter;
         StringBuilder callsignStringBuilder = new StringBuilder();
+        StringBuilder spaceSaver = new StringBuilder();
 
         for (int i = 0; i < 8; i++) {
             currentCharacterCode = Bits.extractUInt(payload, (7 - i)*SIZE_CHARACTER_CODE, SIZE_CHARACTER_CODE);
@@ -79,7 +80,13 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
             if (currentCharacter == null) return null;
 
             //spaces are used to mark empty emplacements
-            if (currentCharacter != ' ') callsignStringBuilder.append(currentCharacter);
+            if (currentCharacter != ' ') {
+                callsignStringBuilder.append(spaceSaver);
+                callsignStringBuilder.append(currentCharacter);
+            }
+            else {
+                spaceSaver.append(currentCharacter);
+            }
         }
 
         return new CallSign(callsignStringBuilder.toString());

@@ -17,6 +17,8 @@ public final class AdsbDemodulator {
     private static final int SIZE_STEP = 5;
     private final PowerWindow powerWindow;
 
+    private final byte[] temp_bytes;
+
     /**
      * Constructor of AsbDemodulator
      * @param samplesStream stream that as to
@@ -24,18 +26,8 @@ public final class AdsbDemodulator {
      */
     public AdsbDemodulator(InputStream samplesStream) throws IOException {
         powerWindow = new PowerWindow(samplesStream, WINDOW_SIZE);
-    }
 
-    private byte getDF(){
-        byte DF = 0;
-        for (int i = 0; i < Byte.SIZE; i++) {
-            // formula 2.3.3
-            DF = (byte) (DF << 1);
-            DF += powerWindow.get(SIZE_PREAMBLE + (2*SIZE_STEP * i))
-                    < powerWindow.get(SIZE_PREAMBLE + SIZE_STEP + (2*SIZE_STEP * i))
-                    ? 0 : 1;
-        }
-        return DF;
+        temp_bytes = new byte[14];
     }
 
     /**
@@ -45,7 +37,6 @@ public final class AdsbDemodulator {
      */
     public RawMessage nextMessage() throws IOException{
         byte DF = 0;
-        byte[] bytes = new byte[14];
         int left = 0;
         int middle = 0;
         int right = 0;
@@ -74,18 +65,18 @@ public final class AdsbDemodulator {
             }
 
             //complete the rest of the message
-            bytes[0] = DF;
+            temp_bytes[0] = DF;
 
             for (int k = 1; k < RawMessage.LENGTH; k++) {
                 for (int j = 0; j < Byte.SIZE; j++) {
                     // formula 2.3.3
-                    bytes[k] = (byte) (bytes[k] << 1);
-                    bytes[k] += powerWindow.get(SIZE_PREAMBLE + 2*SIZE_STEP * (k * Byte.SIZE + j))
+                    temp_bytes[k] = (byte) (temp_bytes[k] << 1);
+                    temp_bytes[k] += powerWindow.get(SIZE_PREAMBLE + 2*SIZE_STEP * (k * Byte.SIZE + j))
                             < powerWindow.get(SIZE_PREAMBLE + SIZE_STEP + 2*SIZE_STEP * (k * Byte.SIZE + j))
                             ? 0 : 1;
                 }
             }
-            rawMessage = RawMessage.of(powerWindow.position() * 100, bytes);
+            rawMessage = RawMessage.of(powerWindow.position() * 100, temp_bytes);
         }
         powerWindow.advanceBy(WINDOW_SIZE);
         return rawMessage;
@@ -118,5 +109,17 @@ public final class AdsbDemodulator {
         return powerWindow.get(indexInWindow + 5) + powerWindow.get(indexInWindow + 15)
                 + powerWindow.get(indexInWindow + 20) + powerWindow.get(indexInWindow + 25)
                 + powerWindow.get(indexInWindow + 30) + powerWindow.get(indexInWindow + 40);
+    }
+
+    private byte getDF(){
+        byte DF = 0;
+        for (int i = 0; i < Byte.SIZE; i++) {
+            // formula 2.3.3
+            DF = (byte) (DF << 1);
+            DF += powerWindow.get(SIZE_PREAMBLE + (2*SIZE_STEP * i))
+                    < powerWindow.get(SIZE_PREAMBLE + SIZE_STEP + (2*SIZE_STEP * i))
+                    ? 0 : 1;
+        }
+        return DF;
     }
 }

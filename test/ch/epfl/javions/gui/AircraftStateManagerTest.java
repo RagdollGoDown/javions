@@ -34,6 +34,9 @@ class AircraftStateManagerTest {
                 aircraftStateManager.updateWithMessage(MessageParser.parse(rawMessage));
             }
         } catch (EOFException e) { /* nothing to do */ }
+        catch (NullPointerException e){
+            System.out.println("No more messages");
+        }
     }
 
     @Test

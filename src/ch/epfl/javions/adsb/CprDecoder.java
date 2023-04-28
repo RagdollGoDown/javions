@@ -15,6 +15,8 @@ public final class CprDecoder {
     private static final int N_LATITUDE_EVEN = 60;
     private static final int N_LATITUDE_ODD = 59;
 
+    private CprDecoder(){}
+
     /**
      * Find the 'A' value from the latitude
      * @param latitude  the latitude
@@ -56,7 +58,7 @@ public final class CprDecoder {
     public static GeoPos decodePosition(double x0, double y0, double x1, double y1, int mostRecent){
         Preconditions.checkArgument(mostRecent == 0 || mostRecent == 1);
 
-        double zLat = Math.rint(Math.rint((y0 * N_LATITUDE_ODD  - y1 * N_LATITUDE_EVEN)));
+        int zLat = (int) Math.rint((y0 * N_LATITUDE_ODD  - y1 * N_LATITUDE_EVEN));
 
         double latitude0 = (zLat + y0)/N_LATITUDE_EVEN;
         double latitude1 = (zLat + y1)/N_LATITUDE_ODD;
@@ -68,20 +70,18 @@ public final class CprDecoder {
         }
         int zonesLongitudeOdd = zonesLongitudeEven > 1 ? zonesLongitudeEven - 1 : 1;
 
-        int zLong =  (int) Math.rint(Math.rint((x0 * zonesLongitudeOdd  - x1 * zonesLongitudeEven)));
+        int zLong =  (int) Math.rint((x0 * zonesLongitudeOdd  - x1 * zonesLongitudeEven));
 
         double longitude0 = (zLong + x0)/zonesLongitudeEven;
         double longitude1 = (zLong + x1)/zonesLongitudeOdd;
 
-        try {
-            if (mostRecent == 0){
-                return new GeoPos((int) Math.rint(Units.convert(longitude0, Units.Angle.TURN, Units.Angle.T32)), (int) Math.rint(Units.convert(latitude0, Units.Angle.TURN, Units.Angle.T32)));
-            }else{
-                return new GeoPos((int) Math.rint(Units.convert(longitude1, Units.Angle.TURN, Units.Angle.T32)), (int) Math.rint(Units.convert(latitude1, Units.Angle.TURN, Units.Angle.T32)));
-            }
-        }
-        catch (IllegalArgumentException e){
-            return null;
-        }
+        return mostRecent == 0 ? checkAndGetGeoPos(longitude0,latitude0) : checkAndGetGeoPos(longitude1, latitude1);
+    }
+
+    private static GeoPos checkAndGetGeoPos(double longitude, double latitude){
+        int latT32 = (int) Math.rint(Units.convert(latitude, Units.Angle.TURN, Units.Angle.T32));
+        if (!GeoPos.isValidLatitudeT32(latT32)) return null;
+
+        return new GeoPos((int) Math.rint(Units.convert(longitude, Units.Angle.TURN, Units.Angle.T32)), latT32);
     }
 }

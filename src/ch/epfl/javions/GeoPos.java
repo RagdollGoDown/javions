@@ -11,7 +11,7 @@ package ch.epfl.javions;
  */
 public record GeoPos(int longitudeT32, int latitudeT32)
 {
-    static final int POWER_2_WITH_30 = 1_073_741_824;
+    static final int POWER_2_WITH_30 = 1<<30;
 
     /**
      * Store

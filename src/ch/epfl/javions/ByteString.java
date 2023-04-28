@@ -12,6 +12,8 @@ import java.util.Objects;
  */
 public class ByteString {
 
+    private static final HexFormat FORMAT = HexFormat.of().withUpperCase();
+
     private final byte[] bytes;
 
     /**
@@ -31,9 +33,7 @@ public class ByteString {
     public static ByteString ofHexadecimalString(String hexString){
         if (hexString.length() % 2 == 1) throw new NumberFormatException();
 
-        HexFormat hf = HexFormat.of().withUpperCase();
-
-        byte[] bytes = hf.parseHex(hexString);
+        byte[] bytes = FORMAT.parseHex(hexString);
         return new ByteString(bytes);
     }
 
@@ -51,7 +51,6 @@ public class ByteString {
      * @throws IndexOutOfBoundsException when the index is inferior to zero or superior to the array size
      */
     public int byteAt(int index){
-        if (index >= size() || index < 0) throw new IndexOutOfBoundsException();
         return Byte.toUnsignedInt(bytes[index]);
     }
 
@@ -66,11 +65,11 @@ public class ByteString {
      */
     public long bytesInRange(int fromIndex, int toIndex){
         Objects.checkFromIndexSize(fromIndex,toIndex-fromIndex,size());
-        Preconditions.checkArgument((toIndex-fromIndex < Long.SIZE/8));
+        Preconditions.checkArgument((toIndex-fromIndex < Long.BYTES));
 
         long extractedLong = 0;
         for (int i = fromIndex; i < toIndex; i++) {
-            extractedLong = (extractedLong << Byte.SIZE)  | Byte.toUnsignedInt(bytes[i]);
+            extractedLong = (extractedLong << Byte.SIZE)  | byteAt(i);
         }
         return extractedLong;
     }
@@ -80,7 +79,7 @@ public class ByteString {
      * @param bytes the array to compare to
      * @return true if they are the same
      */
-    public boolean bytesEquals(byte[] bytes){
+    private boolean bytesEquals(byte[] bytes){
         return Arrays.equals(this.bytes, bytes);
     }
 

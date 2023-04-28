@@ -13,7 +13,7 @@ import java.util.Objects;
  * @author André Cadet (359392)
  * @author Emile Schüpbach (3347505)
  */
-public class SamplesDecoder {
+public final class SamplesDecoder {
 
     private final InputStream stream;
     private final int batchSize;

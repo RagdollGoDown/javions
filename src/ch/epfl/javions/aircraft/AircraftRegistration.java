@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  * @author Emile Schüpbach (3347505)
  */
 public record AircraftRegistration(String string) {
-    private static final Pattern regex = Pattern.compile("[A-Z0-9 .?/_+-]+");
+    private static final Pattern REGEX = Pattern.compile("[A-Z0-9 .?/_+-]+");
 
     /**
      * Constructor
@@ -20,6 +20,6 @@ public record AircraftRegistration(String string) {
      * @throws IllegalArgumentException if the aircraft registration isn't empty and doesn't follow the regex conditions
      */
     public AircraftRegistration{
-        Preconditions.checkArgument(regex.matcher(string).matches());
+        Preconditions.checkArgument(REGEX.matcher(string).matches());
     }
 }

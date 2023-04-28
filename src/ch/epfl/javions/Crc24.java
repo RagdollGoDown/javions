@@ -8,6 +8,8 @@ package ch.epfl.javions;
  */
 public final class Crc24 {
     public static final int GENERATOR = 0xFFF409;
+
+    private static final int TABLE_SIZE = 256;
     private final int N = 24;
     private final int[] table;
 
@@ -42,30 +44,6 @@ public final class Crc24 {
     }
 
     /**
-     * Calculates the crc24 bit by bit
-     * @param generator the generator used for the crc24 calculation
-     * @param value the value for which we are looking for the crc24
-     * @param N the size of the crc ( in this case 24)
-     * @return the crc24 of the value given
-     */
-    private static int crc_bitwise(int generator, int value, int N){
-        assert value << N >>> N == value; //prevent overflow
-        int crc = 0;
-        int[] table = {0, generator};
-        for (int i = Integer.SIZE - N ; i>=0; i--)
-        {
-            int b = Bits.testBit(value, i)? 1 : 0;
-            crc = ((crc<<1) | b) ^ table[Bits.testBit(crc, N-1)? 1 : 0];
-        }
-        for (int i = N - 1 ; i>=0; i--)
-        {
-            int b = Bits.testBit(value, i)? 1 : 0;
-            crc = (crc<<1) ^ table[Bits.testBit(crc, N-1)? 1 : 0];
-        }
-        return Bits.extractUInt(crc,0,N);
-    }
-
-    /**
      * Calculates the crc24
      * @param bytes the value for which we are looking for the crc24
      * @return the crc24 of the given bytes
@@ -88,8 +66,8 @@ public final class Crc24 {
      * @return a table containing the crc24 of all the number from 0 to 255
      */
     private int[] buildTable(int generator){
-        int[] table = new int[256];
-        for (int i = 0; i < 256; i++) {
+        int[] table = new int[TABLE_SIZE];
+        for (int i = 0; i < TABLE_SIZE; i++) {
             byte[] b = {(byte)i};
             table[i] = crc_bitwise(generator, b, N);
         }
