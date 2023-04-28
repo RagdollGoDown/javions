@@ -6,6 +6,7 @@ import ch.epfl.javions.gui.TileManager;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -31,16 +32,12 @@ public final class JavionApp extends Application {
             MapParameters mp =
                     new MapParameters(17, 17_389_327, 11_867_430);
             BaseMapController bmc = new BaseMapController(tm, mp);
+
             BorderPane root = new BorderPane(bmc.pane());
             primaryStage.setScene(new Scene(root));
+            primaryStage.setWidth(256);
+            primaryStage.setHeight(256);
             primaryStage.show();
-        }
-        //@Override
-        public void start_tileManager(Stage primaryStage) throws Exception {
-            new TileManager(Path.of("tile-cache"),
-                    "tile.openstreetmap.org")
-                    .imageForTileAt(new TileManager.TileId(17, 67927, 46357));
-            Platform.exit();
         }
 }
 

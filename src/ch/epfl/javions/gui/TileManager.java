@@ -163,17 +163,17 @@ public final class TileManager {
      */
     public Image imageForTileAt(TileId tileId){
         Objects.requireNonNull(tileId);
+        if (!TileId.isValid(tileId)){
+            return null;
+        }
         if (tiles.containsKey(tileId)) {
-            System.out.println("from cache");
             return loadFromCache(tileId);
         }else if (Files.exists(pathTileFile(tileId))){
-            System.out.println("from disk");
             Image image = loadFromDisk(tileId);
             if (!(image == null)){
                 return image;
             }
         }
-
         byte[] bytesTile;
         try{
             bytesTile = downloadTile(tileId);
