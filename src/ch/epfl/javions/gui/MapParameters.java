@@ -4,6 +4,12 @@ import ch.epfl.javions.Math2;
 import ch.epfl.javions.Preconditions;
 import javafx.beans.property.*;
 
+/**
+ * Is used to save and modify the zoom and position of the user in the map
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach (3347505)
+ */
 public final class MapParameters{
     private final static int MAX_ZOOM_INCLUDED = 19;
     private final static int MIN_ZOOM_INCLUDED = 6;
@@ -64,21 +70,45 @@ public final class MapParameters{
 
     //------------------------getters
 
+    /**
+     * gets the zoomProperty as readonly
+     * @return the zoom property
+     */
     public ReadOnlyIntegerProperty zoomProperty(){
         return zoom;
     }
 
+    /**
+     * gets the value of the zoom property
+     * @return the value
+     */
     public int getZoom(){return zoom.get();}
 
+    /**
+     * gets the minX as readonly
+     * @return the minX property
+     */
     public ReadOnlyDoubleProperty minXProperty(){
         return minX;
     }
 
+    /**
+     * gets the value of the minX property
+     * @return the value
+     */
     public double getMinX(){return minX.get();}
 
+    /**
+     * gets the minY as readonly
+     * @return the minY property
+     */
     public ReadOnlyDoubleProperty minYProperty(){
         return minY;
     }
 
+    /**
+     * gets the value of the minY property
+     * @return the value
+     */
     public double getMinY(){return minY.get();}
 }

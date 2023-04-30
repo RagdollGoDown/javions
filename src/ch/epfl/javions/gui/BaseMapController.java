@@ -11,7 +11,12 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
-
+/**
+ * Handles user input and transmits it to the mapParameters
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach (3347505)
+ */
 public class BaseMapController {
     private final static int SIZE_TILE = 256;
     private TileManager tileManager;
@@ -67,13 +72,20 @@ public class BaseMapController {
         });
         paneMap.setOnMouseReleased(e -> {
         });
-
-
-
     }
+
+    /**
+     * gets the pane used for the map
+     * @return the pane
+     */
     public Pane pane(){
         return paneMap;
     }
+
+    /**
+     * centers the map onto a position
+     * @param pos the position to be centered
+     */
     public void centerOn(GeoPos pos){
 
     }

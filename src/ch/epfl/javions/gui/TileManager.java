@@ -16,7 +16,10 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Download and store the requested tiles
+ * Downloads and stores the requested tiles
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach (3347505)
  */
 public final class TileManager {
     private final static int MAX_TILES_CACHE_MEMORY = 100;
