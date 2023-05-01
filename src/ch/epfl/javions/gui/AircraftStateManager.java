@@ -87,7 +87,6 @@ public final class AircraftStateManager {
 
     }
 
-    //TODO get ou property?
 
     /**
      * @return the set of the AircraftSate where we know the position
