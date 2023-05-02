@@ -25,7 +25,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public final class AircraftControllerTest extends Application {
-    public static void main(String[] args) { launch(args); }
+    public static void main(String[] args) throws IOException {
+        launch(args); }
 
     static List<RawMessage> readAllMessages(String fileName)
             throws IOException {
@@ -69,7 +70,7 @@ public final class AircraftControllerTest extends Application {
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
-        var mi = readAllMessages("messages_20230318_0915.bin")
+        var mi = readAllMessages("resources/messages_20230318_0915.bin")
                 .iterator();
 
         // Animation des aéronefs

@@ -2,6 +2,9 @@ package ch.epfl.javions.gui;
 
 import ch.epfl.javions.GeoPos;
 import ch.epfl.javions.WebMercator;
+import ch.epfl.javions.aircraft.AircraftDescription;
+import ch.epfl.javions.aircraft.AircraftTypeDesignator;
+import ch.epfl.javions.aircraft.WakeTurbulenceCategory;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
@@ -13,9 +16,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.SVGPath;
 
 import java.util.Map;
+import java.util.Objects;
 
 public final class AircraftController {
-
+    private final static AircraftIcon DEFAULT_SVG = AircraftIcon.BALLOON;
     private final MapParameters mapParameters;
     private final Pane pane;
 
@@ -41,9 +45,7 @@ public final class AircraftController {
         this.followedAircraft = followedAircraft;
     }
 
-    public boolean hasToBeDrawn(ObservableAircraftState observableAircraftState){
-        return true;
-    }
+
 
     public Pane pane(){
         return pane;
@@ -57,12 +59,14 @@ public final class AircraftController {
         //groupLabelIcon.getChildren().addAll(labelGroup, icon(observableAircraftState));
 
         groupLabelIcon.layoutXProperty().bind(Bindings.createDoubleBinding(() ->
-        WebMercator.x(mapParameters.getZoom(),observableAircraftState.getPosition().longitude())
-        - mapParameters.getMinX()));
+                WebMercator.x(mapParameters.getZoom(),observableAircraftState.getPosition().longitude())
+                        - mapParameters.getMinX(),
+                observableAircraftState.positionProperty()));
 
         groupLabelIcon.layoutYProperty().bind(Bindings.createDoubleBinding(() ->
-        WebMercator.y(mapParameters.getZoom(),observableAircraftState.getPosition().latitude())
-        - mapParameters.getMinY()));
+                        WebMercator.y(mapParameters.getZoom(), observableAircraftState.getPosition().latitude())
+                                - mapParameters.getMinY(),
+                observableAircraftState.positionProperty()));
 
         Group trajectoryGroup = new Group();
         trajectoryGroup.getStyleClass().add("trajectory");
@@ -74,11 +78,26 @@ public final class AircraftController {
         pane.getChildren().add(mainGroup);
     }
 
-    private SVGPath icon(ObservableAircraftState observableAircraftState){
-        SVGPath iconPath = new SVGPath();
+    private String getPathSVG(ObservableAircraftState observableAircraftState){
+        if (Objects.isNull(observableAircraftState.aircraftData())) {
+            return DEFAULT_SVG.svgPath();
+        }
 
-        iconPath.contentProperty().set("src/ch/epfl/javions/gui/AircraftIcon.java");
-        //TODO faire rotation
+        AircraftIcon aircraftIcon = AircraftIcon.iconFor(
+                observableAircraftState.aircraftData().typeDesignator(),
+                observableAircraftState.aircraftData().description(),
+                observableAircraftState.getCategory(),
+                observableAircraftState.aircraftData().wakeTurbulenceCategory());
+        return aircraftIcon.svgPath();
+
+    }
+    private SVGPath icon(ObservableAircraftState observableAircraftState){
+       SVGPath iconPath = new SVGPath();
+
+
+
+        iconPath.setContent(getPathSVG(observableAircraftState));
+    //TODO faire rotation
         observableAircraftState.altitudeProperty().addListener((observable, oldValue, newValue) ->{
         //TODO corriger couleur
             iconPath.fillProperty().set(ColorRamp.PLASMA.at(0));

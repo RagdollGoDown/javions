@@ -3,6 +3,8 @@ package ch.epfl.javions.gui;
 import ch.epfl.javions.GeoPos;
 import ch.epfl.javions.WebMercator;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.event.EventType;
@@ -26,6 +28,7 @@ public class BaseMapController {
 
     private Canvas canvasMap;
     private Pane paneMap;
+
     private  boolean redrawNeeded;
     private MouseEvent previousMouseEvent;
 
@@ -46,10 +49,6 @@ public class BaseMapController {
             newS.addPreLayoutPulseListener(this::redrawIfNeeded);
         });
         setupInteractionMousePane();
-
-
-
-
     }
     private void setupInteractionMousePane(){
         LongProperty minScrollTime = new SimpleLongProperty();
