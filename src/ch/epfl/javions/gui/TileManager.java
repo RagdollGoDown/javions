@@ -44,10 +44,8 @@ public final class TileManager {
          */
         public static boolean isValid(TileId tileId){
             if (tileId.zoom < 0 || tileId.zoom > 19) return false;
-
             if (tileId.x < 0 || tileId.x >= 1<<tileId.zoom) return false;
             if (tileId.y < 0 || tileId.y >= 1<<tileId.zoom) return false;
-
             return true;
         }
     }
