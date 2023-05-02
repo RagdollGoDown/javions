@@ -36,7 +36,7 @@ public final class AircraftController {
         aircraftStates.forEach(this::generateGroupForAircraft);
 
         aircraftStates.addListener((SetChangeListener<ObservableAircraftState>)
-                change -> {generateGroupForAircraft(change.getElementAdded())));
+                change -> generateGroupForAircraft(change.getElementAdded()));
 
         this.followedAircraft = followedAircraft;
     }
