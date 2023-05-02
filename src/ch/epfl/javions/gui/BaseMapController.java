@@ -20,6 +20,7 @@ import javafx.scene.layout.Pane;
  */
 public class BaseMapController {
     private final static int SIZE_TILE = 256;
+    private final static int N_TILES_PRELOADED_BORDER = 5;
     private TileManager tileManager;
     private MapParameters mapParameters;
 
@@ -124,7 +125,7 @@ public class BaseMapController {
         GraphicsContext graphicsContext = canvasMap.getGraphicsContext2D();
         graphicsContext.clearRect(0,0, canvasMap.getWidth(), canvasMap.getHeight());
         //-1 to preload borders
-        for (int tileX = -1; tileX <= 1 + Math.ceil(canvasMap.getWidth()/SIZE_TILE); tileX++) {
+        for (int tileX = -1; tileX <= Math.ceil(canvasMap.getWidth()/SIZE_TILE); tileX++) {
             for (int tileY = -1; tileY <= Math.ceil(canvasMap.getHeight()/SIZE_TILE); tileY++) {
                 Image image = tileManager.imageForTileAt(new TileManager.TileId(
                         mapParameters.getZoom(),

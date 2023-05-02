@@ -28,14 +28,23 @@ public final class AircraftController {
         canvas.widthProperty().bind(pane.widthProperty());
         canvas.heightProperty().bind(pane.heightProperty());
 
-        this.aircraftStates = aircraftStates;
+
+
+        aircraftStates.forEach(this::generateGroupForAircraft);
+
         aircraftStates.addListener((SetChangeListener<ObservableAircraftState>)
-                change -> { /* … corps de la lambda */ });
+                change -> {
+                   changegetElementAdded()
+                });
+
         this.followedAircraft = followedAircraft;
     }
 
-    public Pane getPane(){
-        //TODO demander s'il faut que ce soit une 'copie' de pane
+    public boolean hasToBeDrawn(ObservableAircraftState observableAircraftState){
+        return true;
+    }
+
+    public Pane pane(){
         return pane;
     }
 
