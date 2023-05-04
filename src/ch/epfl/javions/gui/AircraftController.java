@@ -88,7 +88,7 @@ public final class AircraftController {
                 mapParameters.zoomProperty(),
                 mapParameters.minYProperty()));
         // group trajectory
-        Group trajectoryGroup = new Group();
+        Group trajectoryGroup =  trajectoryGroup(observableAircraftState);
         trajectoryGroup.getStyleClass().add("trajectory");
 
         Group mainGroup = new Group(trajectoryGroup, groupLabelIcon);
@@ -96,24 +96,77 @@ public final class AircraftController {
         // order of drawing
         mainGroup.viewOrderProperty().bind(observableAircraftState.altitudeProperty().negate());
 
-        //setupTrajectoryGroup(observableAircraftState);
+
         return mainGroup;
     }
     private void addAircraft(ObservableAircraftState observableAircraftState){
         Objects.requireNonNull(observableAircraftState);
         Group group = generateGroupForAircraft(observableAircraftState);
-        pane.getChildren().add(group);
-        pane.setOnMousePressed(e -> {
-                followedAircraft.set(observableAircraftState);
+        group.setOnMousePressed(e -> {
+            followedAircraft.set(observableAircraftState);
         });
+        pane.getChildren().add(group);
+
         icaoToGroup.put(observableAircraftState.address(), group);
     }
     private void removeAircraft(ObservableAircraftState observableAircraftState){
         Objects.requireNonNull(observableAircraftState);
         if (followedAircraft.get() == observableAircraftState) followedAircraft.set(null);
-        //TODO c'est mieux de changer avec un removeif qui fonctionnerait avec l'id (ICAO) du groupe au lieu du map (dans ce cas supprimer la map)
+        //TODO c'est mieux de changer avec un removeif qui fonctionnerait avec l'id (ICAO) du groupe au lieu du map ?? (dans ce cas suprimmr la map)
         pane.getChildren().remove(icaoToGroup.get(observableAircraftState.address()));
         icaoToGroup.remove(observableAircraftState.address());
+    }
+
+    private Group trajectoryGroup(ObservableAircraftState observableAircraftState){
+        Group groupTrajectory = new Group();
+        observableAircraftState.positionProperty().addListener((o, previousPos, newPos)->{
+            //TODO choisir entre prendre la dernière position ou trajectory, si equivalent -> prendre position, si trajectory a moins de ligne -> prenre trajectory
+        //observableAircraftState.getTrajectory().addListener((ListChangeListener<? super ObservableAircraftState.AirbornePos>) change -> {
+                    //int size = change.getList().size();
+                    //if (size < 2) return;
+                    //GeoPos previousPos =  change.getList().get(size-2).position();
+                    //GeoPos newPos =  change.getList().get(size-1).position();
+                    if (Objects.isNull(previousPos)){
+                         return;
+                    }
+
+                    Line line = new Line();
+                    line.startXProperty().bind(Bindings.createDoubleBinding(() ->
+                                    ControllerUtils.LongitudeToGui(mapParameters.getZoom(),
+                                            mapParameters.getMinX(),
+                                            previousPos.longitude()
+                                    ),
+                            mapParameters.zoomProperty(),
+                            mapParameters.minYProperty()));
+                    line.startYProperty().bind(Bindings.createDoubleBinding(() ->
+                                    ControllerUtils.LatitudeToGui(mapParameters.getZoom(),
+                                            mapParameters.getMinY(),
+                                            previousPos.latitude()
+                                    ),
+                            mapParameters.zoomProperty(),
+                            mapParameters.minYProperty()));
+                    line.endXProperty().bind(Bindings.createDoubleBinding(() ->
+                                    ControllerUtils.LongitudeToGui(mapParameters.getZoom(),
+                                            mapParameters.getMinX(),
+                                            newPos.longitude()
+                                    ),
+                            mapParameters.zoomProperty(),
+                            mapParameters.minYProperty()));
+                    line.endYProperty().bind(Bindings.createDoubleBinding(() ->
+                                    ControllerUtils.LatitudeToGui(mapParameters.getZoom(),
+                                            mapParameters.getMinY(),
+                                            newPos.latitude()
+                                    ),
+                            mapParameters.zoomProperty(),
+                            mapParameters.minYProperty()));
+                    //TODO ajouter la couleur des lignes selon la position ici
+                    groupTrajectory.getChildren().add(line);
+                    line.visibleProperty().bind(Bindings.createBooleanBinding(()->
+                            Objects.nonNull(followedAircraft.get()) && followedAircraft.get() == observableAircraftState
+                    , followedAircraft));
+
+                });
+        return groupTrajectory;
     }
     
 
@@ -175,7 +228,6 @@ public final class AircraftController {
             iconPath.fillProperty().set(
                     ColorRamp.PLASMA.at(correctAltitudeForColorRamp(newValue.doubleValue())));
         });
-
         return iconPath;
     }
 
