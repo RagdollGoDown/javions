@@ -1,25 +1,26 @@
 package ch.epfl.javions.gui;
 
-import ch.epfl.javions.GeoPos;
+import ch.epfl.javions.Units;
 import ch.epfl.javions.WebMercator;
-import ch.epfl.javions.aircraft.AircraftDescription;
-import ch.epfl.javions.aircraft.AircraftTypeDesignator;
-import ch.epfl.javions.aircraft.WakeTurbulenceCategory;
+import ch.epfl.javions.aircraft.*;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import javafx.scene.Group;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.Text;
 
 import java.util.Map;
 import java.util.Objects;
 
 public final class AircraftController {
     private final static AircraftIcon DEFAULT_SVG = AircraftIcon.BALLOON;
+    private final static int MAX_ALTITUDE_METERS = 12000;
+    private final static int ZOOM_FOR_VISIBLE_ETIQUETTE_LIMIT = 11;
+    private final static int RECTANGLE_PADDING = 4;
     private final MapParameters mapParameters;
     private final Pane pane;
 
@@ -34,8 +35,6 @@ public final class AircraftController {
         pane = new Pane();
         pane.setPickOnBounds(false);
         pane.getStylesheets().add("aircraft.css");
-
-
 
         aircraftStates.forEach(this::generateGroupForAircraft);
 
@@ -52,11 +51,8 @@ public final class AircraftController {
     }
 
     private void generateGroupForAircraft(ObservableAircraftState observableAircraftState){
-        Group labelGroup = new Group();
-        labelGroup.getStyleClass().add("label");
 
-        Group groupLabelIcon = new Group(labelGroup, icon(observableAircraftState));
-        //groupLabelIcon.getChildren().addAll(labelGroup, icon(observableAircraftState));
+        Group groupLabelIcon = new Group(label(observableAircraftState), icon(observableAircraftState));
 
         groupLabelIcon.layoutXProperty().bind(Bindings.createDoubleBinding(() ->
                 WebMercator.x(mapParameters.getZoom(),observableAircraftState.getPosition().longitude())
@@ -72,10 +68,41 @@ public final class AircraftController {
         trajectoryGroup.getStyleClass().add("trajectory");
 
         Group mainGroup = new Group(trajectoryGroup, groupLabelIcon);
-        //mainGroup.getChildren().addAll(trajectoryGroup, groupLabelIcon);
         mainGroup.setId(observableAircraftState.address().toString());
+        mainGroup.viewOrderProperty().bind(observableAircraftState.altitudeProperty().negate());
 
         pane.getChildren().add(mainGroup);
+    }
+
+    private Group label(ObservableAircraftState observableAircraftState){
+        Text labelText = labelText(observableAircraftState);
+        Rectangle labelBackground = labelBackground(labelText);
+
+        Group labelGroup = new Group(labelBackground,labelText);
+        labelGroup.getStyleClass().add("label");
+        labelGroup.visibleProperty().bind(
+                mapParameters.zoomProperty().greaterThan(ZOOM_FOR_VISIBLE_ETIQUETTE_LIMIT));
+
+        return labelGroup;
+    }
+
+    private Text labelText(ObservableAircraftState observableAircraftState){
+        Text labelText = new Text();
+        labelText.textProperty().bind(
+                Bindings.format("%s\n%f km/h\u2002%f m",
+                        findCorrectLabelTitle(observableAircraftState),
+                        observableAircraftState.velocityProperty(),
+                        observableAircraftState.altitudeProperty()));
+        return labelText;
+    }
+
+    private Rectangle labelBackground(Text labelText){
+        Rectangle background = new Rectangle();
+        background.widthProperty().bind(
+                labelText.layoutBoundsProperty().map(b -> b.getWidth() + RECTANGLE_PADDING));
+        background.heightProperty().bind(
+                labelText.layoutBoundsProperty().map(b -> b.getHeight() + RECTANGLE_PADDING));
+        return background;
     }
 
     private String getPathSVG(ObservableAircraftState observableAircraftState){
@@ -89,20 +116,36 @@ public final class AircraftController {
                 observableAircraftState.getCategory(),
                 observableAircraftState.aircraftData().wakeTurbulenceCategory());
         return aircraftIcon.svgPath();
-
     }
+
     private SVGPath icon(ObservableAircraftState observableAircraftState){
-       SVGPath iconPath = new SVGPath();
-
-
+        SVGPath iconPath = new SVGPath();
+        iconPath.getStyleClass().add("aircraft");
 
         iconPath.setContent(getPathSVG(observableAircraftState));
-    //TODO faire rotation
+        observableAircraftState.trackOrHeadingProperty().addListener((o,ov,nv) -> {
+            iconPath.rotateProperty().set(
+                    Units.convertTo(nv.doubleValue(),Units.Angle.DEGREE));
+        });
+
         observableAircraftState.altitudeProperty().addListener((observable, oldValue, newValue) ->{
-        //TODO corriger couleur
-            iconPath.fillProperty().set(ColorRamp.PLASMA.at(0));
+            iconPath.fillProperty().set(
+                    ColorRamp.PLASMA.at(correctAltitudeForColorRamp(newValue.doubleValue())));
         });
 
         return iconPath;
+    }
+
+    private static double correctAltitudeForColorRamp(double altitude){
+        return Math.cbrt(altitude/MAX_ALTITUDE_METERS);
+    }
+
+    private static String findCorrectLabelTitle(ObservableAircraftState aircraft){
+        AircraftData data = aircraft.aircraftData();
+        if (data == null) return aircraft.address().string();
+
+        if (data.registration() != null) return data.registration().string();
+        if (data.typeDesignator() != null) return data.typeDesignator().string();
+        return aircraft.address().string();
     }
 }
