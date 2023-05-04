@@ -1,18 +1,21 @@
 package ch.epfl.javions.gui;
 
+import ch.epfl.javions.GeoPos;
 import ch.epfl.javions.Units;
-import ch.epfl.javions.WebMercator;
 import ch.epfl.javions.aircraft.*;
+import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
-import javafx.collections.ObservableSet;
-import javafx.collections.SetChangeListener;
+import javafx.collections.*;
 import javafx.scene.Group;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -24,14 +27,17 @@ public final class AircraftController {
     private final MapParameters mapParameters;
     private final Pane pane;
 
-    private Map<ObservableAircraftState, Group> stateToGroupMap;
+    private final Map<IcaoAddress, Group> icaoToGroup;
 
-    private ObjectProperty<ObservableAircraftState> followedAircraft;
+    private final ObjectProperty<ObservableAircraftState> followedAircraft;
+
 
     public AircraftController(MapParameters mapParameters,
                               ObservableSet<ObservableAircraftState> aircraftStates,
                               ObjectProperty<ObservableAircraftState> followedAircraft){
         this.mapParameters = mapParameters;
+        this.icaoToGroup = new HashMap<>();
+
         pane = new Pane();
         pane.setPickOnBounds(false);
         pane.getStylesheets().add("aircraft.css");
@@ -39,42 +45,80 @@ public final class AircraftController {
         aircraftStates.forEach(this::generateGroupForAircraft);
 
         aircraftStates.addListener((SetChangeListener<ObservableAircraftState>)
-                change -> generateGroupForAircraft(change.getElementAdded()));
+                change -> {
+            if (change.wasRemoved()) removeAircraft(change.getElementRemoved());
+            if (change.wasAdded()) addAircraft(change.getElementAdded());
+        });
+
 
         this.followedAircraft = followedAircraft;
+        this.followedAircraft.addListener((o, ov, nv) -> {
+
+        });
     }
 
 
-
+    /**
+     * Return the pane with all the aircraft
+     * @return (Pane) the pane with all the aircraft
+     */
     public Pane pane(){
         return pane;
     }
 
-    private void generateGroupForAircraft(ObservableAircraftState observableAircraftState){
-
+    private Group generateGroupForAircraft(ObservableAircraftState observableAircraftState ){
+        //creation group with icon and label
         Group groupLabelIcon = new Group(label(observableAircraftState), icon(observableAircraftState));
 
         groupLabelIcon.layoutXProperty().bind(Bindings.createDoubleBinding(() ->
-                WebMercator.x(mapParameters.getZoom(),observableAircraftState.getPosition().longitude())
-                        - mapParameters.getMinX(),
-                observableAircraftState.positionProperty()));
+                ControllerUtils.LongitudeToGui(mapParameters.getZoom(),
+                        mapParameters.getMinX(),
+                        observableAircraftState.getPosition().longitude()
+                        ),
+                observableAircraftState.positionProperty(),
+                mapParameters.zoomProperty(),
+                mapParameters.minXProperty()));
 
         groupLabelIcon.layoutYProperty().bind(Bindings.createDoubleBinding(() ->
-                        WebMercator.y(mapParameters.getZoom(), observableAircraftState.getPosition().latitude())
-                                - mapParameters.getMinY(),
-                observableAircraftState.positionProperty()));
-
+                        ControllerUtils.LatitudeToGui(mapParameters.getZoom(),
+                                mapParameters.getMinY(),
+                                observableAircraftState.getPosition().latitude()
+                                ),
+                observableAircraftState.positionProperty(),
+                mapParameters.zoomProperty(),
+                mapParameters.minYProperty()));
+        // group trajectory
         Group trajectoryGroup = new Group();
         trajectoryGroup.getStyleClass().add("trajectory");
 
         Group mainGroup = new Group(trajectoryGroup, groupLabelIcon);
         mainGroup.setId(observableAircraftState.address().toString());
+        // order of drawing
         mainGroup.viewOrderProperty().bind(observableAircraftState.altitudeProperty().negate());
 
-        pane.getChildren().add(mainGroup);
+        //setupTrajectoryGroup(observableAircraftState);
+        return mainGroup;
     }
+    private void addAircraft(ObservableAircraftState observableAircraftState){
+        Objects.requireNonNull(observableAircraftState);
+        Group group = generateGroupForAircraft(observableAircraftState);
+        pane.getChildren().add(group);
+        pane.setOnMousePressed(e -> {
+                followedAircraft.set(observableAircraftState);
+        });
+        icaoToGroup.put(observableAircraftState.address(), group);
+    }
+    private void removeAircraft(ObservableAircraftState observableAircraftState){
+        Objects.requireNonNull(observableAircraftState);
+        if (followedAircraft.get() == observableAircraftState) followedAircraft.set(null);
+        //TODO c'est mieux de changer avec un removeif qui fonctionnerait avec l'id (ICAO) du groupe au lieu du map (dans ce cas supprimer la map)
+        pane.getChildren().remove(icaoToGroup.get(observableAircraftState.address()));
+        icaoToGroup.remove(observableAircraftState.address());
+    }
+    
 
     private Group label(ObservableAircraftState observableAircraftState){
+        Objects.requireNonNull(observableAircraftState);
         Text labelText = labelText(observableAircraftState);
         Rectangle labelBackground = labelBackground(labelText);
 
@@ -82,7 +126,6 @@ public final class AircraftController {
         labelGroup.getStyleClass().add("label");
         labelGroup.visibleProperty().bind(
                 mapParameters.zoomProperty().greaterThan(ZOOM_FOR_VISIBLE_ETIQUETTE_LIMIT));
-
         return labelGroup;
     }
 
@@ -148,4 +191,5 @@ public final class AircraftController {
         if (data.typeDesignator() != null) return data.typeDesignator().string();
         return aircraft.address().string();
     }
+
 }

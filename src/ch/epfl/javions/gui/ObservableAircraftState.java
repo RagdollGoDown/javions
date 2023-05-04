@@ -10,6 +10,8 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -23,7 +25,6 @@ public final class ObservableAircraftState implements AircraftStateSetter {
     public record AirbornePos(GeoPos position, double altitude){}
 
     private final IcaoAddress icaoAddress;
-
 
     private final AircraftData aircraftData;
 

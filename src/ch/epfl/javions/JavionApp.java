@@ -103,7 +103,7 @@ public final class JavionApp extends Application {
                     for (int i = 0; i < 10; i += 1) {
                         Message m = MessageParser.parse(mi.next());
                         if (m != null) asm.updateWithMessage(m);
-                        //asm.purge();
+                        asm.purge();
                     }
                     /*
                     try {

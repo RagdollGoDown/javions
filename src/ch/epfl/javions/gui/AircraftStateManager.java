@@ -67,7 +67,7 @@ public final class AircraftStateManager {
         // check if not null add it in the set of knownPositionAircraft
         if (mapStringIcaoToAircraft.get(icaoAddress).stateSetter().getPosition() != null) {
             modifiableKnownPositionAircrafts.add(mapStringIcaoToAircraft.get(icaoAddress).stateSetter());
-            if (lastMessageNs < mapStringIcaoToAircraft.get(icaoAddress).stateSetter().getLastMessageTimeStampNs());
+            if (lastMessageNs < mapStringIcaoToAircraft.get(icaoAddress).stateSetter().getLastMessageTimeStampNs())
                 lastMessageNs = mapStringIcaoToAircraft.get(icaoAddress).stateSetter().getLastMessageTimeStampNs();
         }
     }
@@ -83,16 +83,9 @@ public final class AircraftStateManager {
                 statesToRemove.add(stateSetterAircraft);
             }
         }
+
         modifiableKnownPositionAircrafts.removeAll(statesToRemove);
 
-    }
-
-
-    /**
-     * @return the set of the AircraftSate where we know the position
-     */
-    public ObservableSet<ObservableAircraftState> getKnownPositionAircrafts(){
-        return unmodifiableKnownPositionAircrafts;
     }
 
 }

@@ -100,10 +100,7 @@ public class TerminalInterface {
 
     private static String observableSetToString(){
 
-        List<ObservableAircraftState> knownPositionAircraft = new ArrayList<>();
-        for (ObservableAircraftState aircraftState : aircraftStateManager.getKnownPositionAircrafts()) {
-            knownPositionAircraft.add(aircraftState);
-        }
+        List<ObservableAircraftState> knownPositionAircraft = new ArrayList<>(aircraftStateManager.states());
 
         knownPositionAircraft.sort(new AddressComparator());
         StringBuilder sb = new StringBuilder();

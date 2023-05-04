@@ -1,11 +1,12 @@
 package ch.epfl.javions.gui;
 
 import ch.epfl.javions.GeoPos;
-import ch.epfl.javions.WebMercator;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.event.EventType;
 import javafx.scene.canvas.Canvas;
@@ -32,13 +33,13 @@ public class BaseMapController {
     private  boolean redrawNeeded;
     private MouseEvent previousMouseEvent;
 
+
     public BaseMapController(TileManager tileManager, MapParameters mapParameters){
         this.tileManager = tileManager;
         this.mapParameters = mapParameters;
         this.canvasMap = new Canvas();
         this.paneMap = new Pane(canvasMap);
         this.redrawNeeded = false;
-
         canvasMap.widthProperty().bind(paneMap.widthProperty());
         canvasMap.heightProperty().bind(paneMap.heightProperty());
         canvasMap.widthProperty().addListener(((observable, oldValue, newValue) -> redrawOnNextPulse()));
@@ -98,8 +99,12 @@ public class BaseMapController {
      * @param pos the position to be centered
      */
     public void centerOn(GeoPos pos){
-        double x = WebMercator.x(mapParameters.getZoom(), pos.longitude()) - canvasMap.getWidth()/2;
-        double y = WebMercator.y(mapParameters.getZoom(), pos.latitude()) - canvasMap.getHeight()/2;
+        double x = ControllerUtils.LongitudeToGui(mapParameters.getZoom(),
+                canvasMap.getWidth()/2 ,
+                pos.longitude());
+        double y = ControllerUtils.LatitudeToGui(mapParameters.getZoom(),
+                canvasMap.getHeight()/2,
+                pos.longitude());
         mapParameters.changePosition(x,y);
     }
 
@@ -140,4 +145,6 @@ public class BaseMapController {
             }
         }
     }
+
+
 }
