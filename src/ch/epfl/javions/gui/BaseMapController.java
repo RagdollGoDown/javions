@@ -100,12 +100,13 @@ public class BaseMapController {
      */
     public void centerOn(GeoPos pos){
         double x = ControllerUtils.LongitudeToGui(mapParameters.getZoom(),
-                canvasMap.getWidth()/2 ,
+                mapParameters.getMinX() + canvasMap.getWidth()/2,
                 pos.longitude());
         double y = ControllerUtils.LatitudeToGui(mapParameters.getZoom(),
-                canvasMap.getHeight()/2,
-                pos.longitude());
+                mapParameters.getMinY() + canvasMap.getHeight()/2,
+                pos.latitude());
         mapParameters.changePosition(x,y);
+        redrawOnNextPulse();
     }
 
     private void redrawOnNextPulse() {
@@ -145,6 +146,4 @@ public class BaseMapController {
             }
         }
     }
-
-
 }

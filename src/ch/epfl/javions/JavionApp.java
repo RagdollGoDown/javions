@@ -5,11 +5,13 @@ import ch.epfl.javions.adsb.MessageParser;
 import ch.epfl.javions.adsb.RawMessage;
 import ch.epfl.javions.aircraft.AircraftDatabase;
 import ch.epfl.javions.gui.*;
+import com.sun.javafx.property.adapter.PropertyDescriptor;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
@@ -87,6 +89,16 @@ public final class JavionApp extends Application {
             AircraftStateManager asm = new AircraftStateManager();
             ObjectProperty<ObservableAircraftState> sap =
                     new SimpleObjectProperty<>();
+
+            ChangeListener<GeoPos> centerOnSap = (o,ov,nv)->{
+                bmc.centerOn(nv);
+            };
+
+            sap.addListener((o,ov,nv) -> {
+                if (ov != null) ov.positionProperty().removeListener(centerOnSap);
+                nv.positionProperty().addListener(centerOnSap);
+            });
+
             AircraftController ac =
                     new AircraftController(mp, asm.states(), sap);
             var root = new StackPane(bmc.pane(), ac.pane());

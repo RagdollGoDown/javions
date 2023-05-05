@@ -57,9 +57,6 @@ public final class AircraftController {
 
 
         this.followedAircraft = followedAircraft;
-        this.followedAircraft.addListener((o, ov, nv) -> {
-
-        });
     }
 
 
@@ -101,15 +98,11 @@ public final class AircraftController {
         // order of drawing
         mainGroup.viewOrderProperty().bind(observableAircraftState.altitudeProperty().negate());
 
-
         return mainGroup;
     }
     private void addAircraft(ObservableAircraftState observableAircraftState){
         Objects.requireNonNull(observableAircraftState);
         Group group = generateGroupForAircraft(observableAircraftState);
-        group.setOnMousePressed(e -> {
-            followedAircraft.set(observableAircraftState);
-        });
         pane.getChildren().add(group);
 
         icaoToGroup.put(observableAircraftState.address(), group);
@@ -246,6 +239,11 @@ public final class AircraftController {
         iconPath.fillProperty().bind(
                 observableAircraftState.altitudeProperty().map(
                         a-> ColorRamp.PLASMA.at(ControllerUtils.correctAltitudeForColorRamp(a.doubleValue()))));
+
+        iconPath.setOnMousePressed(e -> {
+            followedAircraft.set(observableAircraftState);
+            System.out.println(observableAircraftState.getTrajectory().size());
+        });
 
         return iconPath;
     }
