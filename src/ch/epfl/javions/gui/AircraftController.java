@@ -242,7 +242,6 @@ public final class AircraftController {
 
         iconPath.setOnMousePressed(e -> {
             followedAircraft.set(observableAircraftState);
-            System.out.println(observableAircraftState.getTrajectory().size());
         });
 
         return iconPath;
