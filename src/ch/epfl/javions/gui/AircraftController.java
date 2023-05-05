@@ -5,11 +5,15 @@ import ch.epfl.javions.Units;
 import ch.epfl.javions.aircraft.*;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.*;
 import javafx.scene.Group;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
@@ -19,9 +23,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static javafx.scene.paint.CycleMethod.NO_CYCLE;
+
 public final class AircraftController {
     private final static AircraftIcon DEFAULT_SVG = AircraftIcon.BALLOON;
-    private final static int MAX_ALTITUDE_METERS = 12000;
     private final static int ZOOM_FOR_VISIBLE_ETIQUETTE_LIMIT = 11;
     private final static int RECTANGLE_PADDING = 4;
     private final MapParameters mapParameters;
@@ -112,63 +117,78 @@ public final class AircraftController {
     private void removeAircraft(ObservableAircraftState observableAircraftState){
         Objects.requireNonNull(observableAircraftState);
         if (followedAircraft.get() == observableAircraftState) followedAircraft.set(null);
-        //TODO c'est mieux de changer avec un removeif qui fonctionnerait avec l'id (ICAO) du groupe au lieu du map ?? (dans ce cas suprimmr la map)
-        pane.getChildren().remove(icaoToGroup.get(observableAircraftState.address()));
+        pane.getChildren().removeIf(a -> a.getId().equals(observableAircraftState.address().string()));
         icaoToGroup.remove(observableAircraftState.address());
     }
 
     private Group trajectoryGroup(ObservableAircraftState observableAircraftState){
         Group groupTrajectory = new Group();
-        observableAircraftState.positionProperty().addListener((o, previousPos, newPos)->{
-            //TODO choisir entre prendre la dernière position ou trajectory, si equivalent -> prendre position, si trajectory a moins de ligne -> prenre trajectory
-        //observableAircraftState.getTrajectory().addListener((ListChangeListener<? super ObservableAircraftState.AirbornePos>) change -> {
-                    //int size = change.getList().size();
-                    //if (size < 2) return;
-                    //GeoPos previousPos =  change.getList().get(size-2).position();
-                    //GeoPos newPos =  change.getList().get(size-1).position();
-                    if (Objects.isNull(previousPos)){
+        observableAircraftState.getTrajectory().addListener(
+                (ListChangeListener<? super ObservableAircraftState.AirbornePos>) change -> {
+                    int size = change.getList().size();
+                    if (size < 2) return;
+                    ObservableAircraftState.AirbornePos previousPos =  change.getList().get(size-2);
+                    ObservableAircraftState.AirbornePos newPos =  change.getList().get(size-1);
+                    if (Objects.isNull(previousPos.position())){
                          return;
                     }
 
                     Line line = new Line();
-                    line.startXProperty().bind(Bindings.createDoubleBinding(() ->
-                                    ControllerUtils.LongitudeToGui(mapParameters.getZoom(),
-                                            mapParameters.getMinX(),
-                                            previousPos.longitude()
-                                    ),
-                            mapParameters.zoomProperty(),
-                            mapParameters.minYProperty()));
-                    line.startYProperty().bind(Bindings.createDoubleBinding(() ->
-                                    ControllerUtils.LatitudeToGui(mapParameters.getZoom(),
-                                            mapParameters.getMinY(),
-                                            previousPos.latitude()
-                                    ),
-                            mapParameters.zoomProperty(),
-                            mapParameters.minYProperty()));
-                    line.endXProperty().bind(Bindings.createDoubleBinding(() ->
-                                    ControllerUtils.LongitudeToGui(mapParameters.getZoom(),
-                                            mapParameters.getMinX(),
-                                            newPos.longitude()
-                                    ),
-                            mapParameters.zoomProperty(),
-                            mapParameters.minYProperty()));
-                    line.endYProperty().bind(Bindings.createDoubleBinding(() ->
-                                    ControllerUtils.LatitudeToGui(mapParameters.getZoom(),
-                                            mapParameters.getMinY(),
-                                            newPos.latitude()
-                                    ),
-                            mapParameters.zoomProperty(),
-                            mapParameters.minYProperty()));
-                    //TODO ajouter la couleur des lignes selon la position ici
-                    groupTrajectory.getChildren().add(line);
-                    line.visibleProperty().bind(Bindings.createBooleanBinding(()->
-                            Objects.nonNull(followedAircraft.get()) && followedAircraft.get() == observableAircraftState
-                    , followedAircraft));
+                    setupLineEndAndStart(line, previousPos.position(), newPos.position());
+                    setupLineColor(line, previousPos.altitude(), newPos.altitude());
 
+                    groupTrajectory.getChildren().add(line);
                 });
+
+        groupTrajectory.visibleProperty().bind(Bindings.createBooleanBinding(()->
+                        Objects.nonNull(followedAircraft.get()) && followedAircraft.get() == observableAircraftState
+                , followedAircraft));
+
         return groupTrajectory;
     }
-    
+
+    private void setupLineEndAndStart(Line line, GeoPos start,GeoPos end){
+
+        line.startXProperty().bind(Bindings.createDoubleBinding(() ->
+                        ControllerUtils.LongitudeToGui(mapParameters.getZoom(),
+                                mapParameters.getMinX(),
+                                start.longitude()
+                        ),
+                mapParameters.zoomProperty(),
+                mapParameters.minYProperty()));
+        line.startYProperty().bind(Bindings.createDoubleBinding(() ->
+                        ControllerUtils.LatitudeToGui(mapParameters.getZoom(),
+                                mapParameters.getMinY(),
+                                start.latitude()
+                        ),
+                mapParameters.zoomProperty(),
+                mapParameters.minYProperty()));
+        line.endXProperty().bind(Bindings.createDoubleBinding(() ->
+                        ControllerUtils.LongitudeToGui(mapParameters.getZoom(),
+                                mapParameters.getMinX(),
+                                end.longitude()
+                        ),
+                mapParameters.zoomProperty(),
+                mapParameters.minYProperty()));
+        line.endYProperty().bind(Bindings.createDoubleBinding(() ->
+                        ControllerUtils.LatitudeToGui(mapParameters.getZoom(),
+                                mapParameters.getMinY(),
+                                end.latitude()
+                        ),
+                mapParameters.zoomProperty(),
+                mapParameters.minYProperty()));
+    }
+
+    private void setupLineColor(Line line, double altitude1, double altitude2){
+        if (altitude1 == altitude2){
+            line.setStroke(ColorRamp.PLASMA.at(ControllerUtils.correctAltitudeForColorRamp(altitude1)));
+        }
+        else {
+            Stop s1 = new Stop(0, ColorRamp.PLASMA.at(ControllerUtils.correctAltitudeForColorRamp(altitude1)));
+            Stop s2 = new Stop(1, ColorRamp.PLASMA.at(ControllerUtils.correctAltitudeForColorRamp(altitude2)));
+            line.setStroke(new LinearGradient(0, 0, 1, 0, true, NO_CYCLE, s1, s2));
+        }
+    }
 
     private Group label(ObservableAircraftState observableAircraftState){
         Objects.requireNonNull(observableAircraftState);
@@ -186,7 +206,7 @@ public final class AircraftController {
         Text labelText = new Text();
         labelText.textProperty().bind(
                 Bindings.format("%s\n%f km/h\u2002%f m",
-                        findCorrectLabelTitle(observableAircraftState),
+                        ControllerUtils.findCorrectLabelTitle(observableAircraftState),
                         observableAircraftState.velocityProperty(),
                         observableAircraftState.altitudeProperty()));
         return labelText;
@@ -219,29 +239,14 @@ public final class AircraftController {
         iconPath.getStyleClass().add("aircraft");
 
         iconPath.setContent(getPathSVG(observableAircraftState));
-        observableAircraftState.trackOrHeadingProperty().addListener((o,ov,nv) -> {
-            iconPath.rotateProperty().set(
-                    Units.convertTo(nv.doubleValue(),Units.Angle.DEGREE));
-        });
+        iconPath.rotateProperty().bind(
+                observableAircraftState.trackOrHeadingProperty().map(
+                        t -> Units.convertTo(t.doubleValue(),Units.Angle.DEGREE)));
 
-        observableAircraftState.altitudeProperty().addListener((observable, oldValue, newValue) ->{
-            iconPath.fillProperty().set(
-                    ColorRamp.PLASMA.at(correctAltitudeForColorRamp(newValue.doubleValue())));
-        });
+        iconPath.fillProperty().bind(
+                observableAircraftState.altitudeProperty().map(
+                        a-> ColorRamp.PLASMA.at(ControllerUtils.correctAltitudeForColorRamp(a.doubleValue()))));
+
         return iconPath;
     }
-
-    private static double correctAltitudeForColorRamp(double altitude){
-        return Math.cbrt(altitude/MAX_ALTITUDE_METERS);
-    }
-
-    private static String findCorrectLabelTitle(ObservableAircraftState aircraft){
-        AircraftData data = aircraft.aircraftData();
-        if (data == null) return aircraft.address().string();
-
-        if (data.registration() != null) return data.registration().string();
-        if (data.typeDesignator() != null) return data.typeDesignator().string();
-        return aircraft.address().string();
-    }
-
 }

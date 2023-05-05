@@ -1,8 +1,12 @@
 package ch.epfl.javions.gui;
 
 import ch.epfl.javions.WebMercator;
+import ch.epfl.javions.aircraft.AircraftData;
 
 public final class ControllerUtils {
+
+    private final static int MAX_ALTITUDE_METERS = 12000;
+
     private ControllerUtils() {}
 
     /**
@@ -27,4 +31,26 @@ public final class ControllerUtils {
         return WebMercator.y(zoom, positionElement) - positionOrigin;
     }
 
+    /**
+     * Calculates the correct value to use for the color ramp
+     * @param altitude the unchanged altitude of the aircraft in meters
+     * @return the changed value
+     */
+    public static double correctAltitudeForColorRamp(double altitude){
+        return Math.cbrt(altitude/MAX_ALTITUDE_METERS);
+    }
+
+    /**
+     * finds which is available in the following order registration, type designation, Icao address
+     * @param aircraft the aircraft from which we are retrieving this information
+     * @return the first available
+     */
+    public static String findCorrectLabelTitle(ObservableAircraftState aircraft){
+        AircraftData data = aircraft.aircraftData();
+        if (data == null) return aircraft.address().string();
+
+        if (data.registration() != null) return data.registration().string();
+        if (data.typeDesignator() != null) return data.typeDesignator().string();
+        return aircraft.address().string();
+    }
 }

@@ -85,7 +85,6 @@ public final class AircraftStateManager {
         }
 
         modifiableKnownPositionAircrafts.removeAll(statesToRemove);
-
     }
 
 }
