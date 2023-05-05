@@ -127,6 +127,7 @@ public final class AircraftController {
                     }
 
                     Line line = new Line();
+                    line.getStyleClass().add("Line");
                     setupLineEndAndStart(line, previousPos.position(), newPos.position());
                     setupLineColor(line, previousPos.altitude(), newPos.altitude());
 
