@@ -31,6 +31,11 @@ public final class AircraftController {
     private final static int ZOOM_FOR_VISIBLE_ETIQUETTE_LIMIT = 11;
     private final static int RECTANGLE_PADDING = 4;
     private final static String TRAJECTORY_GROUP_ID = "trajectory";
+    private final static String CSS_STYLE_SHEET = "aircraft.css";
+    private final static String CSS_STYLE_AIRCRAFT = "aircraft";
+    private final static String CSS_STYLE_LABEL = "label";
+    private final static String CSS_STYLE_TRAJECTORY = "trajectory";
+    private final static String CSS_STYLE_LINE = "Line";
     private final MapParameters mapParameters;
     private final Pane pane;
 
@@ -47,7 +52,7 @@ public final class AircraftController {
 
         pane = new Pane();
         pane.setPickOnBounds(false);
-        pane.getStylesheets().add("aircraft.css");
+        pane.getStylesheets().add(CSS_STYLE_SHEET);
 
         aircraftStates.forEach(this::generateGroupForAircraft);
 
@@ -153,7 +158,7 @@ public final class AircraftController {
             setupLineColor(line, trajectory.get(i-1).altitude(), trajectory.get(i).altitude());
             groupTrajectory.getChildren().add(line);
         }
-        
+
         observableAircraftState.getTrajectory().addListener(
                 (ListChangeListener<? super ObservableAircraftState.AirbornePos>) change -> {
                     int size = change.getList().size();
@@ -230,7 +235,7 @@ public final class AircraftController {
         Rectangle labelBackground = labelBackground(labelText);
 
         Group labelGroup = new Group(labelBackground,labelText);
-        labelGroup.getStyleClass().add("label");
+        labelGroup.getStyleClass().add(CSS_STYLE_LABEL);
         labelGroup.visibleProperty().bind(
                 mapParameters.zoomProperty().greaterThan(ZOOM_FOR_VISIBLE_ETIQUETTE_LIMIT));
         return labelGroup;
@@ -241,7 +246,7 @@ public final class AircraftController {
         labelText.textProperty().bind(
                 Bindings.format("%s\n %d km/h\u2002%f m",
                         ControllerUtils.findCorrectLabelTitle(observableAircraftState),
-                        observableAircraftState.getVelocity() != 0 ? 
+                        observableAircraftState.getVelocity() != 0 ?
                                 (int)Math.rint(observableAircraftState.getVelocity()) : "?",
                         observableAircraftState.altitudeProperty()));
         return labelText;
@@ -271,7 +276,7 @@ public final class AircraftController {
 
     private SVGPath icon(ObservableAircraftState observableAircraftState){
         SVGPath iconPath = new SVGPath();
-        iconPath.getStyleClass().add("aircraft");
+        iconPath.getStyleClass().add(CSS_STYLE_AIRCRAFT);
 
         iconPath.setContent(getPathSVG(observableAircraftState));
         iconPath.rotateProperty().bind(

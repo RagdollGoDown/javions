@@ -99,9 +99,12 @@ public final class JavionApp extends Application {
                 nv.positionProperty().addListener(centerOnSap);
             });
 
-            AircraftController ac =
-                    new AircraftController(mp, asm.states(), sap);
-            var root = new StackPane(bmc.pane(), ac.pane());
+            AircraftController ac = new AircraftController(mp, asm.states(), sap);
+
+            AircraftTableController atc =new AircraftTableController(asm.states(), sap);
+
+            var root = new StackPane(bmc.pane(), ac.pane(),atc.pane());
+
             primaryStage.setScene(new Scene(root));
             primaryStage.show();
 
