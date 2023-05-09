@@ -116,34 +116,15 @@ public final class AircraftController {
     private void removeAircraft(ObservableAircraftState observableAircraftState){
         Objects.requireNonNull(observableAircraftState);
         if (followedAircraft.get() == observableAircraftState) followedAircraft.set(null);
-        pane.getChildren().removeIf(a -> a.getId().equals(observableAircraftState.address().string()));
+        //pane.getChildren().removeIf(a -> a.getId().equals(observableAircraftState.address().string()));
+        pane.getChildren().remove(icaoToGroup.get(observableAircraftState.address()));
         icaoToGroup.remove(observableAircraftState.address());
     }
 
     private Group trajectoryGroup(){
         Group groupTrajectory = new Group();
-        observableAircraftState.getTrajectory().addListener(
-                (ListChangeListener<? super ObservableAircraftState.AirbornePos>) change -> {
-                    int size = change.getList().size();
-                    if (size < 2) return;
-                    ObservableAircraftState.AirbornePos previousPos =  change.getList().get(size-2);
-                    ObservableAircraftState.AirbornePos newPos =  change.getList().get(size-1);
-                    if (Objects.isNull(previousPos.position())){
-                         return;
-                    }
-
-                    Line line = new Line();
-                    line.getStyleClass().add("Line");
-                    setupLineEndAndStart(line, previousPos.position(), newPos.position());
-                    setupLineColor(line, previousPos.altitude(), newPos.altitude());
-
-                    groupTrajectory.getChildren().add(line);
-                });
-
-        groupTrajectory.visibleProperty().bind(Bindings.createBooleanBinding(()->
-                        Objects.nonNull(followedAircraft.get()) && followedAircraft.get() == observableAircraftState
-                , followedAircraft));
-
+        //by default lines are not created for optimisation
+        groupTrajectory.setId(TRAJECTORY_GROUP_ID);
         return groupTrajectory;
     }
 
@@ -258,9 +239,10 @@ public final class AircraftController {
     private Text labelText(ObservableAircraftState observableAircraftState){
         Text labelText = new Text();
         labelText.textProperty().bind(
-                Bindings.format("%s\n%f km/h\u2002%f m",
+                Bindings.format("%s\n %d km/h\u2002%f m",
                         ControllerUtils.findCorrectLabelTitle(observableAircraftState),
-                        observableAircraftState.velocityProperty(),
+                        observableAircraftState.getVelocity() != 0 ? 
+                                (int)Math.rint(observableAircraftState.getVelocity()) : "?",
                         observableAircraftState.altitudeProperty()));
         return labelText;
     }
