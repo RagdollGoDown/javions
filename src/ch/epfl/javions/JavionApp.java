@@ -14,9 +14,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.*;
@@ -104,8 +102,11 @@ public final class JavionApp extends Application {
             AircraftTableController atc = new AircraftTableController(asm.states(), sap);
 
             var map = new StackPane(bmc.pane(), ac.pane());
-
-            primaryStage.setScene(new Scene(map));
+            var root = new GridPane();
+            GridPane.setRowIndex(map, 0);
+            GridPane.setRowIndex(atc.pane(), 1);
+            root.getChildren().addAll(map, atc.pane());
+            primaryStage.setScene(new Scene(root));
             primaryStage.show();
 
             var mi = readAllMessages("resources/messages_20230318_0915.bin")
