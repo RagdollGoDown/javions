@@ -42,6 +42,8 @@ public final class AircraftController {
     private final Map<IcaoAddress, Group> icaoToGroup;
 
     private final ObjectProperty<ObservableAircraftState> followedAircraft;
+    private ListChangeListener<? super ObservableAircraftState.AirbornePos> listenerFollowedAircraft  = null;
+
 
 
     public AircraftController(MapParameters mapParameters,
@@ -134,7 +136,7 @@ public final class AircraftController {
     }
 
     private void setupTrajectory(ObservableAircraftState observableAircraftState){
-
+        System.out.println("add: " + observableAircraftState.address());
         ObservableList<ObservableAircraftState.AirbornePos> trajectory = observableAircraftState.getTrajectory();
         /*
         Group groupTrajectoryTemp = null;
@@ -149,7 +151,8 @@ public final class AircraftController {
         System.out.println(groupTrajectoryTemp);*/
         Group groupTrajectory = (Group) icaoToGroup.get(observableAircraftState.address())
                 .getChildren().filtered((child)->TRAJECTORY_GROUP_ID.equals(child.getId())).get(0);
-        if (groupTrajectory.getChildren().size()<1) System.out.println(groupTrajectory.getChildren().size());
+
+        if (groupTrajectory.getChildren().size()!=0) return;
         for (int i = 2; i < trajectory.size(); i++) {
             if (Objects.isNull(trajectory.get(i-1).position()) || Objects.isNull(trajectory.get(i).position())) continue;
 
@@ -158,23 +161,23 @@ public final class AircraftController {
             setupLineColor(line, trajectory.get(i-1).altitude(), trajectory.get(i).altitude());
             groupTrajectory.getChildren().add(line);
         }
+        ListChangeListener<? super ObservableAircraftState.AirbornePos> listener = change -> {
+            int size = change.getList().size();
+            if (size < 2) return;
+            ObservableAircraftState.AirbornePos previousPos =  change.getList().get(size-2);
+            ObservableAircraftState.AirbornePos newPos =  change.getList().get(size-1);
+            if (Objects.isNull(previousPos.position())){
+                return;
+            }
 
-        observableAircraftState.getTrajectory().addListener(
-                (ListChangeListener<? super ObservableAircraftState.AirbornePos>) change -> {
-                    int size = change.getList().size();
-                    if (size < 2) return;
-                    ObservableAircraftState.AirbornePos previousPos =  change.getList().get(size-2);
-                    ObservableAircraftState.AirbornePos newPos =  change.getList().get(size-1);
-                    if (Objects.isNull(previousPos.position())){
-                        return;
-                    }
+            Line line = new Line();
+            setupLineEndAndStart(line, previousPos.position(), newPos.position());
+            setupLineColor(line, previousPos.altitude(), newPos.altitude());
 
-                    Line line = new Line();
-                    setupLineEndAndStart(line, previousPos.position(), newPos.position());
-                    setupLineColor(line, previousPos.altitude(), newPos.altitude());
-
-                    groupTrajectory.getChildren().add(line);
-                });
+            groupTrajectory.getChildren().add(line);
+        };
+        observableAircraftState.getTrajectory().addListener(listener);
+        this.listenerFollowedAircraft = listener;
         groupTrajectory.visibleProperty().bind(Bindings.createBooleanBinding(()->
                         Objects.nonNull(followedAircraft.get()) && followedAircraft.get() == observableAircraftState,
                 followedAircraft));
@@ -183,16 +186,20 @@ public final class AircraftController {
         ObservableList<ObservableAircraftState.AirbornePos> trajectory = observableAircraftState.getTrajectory();
         Group groupTrajectory = (Group) icaoToGroup.get(observableAircraftState.address())
                 .getChildren().filtered((child)->TRAJECTORY_GROUP_ID.equals(child.getId())).get(0);
+        groupTrajectory.getChildren().clear();
+        trajectory.removeListener(listenerFollowedAircraft);
+
 
     }
 
 
     private void setupLineEndAndStart(Line line, GeoPos start,GeoPos end){
-        line.startXProperty().bind(Bindings.createDoubleBinding(() ->
-                        ControllerUtils.LongitudeToGui(mapParameters.getZoom(),
+        line.startXProperty().bind(Bindings.createDoubleBinding(() ->{
+                   System.out.println(start);
+                        return ControllerUtils.LongitudeToGui(mapParameters.getZoom(),
                                 mapParameters.getMinX(),
                                 start.longitude()
-                        ),
+                        );},
                 mapParameters.zoomProperty(),
                 mapParameters.minYProperty()));
         line.startYProperty().bind(Bindings.createDoubleBinding(() ->

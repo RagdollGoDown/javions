@@ -101,11 +101,11 @@ public final class JavionApp extends Application {
 
             AircraftController ac = new AircraftController(mp, asm.states(), sap);
 
-            AircraftTableController atc =new AircraftTableController(asm.states(), sap);
+            AircraftTableController atc = new AircraftTableController(asm.states(), sap);
 
-            var root = new StackPane(bmc.pane(), ac.pane(),atc.pane());
+            var map = new StackPane(bmc.pane(), ac.pane());
 
-            primaryStage.setScene(new Scene(root));
+            primaryStage.setScene(new Scene(map));
             primaryStage.show();
 
             var mi = readAllMessages("resources/messages_20230318_0915.bin")
