@@ -242,12 +242,7 @@ public final class AircraftController {
     }
 
     private Text labelText(ObservableAircraftState observableAircraftState) {
-        observableAircraftState.velocityProperty().addListener((v,o,b) -> {
-            if (observableAircraftState.address().string().equals("4B2BE2")){
-                System.out.println((int) Math.rint(observableAircraftState.getVelocity()));
-            }
 
-        });
         Text labelText = new Text();
         labelText.textProperty().bind(
                 Bindings.format("%s\n %d km/h\u2002 %.2f m",
