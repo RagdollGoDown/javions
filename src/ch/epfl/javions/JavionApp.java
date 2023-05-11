@@ -12,8 +12,10 @@ import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.SplitPane;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
@@ -92,20 +94,20 @@ public final class JavionApp extends Application {
                 bmc.centerOn(nv);
             };
 
-            sap.addListener((o,ov,nv) -> {
-                if (ov != null) ov.positionProperty().removeListener(centerOnSap);
-                nv.positionProperty().addListener(centerOnSap);
-            });
-
             AircraftController ac = new AircraftController(mp, asm.states(), sap);
 
             AircraftTableController atc = new AircraftTableController(asm.states(), sap);
 
-            var map = new StackPane(bmc.pane(), ac.pane());
+            /*var map = new StackPane(bmc.pane(), ac.pane());
             var root = new GridPane();
             GridPane.setRowIndex(map, 0);
             GridPane.setRowIndex(atc.pane(), 1);
             root.getChildren().addAll(map, atc.pane());
+            primaryStage.setScene(new Scene(root));
+            primaryStage.show();*/
+            var map = new StackPane(bmc.pane(), ac.pane());
+            var root = new SplitPane(map, atc.pane());
+            root.setOrientation(Orientation.VERTICAL);
             primaryStage.setScene(new Scene(root));
             primaryStage.show();
 

@@ -3,16 +3,11 @@ package ch.epfl.javions.gui;
 import ch.epfl.javions.GeoPos;
 import ch.epfl.javions.Units;
 import ch.epfl.javions.aircraft.*;
-import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.*;
 import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Line;
@@ -27,7 +22,7 @@ import java.util.Objects;
 import static javafx.scene.paint.CycleMethod.NO_CYCLE;
 
 public final class AircraftController {
-    private final static AircraftIcon DEFAULT_SVG = AircraftIcon.BALLOON;
+    private final static AircraftIcon DEFAULT_ICON = AircraftIcon.AIRLINER;
     private final static int ZOOM_FOR_VISIBLE_ETIQUETTE_LIMIT = 11;
     private final static int RECTANGLE_PADDING = 4;
     private final static String TRAJECTORY_GROUP_ID = "trajectory";
@@ -136,7 +131,6 @@ public final class AircraftController {
     }
 
     private void setupTrajectory(ObservableAircraftState observableAircraftState){
-        System.out.println("add: " + observableAircraftState.address());
         ObservableList<ObservableAircraftState.AirbornePos> trajectory = observableAircraftState.getTrajectory();
         /*
         Group groupTrajectoryTemp = null;
@@ -195,7 +189,6 @@ public final class AircraftController {
 
     private void setupLineEndAndStart(Line line, GeoPos start,GeoPos end){
         line.startXProperty().bind(Bindings.createDoubleBinding(() ->{
-                   System.out.println(start);
                         return ControllerUtils.LongitudeToGui(mapParameters.getZoom(),
                                 mapParameters.getMinX(),
                                 start.longitude()
@@ -248,13 +241,20 @@ public final class AircraftController {
         return labelGroup;
     }
 
-    private Text labelText(ObservableAircraftState observableAircraftState){
+    private Text labelText(ObservableAircraftState observableAircraftState) {
+        observableAircraftState.velocityProperty().addListener((v,o,b) -> {
+            if (observableAircraftState.address().string().equals("4B2BE2")){
+                System.out.println((int) Math.rint(observableAircraftState.getVelocity()));
+            }
+
+        });
         Text labelText = new Text();
         labelText.textProperty().bind(
-                Bindings.format("%s\n %d km/h\u2002%f m",
+                Bindings.format("%s\n %d km/h\u2002 %.2f m",
                         ControllerUtils.findCorrectLabelTitle(observableAircraftState),
-                        observableAircraftState.getVelocity() != 0 ?
-                                (int)Math.rint(observableAircraftState.getVelocity()) : "?",
+                        observableAircraftState.velocityProperty().map(v -> {
+                            return v.doubleValue() != 0 ? (int) Math.rint(v.doubleValue()) : "?";
+                        }),
                         observableAircraftState.altitudeProperty()));
         return labelText;
     }
@@ -268,27 +268,23 @@ public final class AircraftController {
         return background;
     }
 
-    private String getPathSVG(ObservableAircraftState observableAircraftState){
-        if (Objects.isNull(observableAircraftState.aircraftData())) {
-            return DEFAULT_SVG.svgPath();
-        }
-
-        AircraftIcon aircraftIcon = AircraftIcon.iconFor(
-                observableAircraftState.aircraftData().typeDesignator(),
-                observableAircraftState.aircraftData().description(),
-                observableAircraftState.getCategory(),
-                observableAircraftState.aircraftData().wakeTurbulenceCategory());
-        return aircraftIcon.svgPath();
-    }
-
     private SVGPath icon(ObservableAircraftState observableAircraftState){
+        AircraftIcon aircraftIcon = Objects.isNull(observableAircraftState.aircraftData()) ?
+                DEFAULT_ICON :
+                AircraftIcon.iconFor(
+                        observableAircraftState.aircraftData().typeDesignator(),
+                        observableAircraftState.aircraftData().description(),
+                        observableAircraftState.getCategory(),
+                        observableAircraftState.aircraftData().wakeTurbulenceCategory());
+
         SVGPath iconPath = new SVGPath();
         iconPath.getStyleClass().add(CSS_STYLE_AIRCRAFT);
 
-        iconPath.setContent(getPathSVG(observableAircraftState));
-        iconPath.rotateProperty().bind(
+        iconPath.setContent(aircraftIcon.svgPath());
+        if (aircraftIcon.canRotate()){
+            iconPath.rotateProperty().bind(
                 observableAircraftState.trackOrHeadingProperty().map(
-                        t -> Units.convertTo(t.doubleValue(),Units.Angle.DEGREE)));
+                    t -> Units.convertTo(t.doubleValue(),Units.Angle.DEGREE)));}
 
         iconPath.fillProperty().bind(
                 observableAircraftState.altitudeProperty().map(
