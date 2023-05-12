@@ -7,6 +7,7 @@ import javafx.collections.SetChangeListener;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 
 import java.text.NumberFormat;
@@ -96,6 +97,13 @@ public final class AircraftTableController {
             tableView.scrollTo(nv);
         });
 
+        tableView.setOnMouseClicked((mouseEvent) -> {
+            if (mouseEvent.getClickCount() >= 2 && mouseEvent.getButton() == MouseButton.PRIMARY){
+                System.out.println("double click");
+                setOnDoubleClick((aircraftState) -> {followedAircraft.set(aircraftState);});
+            }
+        });
+
         aircraftStates.addListener((SetChangeListener<ObservableAircraftState>)
                 change -> {
             if (change.wasAdded()){
@@ -114,9 +122,8 @@ public final class AircraftTableController {
         return pane;
     }
 
-    //TODO finir classe
     public void setOnDoubleClick(Consumer<ObservableAircraftState> aircraftStateConsumer){
-        aircraftStateConsumer.accept(followedAircraft.get());
+        aircraftStateConsumer.accept(tableView.getSelectionModel().getSelectedItem());
     }
 
     private void setupTextColumns(){
