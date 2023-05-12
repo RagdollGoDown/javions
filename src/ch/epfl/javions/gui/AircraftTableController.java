@@ -197,13 +197,20 @@ public final class AircraftTableController {
      * Sets up the columns for the speed, altitude, latitude and longitude
      */
     private void setupNumericalColumns() {
-        TableColumn<ObservableAircraftState, String> longColumn =
-                createNumericalTableColumn(LONG_AND_LAT_FORMAT,LONG_AND_LAT_COMPARATOR,LONGITUDE_NAME);
+        TableColumn<ObservableAircraftState, String> longColumn = new TableColumn<>(LONGITUDE_NAME);
+        longColumn.getStyleClass().add(NUMERIC_STYLE_CLASS);
+        longColumn.setCellValueFactory(
+                f -> f.getValue().positionProperty().map(
+                        p -> LONG_AND_LAT_FORMAT.format(p.longitudeDEGREE())));
         longColumn.setComparator(LONG_AND_LAT_COMPARATOR);
         tableView.getColumns().add(longColumn);
 
-        TableColumn<ObservableAircraftState, String> latColumn =
-                createNumericalTableColumn(LONG_AND_LAT_FORMAT,LONG_AND_LAT_COMPARATOR,LATITUDE_NAME);
+        TableColumn<ObservableAircraftState, String> latColumn = new TableColumn<>(LATITUDE_NAME);
+        latColumn.getStyleClass().add(NUMERIC_STYLE_CLASS);
+        latColumn.setCellValueFactory(
+                f -> f.getValue().positionProperty().map(
+                        p -> LONG_AND_LAT_FORMAT.format(p.latitudeDEGREE())));
+        latColumn.setComparator(LONG_AND_LAT_COMPARATOR);
         tableView.getColumns().add(latColumn);
 
         TableColumn<ObservableAircraftState, String> altColumn =
@@ -216,11 +223,11 @@ public final class AircraftTableController {
     }
 
     /**
-     * creates a column for the number
-     * @param nf the number's formate
-     * @param comparator the comparator between the numbers
+     * creates a column for a generic number
+     * @param nf the format when parsing to string
+     * @param comparator the comparator to compare the numbers
      * @param columnName the name of the column
-     * @return the created column
+     * @return the column created
      */
     private TableColumn<ObservableAircraftState,String> createNumericalTableColumn
             (NumberFormat nf, Comparator<String> comparator, String columnName){
@@ -230,5 +237,6 @@ public final class AircraftTableController {
                 f -> f.getValue().velocityProperty().map(
                         v -> nf.format(v.doubleValue())));
         column.setComparator(comparator);
+        return column;
     }
 }
