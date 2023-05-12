@@ -4,6 +4,7 @@ import ch.epfl.javions.GeoPos;
 import ch.epfl.javions.Units;
 import ch.epfl.javions.aircraft.*;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.*;
 import javafx.scene.Group;
@@ -59,10 +60,11 @@ public final class AircraftController {
             if (change.wasAdded()) addAircraft(change.getElementAdded());
         });
 
-
         this.followedAircraft = followedAircraft;
         this.followedAircraft.addListener((observable, oldValue, newValue)->{
-            if (Objects.nonNull(oldValue)) removeTrajectory(oldValue);
+            if (Objects.nonNull(oldValue)) {
+                removeTrajectory(oldValue);
+            };
             if (Objects.nonNull(newValue)) setupTrajectory(newValue);
         });
     }
@@ -99,7 +101,7 @@ public final class AircraftController {
                 mapParameters.minYProperty()));
         // group trajectory
         Group trajectoryGroup =  trajectoryGroup();
-        trajectoryGroup.getStyleClass().add("trajectory");
+        trajectoryGroup.getStyleClass().add(CSS_STYLE_TRAJECTORY);
 
         Group mainGroup = new Group(trajectoryGroup, groupLabelIcon);
         mainGroup.setId(observableAircraftState.address().toString());
@@ -118,7 +120,6 @@ public final class AircraftController {
     private void removeAircraft(ObservableAircraftState observableAircraftState){
         Objects.requireNonNull(observableAircraftState);
         if (followedAircraft.get() == observableAircraftState) followedAircraft.set(null);
-        //pane.getChildren().removeIf(a -> a.getId().equals(observableAircraftState.address().string()));
         pane.getChildren().remove(icaoToGroup.get(observableAircraftState.address()));
         icaoToGroup.remove(observableAircraftState.address());
     }
@@ -151,6 +152,7 @@ public final class AircraftController {
             if (Objects.isNull(trajectory.get(i-1).position()) || Objects.isNull(trajectory.get(i).position())) continue;
 
             Line line = new Line();
+            line.getStyleClass().add(CSS_STYLE_LINE);
             setupLineEndAndStart(line, trajectory.get(i-1).position(), trajectory.get(i).position());
             setupLineColor(line, trajectory.get(i-1).altitude(), trajectory.get(i).altitude());
             groupTrajectory.getChildren().add(line);
@@ -182,8 +184,6 @@ public final class AircraftController {
                 .getChildren().filtered((child)->TRAJECTORY_GROUP_ID.equals(child.getId())).get(0);
         groupTrajectory.getChildren().clear();
         trajectory.removeListener(listenerFollowedAircraft);
-
-
     }
 
 
@@ -236,8 +236,12 @@ public final class AircraftController {
 
         Group labelGroup = new Group(labelBackground,labelText);
         labelGroup.getStyleClass().add(CSS_STYLE_LABEL);
-        labelGroup.visibleProperty().bind(
-                mapParameters.zoomProperty().greaterThan(ZOOM_FOR_VISIBLE_ETIQUETTE_LIMIT));
+        labelGroup.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+            mapParameters.zoomProperty().get() > ZOOM_FOR_VISIBLE_ETIQUETTE_LIMIT ||
+            observableAircraftState.equals(followedAircraft.get()),
+            mapParameters.zoomProperty(),
+            followedAircraft
+        ));
         return labelGroup;
     }
 
@@ -245,11 +249,10 @@ public final class AircraftController {
 
         Text labelText = new Text();
         labelText.textProperty().bind(
-                Bindings.format("%s\n %d km/h\u2002 %.2f m",
+                Bindings.format("%s\n %s km/h\u2002 %.2f m",
                         ControllerUtils.findCorrectLabelTitle(observableAircraftState),
-                        observableAircraftState.velocityProperty().map(v -> {
-                            return v.doubleValue() != 0 ? (int) Math.rint(v.doubleValue()) : "?";
-                        }),
+                        observableAircraftState.velocityProperty().map(v ->
+                            v.doubleValue() != 0 && !Double.isNaN(v.doubleValue()) ? (int) Math.rint(v.doubleValue()): "?"),
                         observableAircraftState.altitudeProperty()));
         return labelText;
     }

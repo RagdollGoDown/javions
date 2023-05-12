@@ -4,12 +4,13 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
-import javafx.scene.control.Alert;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 
+import java.text.Format;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Comparator;
@@ -97,13 +98,6 @@ public final class AircraftTableController {
             tableView.scrollTo(nv);
         });
 
-        tableView.setOnMouseClicked((mouseEvent) -> {
-            if (mouseEvent.getClickCount() >= 2 && mouseEvent.getButton() == MouseButton.PRIMARY){
-                System.out.println("double click");
-                setOnDoubleClick((aircraftState) -> {followedAircraft.set(aircraftState);});
-            }
-        });
-
         aircraftStates.addListener((SetChangeListener<ObservableAircraftState>)
                 change -> {
             if (change.wasAdded()){
@@ -122,22 +116,22 @@ public final class AircraftTableController {
         return pane;
     }
 
+    /**
+     * when double-clicking on an aircraft's row, the aircraft becomes the followed aircraft
+     * @param aircraftStateConsumer gives us the function to apply to the selected aircraft
+     */
     public void setOnDoubleClick(Consumer<ObservableAircraftState> aircraftStateConsumer){
         aircraftStateConsumer.accept(tableView.getSelectionModel().getSelectedItem());
     }
 
+    /**
+     * Sets up the columns for the icao address, the callsign, the registration,
+     * the type registration, the model and the description
+     */
     private void setupTextColumns(){
         TableColumn<ObservableAircraftState, String> icaoColumn = new TableColumn<>(ICAO_COLUMN_NAME);
         icaoColumn.setPrefWidth(ICAO_PREFWIDTH);
-        icaoColumn.setCellValueFactory(f ->
-        {
-            if (f.getValue().aircraftData() != null && f.getValue().aircraftData().model() != null){
-                return new ReadOnlyObjectWrapper<>(f.getValue().address().string());
-            }
-            else {
-                return new ReadOnlyObjectWrapper<>(ON_UNKNOWN_TEXT);
-            }
-        });
+        icaoColumn.setCellValueFactory(f -> new ReadOnlyObjectWrapper<>(f.getValue().address().string()));
         tableView.getColumns().add(icaoColumn);
 
         TableColumn<ObservableAircraftState, String> callsignColumn = new TableColumn<>(CALLSIGN_COLUMN_NAME);
@@ -150,7 +144,7 @@ public final class AircraftTableController {
         registrationColumn.setPrefWidth(REGISTRATION_PREFWIDTH);
         registrationColumn.setCellValueFactory(f ->
         {
-            if (f.getValue().aircraftData() != null && f.getValue().aircraftData().model() != null){
+            if (f.getValue().aircraftData() != null && f.getValue().aircraftData().registration() != null){
                 return new ReadOnlyObjectWrapper<>(f.getValue().aircraftData().registration().string());
             }
             else {
@@ -163,7 +157,7 @@ public final class AircraftTableController {
         typeColumn.setPrefWidth(TYPE_DESIGNATOR_PREFWIDTH);
         typeColumn.setCellValueFactory(f ->
         {
-            if (f.getValue().aircraftData() != null && f.getValue().aircraftData().model() != null){
+            if (f.getValue().aircraftData() != null && f.getValue().aircraftData().typeDesignator() != null){
                 return new ReadOnlyObjectWrapper<>(f.getValue().aircraftData().typeDesignator().string());
             }
             else {
@@ -199,37 +193,42 @@ public final class AircraftTableController {
         tableView.getColumns().add(descriptionColumn);
     }
 
+    /**
+     * Sets up the columns for the speed, altitude, latitude and longitude
+     */
     private void setupNumericalColumns() {
-        TableColumn<ObservableAircraftState, String> longColumn = new TableColumn<>(LONGITUDE_NAME);
-        longColumn.getStyleClass().add(NUMERIC_STYLE_CLASS);
-        longColumn.setCellValueFactory(
-                f -> f.getValue().positionProperty().map(
-                        p -> LONG_AND_LAT_FORMAT.format(p.longitudeDEGREE())));
+        TableColumn<ObservableAircraftState, String> longColumn =
+                createNumericalTableColumn(LONG_AND_LAT_FORMAT,LONG_AND_LAT_COMPARATOR,LONGITUDE_NAME);
         longColumn.setComparator(LONG_AND_LAT_COMPARATOR);
         tableView.getColumns().add(longColumn);
 
-        TableColumn<ObservableAircraftState, String> latColumn = new TableColumn<>(LATITUDE_NAME);
-        latColumn.getStyleClass().add(NUMERIC_STYLE_CLASS);
-        latColumn.setCellValueFactory(
-                f -> f.getValue().positionProperty().map(
-                        p -> LONG_AND_LAT_FORMAT.format(p.latitudeDEGREE())));
-        latColumn.setComparator(LONG_AND_LAT_COMPARATOR);
+        TableColumn<ObservableAircraftState, String> latColumn =
+                createNumericalTableColumn(LONG_AND_LAT_FORMAT,LONG_AND_LAT_COMPARATOR,LATITUDE_NAME);
         tableView.getColumns().add(latColumn);
 
-        TableColumn<ObservableAircraftState, String> altColumn = new TableColumn<>(ALTITUDE_NAME);
-        altColumn.getStyleClass().add(NUMERIC_STYLE_CLASS);
-        altColumn.setCellValueFactory(
-                f -> f.getValue().altitudeProperty().map(
-                        a -> ALT_AND_SPE_FORMAT.format(a.doubleValue())));
-        altColumn.setComparator(ALT_AND_SPE_COMPARATOR);
+        TableColumn<ObservableAircraftState, String> altColumn =
+                createNumericalTableColumn(ALT_AND_SPE_FORMAT,ALT_AND_SPE_COMPARATOR,ALTITUDE_NAME);
         tableView.getColumns().add(altColumn);
 
-        TableColumn<ObservableAircraftState, String> speedColumn = new TableColumn<>(SPEED_NAME);
-        speedColumn.getStyleClass().add(NUMERIC_STYLE_CLASS);
-        speedColumn.setCellValueFactory(
-                f -> f.getValue().velocityProperty().map(
-                        v -> ALT_AND_SPE_FORMAT.format(v.doubleValue())));
-        speedColumn.setComparator(ALT_AND_SPE_COMPARATOR);
+        TableColumn<ObservableAircraftState, String> speedColumn =
+                createNumericalTableColumn(ALT_AND_SPE_FORMAT,ALT_AND_SPE_COMPARATOR,SPEED_NAME);
         tableView.getColumns().add(speedColumn);
+    }
+
+    /**
+     * creates a column for the number
+     * @param nf the number's formate
+     * @param comparator the comparator between the numbers
+     * @param columnName the name of the column
+     * @return the created column
+     */
+    private TableColumn<ObservableAircraftState,String> createNumericalTableColumn
+            (NumberFormat nf, Comparator<String> comparator, String columnName){
+        TableColumn<ObservableAircraftState, String> column = new TableColumn<>(columnName);
+        column.getStyleClass().add(NUMERIC_STYLE_CLASS);
+        column.setCellValueFactory(
+                f -> f.getValue().velocityProperty().map(
+                        v -> nf.format(v.doubleValue())));
+        column.setComparator(comparator);
     }
 }

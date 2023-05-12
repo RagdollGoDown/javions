@@ -16,6 +16,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
@@ -97,6 +98,13 @@ public final class JavionApp extends Application {
             AircraftController ac = new AircraftController(mp, asm.states(), sap);
 
             AircraftTableController atc = new AircraftTableController(asm.states(), sap);
+
+            atc.pane().getChildren().get(0).setOnMouseClicked((mouseEvent) -> {
+                if (mouseEvent.getClickCount() >= 2 && mouseEvent.getButton() == MouseButton.PRIMARY){
+                    atc.setOnDoubleClick(sap::set);
+                    bmc.centerOn(sap.get().getPosition());
+                }
+            });
 
             /*var map = new StackPane(bmc.pane(), ac.pane());
             var root = new GridPane();
