@@ -4,7 +4,7 @@ import ch.epfl.javions.GeoPos;
 import ch.epfl.javions.Units;
 import ch.epfl.javions.aircraft.*;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.*;
 import javafx.scene.Group;
@@ -41,7 +41,12 @@ public final class AircraftController {
     private ListChangeListener<? super ObservableAircraftState.AirbornePos> listenerFollowedAircraft  = null;
 
 
-
+    /**
+     * Display aircraft on the map
+     * @param mapParameters the mapParameter instance
+     * @param aircraftStates (ObservableSet) set of known position aircraft
+     * @param followedAircraft the aircraft that is currently followed
+     */
     public AircraftController(MapParameters mapParameters,
                               ObservableSet<ObservableAircraftState> aircraftStates,
                               ObjectProperty<ObservableAircraftState> followedAircraft){
@@ -62,9 +67,7 @@ public final class AircraftController {
 
         this.followedAircraft = followedAircraft;
         this.followedAircraft.addListener((observable, oldValue, newValue)->{
-            if (Objects.nonNull(oldValue)) {
-                removeTrajectory(oldValue);
-            };
+            if (Objects.nonNull(oldValue)) removeTrajectory(oldValue);
             if (Objects.nonNull(newValue)) setupTrajectory(newValue);
         });
     }
@@ -78,6 +81,11 @@ public final class AircraftController {
         return pane;
     }
 
+    /**
+     * Generate the group of the icons, tag and trajectory corresponding to an aircraft
+     * @param observableAircraftState the aicraft from which the group will be crated
+     * @return a group containing the icon, the tag and the trajectory
+     */
     private Group generateGroupForAircraft(ObservableAircraftState observableAircraftState ){
         //creation group with icon and label
         Group groupLabelIcon = new Group(label(observableAircraftState), icon(observableAircraftState));
@@ -110,6 +118,11 @@ public final class AircraftController {
 
         return mainGroup;
     }
+
+    /**
+     * Add an aircraft on the screen
+     * @param observableAircraftState the aircraft to add
+     */
     private void addAircraft(ObservableAircraftState observableAircraftState){
         Objects.requireNonNull(observableAircraftState);
         Group group = generateGroupForAircraft(observableAircraftState);
@@ -117,6 +130,11 @@ public final class AircraftController {
 
         icaoToGroup.put(observableAircraftState.address(), group);
     }
+
+    /**
+     * Remove the aircraft from screen
+     * @param observableAircraftState the aircraft to remove
+     */
     private void removeAircraft(ObservableAircraftState observableAircraftState){
         Objects.requireNonNull(observableAircraftState);
         if (followedAircraft.get() == observableAircraftState) followedAircraft.set(null);
@@ -124,30 +142,33 @@ public final class AircraftController {
         icaoToGroup.remove(observableAircraftState.address());
     }
 
+    /**
+     * Create an empty group for trajectory
+     * @return the group for trajectory
+     */
     private Group trajectoryGroup(){
         Group groupTrajectory = new Group();
-        //by default lines are not created for optimisation
+        //by default lines are not created for optimization
         groupTrajectory.setId(TRAJECTORY_GROUP_ID);
         return groupTrajectory;
     }
 
+    /**
+     * Set up the trajectory of an aircraft
+     * @param observableAircraftState the aircraft which needs his trajector up
+     */
     private void setupTrajectory(ObservableAircraftState observableAircraftState){
         ObservableList<ObservableAircraftState.AirbornePos> trajectory = observableAircraftState.getTrajectory();
-        /*
-        Group groupTrajectoryTemp = null;
-        for (Node node:
-                icaoToGroup.get(observableAircraftState.address())
-                        .getChildren()) {
-            System.out.println(node);
-            System.out.println(node.getId().equals(TRAJECTORY_GROUP_ID));
-            if (node.getId().equals(TRAJECTORY_GROUP_ID)) groupTrajectoryTemp = (Group) node;
-        }
-        if (Objects.isNull(groupTrajectoryTemp) || groupTrajectoryTemp.getChildren().size()<1) return;
-        System.out.println(groupTrajectoryTemp);*/
+
+        // get group trajectory
         Group groupTrajectory = (Group) icaoToGroup.get(observableAircraftState.address())
                 .getChildren().filtered((child)->TRAJECTORY_GROUP_ID.equals(child.getId())).get(0);
 
-        if (groupTrajectory.getChildren().size()!=0) return;
+        //if it already has line, nothing needed (should never appear)
+        //TODO remove this
+        if (groupTrajectory.getChildren().size()!=0) System.out.println("La trajectoire a déjà des enfants, ne devrait jamais arriver!!!");
+
+        //creat the previous lines
         for (int i = 2; i < trajectory.size(); i++) {
             if (Objects.isNull(trajectory.get(i-1).position()) || Objects.isNull(trajectory.get(i).position())) continue;
 
@@ -157,6 +178,8 @@ public final class AircraftController {
             setupLineColor(line, trajectory.get(i-1).altitude(), trajectory.get(i).altitude());
             groupTrajectory.getChildren().add(line);
         }
+
+        //setup listener for new lines
         ListChangeListener<? super ObservableAircraftState.AirbornePos> listener = change -> {
             int size = change.getList().size();
             if (size < 2) return;
@@ -174,50 +197,66 @@ public final class AircraftController {
         };
         observableAircraftState.getTrajectory().addListener(listener);
         this.listenerFollowedAircraft = listener;
+
+        // trajectory are invisible if not the one of the followed aircraft
         groupTrajectory.visibleProperty().bind(Bindings.createBooleanBinding(()->
                         Objects.nonNull(followedAircraft.get()) && followedAircraft.get() == observableAircraftState,
                 followedAircraft));
     }
+
+    /**
+     * Remove the trajectory of an aircraft
+     * @param observableAircraftState the aircraft from which the trajectory has to be removed
+     */
     private void removeTrajectory(ObservableAircraftState observableAircraftState){
         ObservableList<ObservableAircraftState.AirbornePos> trajectory = observableAircraftState.getTrajectory();
         Group groupTrajectory = (Group) icaoToGroup.get(observableAircraftState.address())
                 .getChildren().filtered((child)->TRAJECTORY_GROUP_ID.equals(child.getId())).get(0);
+        //remove lines
         groupTrajectory.getChildren().clear();
+        //remove listener
         trajectory.removeListener(listenerFollowedAircraft);
     }
 
 
-    private void setupLineEndAndStart(Line line, GeoPos start,GeoPos end){
-        line.startXProperty().bind(Bindings.createDoubleBinding(() ->{
-                        return ControllerUtils.LongitudeToGui(mapParameters.getZoom(),
-                                mapParameters.getMinX(),
-                                start.longitude()
-                        );},
-                mapParameters.zoomProperty(),
-                mapParameters.minYProperty()));
-        line.startYProperty().bind(Bindings.createDoubleBinding(() ->
-                        ControllerUtils.LatitudeToGui(mapParameters.getZoom(),
-                                mapParameters.getMinY(),
-                                start.latitude()
-                        ),
-                mapParameters.zoomProperty(),
-                mapParameters.minYProperty()));
-        line.endXProperty().bind(Bindings.createDoubleBinding(() ->
+    private DoubleBinding bindingLongitude(double longitude){
+        return Bindings.createDoubleBinding(() ->
                         ControllerUtils.LongitudeToGui(mapParameters.getZoom(),
                                 mapParameters.getMinX(),
-                                end.longitude()
+                                longitude
                         ),
                 mapParameters.zoomProperty(),
-                mapParameters.minYProperty()));
-        line.endYProperty().bind(Bindings.createDoubleBinding(() ->
+                mapParameters.minYProperty());
+    }
+    private DoubleBinding bindingLatitude(double latitude){
+        return Bindings.createDoubleBinding(() ->
                         ControllerUtils.LatitudeToGui(mapParameters.getZoom(),
-                                mapParameters.getMinY(),
-                                end.latitude()
+                                mapParameters.getMinX(),
+                                latitude
                         ),
                 mapParameters.zoomProperty(),
-                mapParameters.minYProperty()));
+                mapParameters.minYProperty());
     }
 
+    /**
+     * Set up a line to stay at the correct coordinates relatively to the map
+     * @param line the line that has to be set up
+     * @param start the start position of the line
+     * @param end the end position of the line
+     */
+    private void setupLineEndAndStart(Line line, GeoPos start,GeoPos end){
+        line.startXProperty().bind(bindingLongitude(start.longitude()));
+        line.startYProperty().bind(bindingLatitude(start.latitude()));
+        line.endXProperty().bind(bindingLongitude(end.longitude()));
+        line.endYProperty().bind(bindingLatitude(end.latitude()));
+    }
+
+    /**
+     * Set up the color of a line depending on the altitude
+     * @param line the line to set up
+     * @param altitude1 the altitude of the start of the line
+     * @param altitude2 the altitude of the end of the line
+     */
     private void setupLineColor(Line line, double altitude1, double altitude2){
         if (altitude1 == altitude2){
             line.setStroke(ColorRamp.PLASMA.at(ControllerUtils.correctAltitudeForColorRamp(altitude1)));
@@ -229,6 +268,11 @@ public final class AircraftController {
         }
     }
 
+    /**
+     * Create the group for the label
+     * @param observableAircraftState the aircraft which need the label
+     * @return the group of the label
+     */
     private Group label(ObservableAircraftState observableAircraftState){
         Objects.requireNonNull(observableAircraftState);
         Text labelText = labelText(observableAircraftState);
@@ -245,6 +289,11 @@ public final class AircraftController {
         return labelGroup;
     }
 
+    /**
+     * Create the text of the label
+     * @param observableAircraftState the aircraft with the information for the text
+     * @return (Text) the text of the information of aircraft
+     */
     private Text labelText(ObservableAircraftState observableAircraftState) {
 
         Text labelText = new Text();
@@ -257,6 +306,11 @@ public final class AircraftController {
         return labelText;
     }
 
+    /**
+     * Generate background for the tag
+     * @param labelText the text of the tag
+     * @return (Rectangle) the background of the text
+     */
     private Rectangle labelBackground(Text labelText){
         Rectangle background = new Rectangle();
         background.widthProperty().bind(
@@ -266,6 +320,11 @@ public final class AircraftController {
         return background;
     }
 
+    /**
+     * Get the icon of an aircraft
+     * @param observableAircraftState the aircraft of the needed icon
+     * @return (SVGPath) the icon of the aircraft
+     */
     private SVGPath icon(ObservableAircraftState observableAircraftState){
         AircraftIcon aircraftIcon = Objects.isNull(observableAircraftState.aircraftData()) ?
                 DEFAULT_ICON :
@@ -288,10 +347,7 @@ public final class AircraftController {
                 observableAircraftState.altitudeProperty().map(
                         a-> ColorRamp.PLASMA.at(ControllerUtils.correctAltitudeForColorRamp(a.doubleValue()))));
 
-        iconPath.setOnMousePressed(e -> {
-            followedAircraft.set(observableAircraftState);
-        });
-
+        iconPath.setOnMousePressed(e -> followedAircraft.set(observableAircraftState));
         return iconPath;
     }
 }
