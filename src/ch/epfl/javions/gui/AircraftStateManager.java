@@ -20,7 +20,7 @@ import java.util.*;
 public final class AircraftStateManager {
     private final static long MINUTE_IN_NS = 60000000000L;
     private final AircraftDatabase aircraftDatabase;
-    private Map<IcaoAddress, AircraftStateAccumulator<ObservableAircraftState>> mapStringIcaoToAircraft;
+    private final Map<IcaoAddress, AircraftStateAccumulator<ObservableAircraftState>> mapStringIcaoToAircraft;
     private final ObservableSet<ObservableAircraftState> modifiableKnownPositionAircrafts;
     private final ObservableSet<ObservableAircraftState> unmodifiableKnownPositionAircrafts;
     private long lastMessageNs;

@@ -13,14 +13,6 @@ import static java.lang.System.nanoTime;
 import static java.lang.Thread.sleep;
 
 public class TerminalInterface {
-    private static final int SIZE_ICAO = 6;
-    private static final int SIZE_INDICATIF = 8;
-    private static final int SIZE_IMMAT = 6;
-    private static final int SIZE_MODEL = 20;
-    private static final int SIZE_LONG = 8;
-    private static final int SIZE_LAT = 8;
-    private static final int SIZE_ALT = 5;
-    private static final int SIZE_SPEED = 4;
     private final static String HEADER = "OACI    Indicatif Immat.  Modèle             Longitude   Latitude   Alt.  Vit.\n" +
             "――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――";
     private static String pathMessageFile;
