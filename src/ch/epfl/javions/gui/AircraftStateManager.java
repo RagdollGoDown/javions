@@ -20,14 +20,14 @@ import java.util.*;
 public final class AircraftStateManager {
     private final static long MINUTE_IN_NS = 60000000000L;
     private final AircraftDatabase aircraftDatabase;
-    private final Map<IcaoAddress, AircraftStateAccumulator<ObservableAircraftState>> mapStringIcaoToAircraft;
+    private final Map<IcaoAddress, AircraftStateAccumulator<ObservableAircraftState>> icaoToAircraft;
     private final ObservableSet<ObservableAircraftState> modifiableKnownPositionAircrafts;
     private final ObservableSet<ObservableAircraftState> unmodifiableKnownPositionAircrafts;
     private long lastMessageNs;
 
     public AircraftStateManager(String pathAircraftDatabase){
         aircraftDatabase = new AircraftDatabase(pathAircraftDatabase);
-        mapStringIcaoToAircraft = new HashMap<>();
+        icaoToAircraft = new HashMap<>();
         modifiableKnownPositionAircrafts = FXCollections.observableSet();
         unmodifiableKnownPositionAircrafts = FXCollections.unmodifiableObservableSet(modifiableKnownPositionAircrafts);
         lastMessageNs = 0;
@@ -49,7 +49,7 @@ public final class AircraftStateManager {
         if (message == null) return;
 
         IcaoAddress icaoAddress = message.icaoAddress();
-        if (!mapStringIcaoToAircraft.containsKey(icaoAddress)){
+        if (!icaoToAircraft.containsKey(icaoAddress)){
             AircraftStateAccumulator<ObservableAircraftState> aircraftStateAccumulator;
             try{
                 AircraftData aircraftData = aircraftDatabase.get(icaoAddress);
@@ -60,15 +60,15 @@ public final class AircraftStateManager {
                 aircraftStateAccumulator = new AircraftStateAccumulator<>(
                         new ObservableAircraftState(message.icaoAddress(), null));
             }
-            mapStringIcaoToAircraft.put(icaoAddress, aircraftStateAccumulator);
+            icaoToAircraft.put(icaoAddress, aircraftStateAccumulator);
         }
-        mapStringIcaoToAircraft.get(icaoAddress).update(message);
+        icaoToAircraft.get(icaoAddress).update(message);
 
         // check if not null add it in the set of knownPositionAircraft
-        if (mapStringIcaoToAircraft.get(icaoAddress).stateSetter().getPosition() != null) {
-            modifiableKnownPositionAircrafts.add(mapStringIcaoToAircraft.get(icaoAddress).stateSetter());
-            if (lastMessageNs < mapStringIcaoToAircraft.get(icaoAddress).stateSetter().getLastMessageTimeStampNs())
-                lastMessageNs = mapStringIcaoToAircraft.get(icaoAddress).stateSetter().getLastMessageTimeStampNs();
+        if (icaoToAircraft.get(icaoAddress).stateSetter().getPosition() != null) {
+            modifiableKnownPositionAircrafts.add(icaoToAircraft.get(icaoAddress).stateSetter());
+            if (lastMessageNs < icaoToAircraft.get(icaoAddress).stateSetter().getLastMessageTimeStampNs())
+                lastMessageNs = icaoToAircraft.get(icaoAddress).stateSetter().getLastMessageTimeStampNs();
         }
     }
 
@@ -83,8 +83,12 @@ public final class AircraftStateManager {
                 statesToRemove.add(stateSetterAircraft);
             }
         }
-
         modifiableKnownPositionAircrafts.removeAll(statesToRemove);
+        //remove from map
+        for (ObservableAircraftState state:
+             statesToRemove) {
+            icaoToAircraft.remove(state.address());
+        }
     }
 
 }

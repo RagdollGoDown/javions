@@ -198,7 +198,7 @@ public final class AircraftController {
         observableAircraftState.getTrajectory().addListener(listener);
         this.listenerFollowedAircraft = listener;
 
-        // trajectory are invisible if not the one of the followed aircraft
+        //trajectory are invisible if not the one of the followed aircraft
         groupTrajectory.visibleProperty().bind(Bindings.createBooleanBinding(()->
                         Objects.nonNull(followedAircraft.get()) && followedAircraft.get() == observableAircraftState,
                 followedAircraft));
@@ -226,12 +226,12 @@ public final class AircraftController {
                                 longitude
                         ),
                 mapParameters.zoomProperty(),
-                mapParameters.minYProperty());
+                mapParameters.minXProperty());
     }
     private DoubleBinding bindingLatitude(double latitude){
         return Bindings.createDoubleBinding(() ->
                         ControllerUtils.LatitudeToGui(mapParameters.getZoom(),
-                                mapParameters.getMinX(),
+                                mapParameters.getMinY(),
                                 latitude
                         ),
                 mapParameters.zoomProperty(),
