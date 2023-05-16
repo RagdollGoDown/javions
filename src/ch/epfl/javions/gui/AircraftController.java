@@ -301,7 +301,8 @@ public final class AircraftController {
                 Bindings.format("%s\n %s km/h\u2002 %.2f m",
                         ControllerUtils.findCorrectLabelTitle(observableAircraftState),
                         observableAircraftState.velocityProperty().map(v ->
-                            v.doubleValue() != 0 && !Double.isNaN(v.doubleValue()) ? (int) Math.rint(v.doubleValue()): "?"),
+                            v.doubleValue() != 0 && !Double.isNaN(v.doubleValue()) ?
+                                    (int) Math.rint(Units.convertTo(v.doubleValue(), Units.Speed.KILOMETER_PER_HOUR)): "?"),
                         observableAircraftState.altitudeProperty()));
         return labelText;
     }

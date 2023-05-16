@@ -59,7 +59,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
     }
 
     private void updateTrajectory(){
-        if (lastTrajectoryUpdateTimeStamp == lastMessageTimeStampNs.get()){
+        /*if (lastTrajectoryUpdateTimeStamp == lastMessageTimeStampNs.get()){
             modifiableTrajectory.set(modifiableTrajectory.size() - 1, new AirbornePos(position.get(),altitude.get()));
         }
         else if(modifiableTrajectory.size() == 0
@@ -69,7 +69,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
                 && modifiableTrajectory.get(modifiableTrajectory.size() - 1).position.equals(position.get()))) {
             modifiableTrajectory.add(new AirbornePos(position.get(),altitude.get()));
             lastTrajectoryUpdateTimeStamp = lastMessageTimeStampNs.get();
-        }
+        }*/
     }
 
     /**
@@ -178,7 +178,11 @@ public final class ObservableAircraftState implements AircraftStateSetter {
     @Override
     public void setPosition(GeoPos position) {
         this.position.set(position);
-        updateTrajectory();
+
+        if (getAltitude() != 0) {
+            modifiableTrajectory.add(new AirbornePos(getPosition(), getAltitude()));
+            lastTrajectoryUpdateTimeStamp = getLastMessageTimeStampNs();
+        }
     }
 
     /**
@@ -211,7 +215,16 @@ public final class ObservableAircraftState implements AircraftStateSetter {
     @Override
     public void setAltitude(double altitude) {
         this.altitude.set(altitude);
-        updateTrajectory();
+
+        if (getPosition() != null){
+            if (modifiableTrajectory.size() == 0){
+                modifiableTrajectory.add(new AirbornePos(getPosition(),getAltitude()));
+                lastTrajectoryUpdateTimeStamp = getLastMessageTimeStampNs();
+            }
+            else if (lastTrajectoryUpdateTimeStamp == getLastMessageTimeStampNs()){
+                modifiableTrajectory.set(modifiableTrajectory.size() -1, new AirbornePos(getPosition(),getAltitude()));
+            }
+        }
     }
 
     /**

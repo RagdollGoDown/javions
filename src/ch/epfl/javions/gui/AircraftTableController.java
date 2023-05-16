@@ -1,5 +1,6 @@
 package ch.epfl.javions.gui;
 
+import ch.epfl.javions.Units;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ObservableSet;
@@ -88,8 +89,10 @@ public final class AircraftTableController {
 
 
         followedAircraft.addListener((o,ov,nv) -> {
-            tableView.getSelectionModel().select(nv);
-            tableView.scrollTo(nv);
+            if (tableView.getSelectionModel().getSelectedItem() != nv){
+                tableView.getSelectionModel().select(nv);
+                tableView.scrollTo(nv);
+            }
         });
 
         aircraftStates.addListener((SetChangeListener<ObservableAircraftState>)
@@ -207,29 +210,21 @@ public final class AircraftTableController {
         latColumn.setComparator(LONG_AND_LAT_COMPARATOR);
         tableView.getColumns().add(latColumn);
 
-        TableColumn<ObservableAircraftState, String> altColumn =
-                createNumericalTableColumn(ALTITUDE_NAME);
+        TableColumn<ObservableAircraftState, String> altColumn = new TableColumn<>(ALTITUDE_NAME);
+        altColumn.getStyleClass().add(NUMERIC_STYLE_CLASS);
+        altColumn.setCellValueFactory(
+                f -> f.getValue().altitudeProperty().map(
+                        a -> AircraftTableController.ALT_AND_SPE_FORMAT.format(a.doubleValue())));
+        altColumn.setComparator(AircraftTableController.ALT_AND_SPE_COMPARATOR);
         tableView.getColumns().add(altColumn);
 
-        TableColumn<ObservableAircraftState, String> speedColumn =
-                createNumericalTableColumn(SPEED_NAME);
-        tableView.getColumns().add(speedColumn);
-    }
-
-    /**
-     * creates a column for a generic number
-     *
-     * @param columnName the name of the column
-     * @return the column created
-     */
-    private TableColumn<ObservableAircraftState,String> createNumericalTableColumn
-            (String columnName){
-        TableColumn<ObservableAircraftState, String> column = new TableColumn<>(columnName);
-        column.getStyleClass().add(NUMERIC_STYLE_CLASS);
-        column.setCellValueFactory(
+        TableColumn<ObservableAircraftState, String> speedColumn = new TableColumn<>(SPEED_NAME);
+        speedColumn.getStyleClass().add(NUMERIC_STYLE_CLASS);
+        speedColumn.setCellValueFactory(
                 f -> f.getValue().velocityProperty().map(
-                        v -> AircraftTableController.ALT_AND_SPE_FORMAT.format(v.doubleValue())));
-        column.setComparator(AircraftTableController.ALT_AND_SPE_COMPARATOR);
-        return column;
+                        v -> AircraftTableController.ALT_AND_SPE_FORMAT.format(
+                                Units.convertTo(v.doubleValue(), Units.Speed.KILOMETER_PER_HOUR))));
+        speedColumn.setComparator(AircraftTableController.ALT_AND_SPE_COMPARATOR);
+        tableView.getColumns().add(speedColumn);
     }
 }
