@@ -25,15 +25,15 @@ public final class AircraftStateManager {
     private final ObservableSet<ObservableAircraftState> unmodifiableKnownPositionAircrafts;
     private long lastMessageNs;
 
-    public AircraftStateManager(String pathAircraftDatabase){
-        aircraftDatabase = new AircraftDatabase(pathAircraftDatabase);
+    public AircraftStateManager(AircraftDatabase aircraftDatabase){
+        this.aircraftDatabase = aircraftDatabase;
         icaoToAircraft = new HashMap<>();
         modifiableKnownPositionAircrafts = FXCollections.observableSet();
         unmodifiableKnownPositionAircrafts = FXCollections.unmodifiableObservableSet(modifiableKnownPositionAircrafts);
         lastMessageNs = 0;
     }
     public AircraftStateManager() {
-        this("resources/aircraft.zip");
+        this(new AircraftDatabase("resources/aircraft.zip"));
     }
 
     public ObservableSet<ObservableAircraftState> states() {
