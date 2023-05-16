@@ -9,6 +9,8 @@ import com.sun.javafx.property.adapter.PropertyDescriptor;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -106,15 +108,15 @@ public final class JavionApp extends Application {
                 }
             });
 
-            /*var map = new StackPane(bmc.pane(), ac.pane());
-            var root = new GridPane();
-            GridPane.setRowIndex(map, 0);
-            GridPane.setRowIndex(atc.pane(), 1);
-            root.getChildren().addAll(map, atc.pane());
-            primaryStage.setScene(new Scene(root));
-            primaryStage.show();*/
+            StatusLineController slc = new StatusLineController();
+            slc.aircraftCountProperty().bind(Bindings.size(asm.states()));
+
             var map = new StackPane(bmc.pane(), ac.pane());
-            var root = new SplitPane(map, atc.pane());
+            var tableAndSlit = new BorderPane();
+            tableAndSlit.bottomProperty().set(atc.pane());
+            tableAndSlit.topProperty().set(slc.pane());
+
+            var root = new SplitPane(map, tableAndSlit);
             root.setOrientation(Orientation.VERTICAL);
             primaryStage.setScene(new Scene(root));
             primaryStage.show();
