@@ -1,4 +1,4 @@
-package ch.epfl.javions;
+package ch.epfl.javions.gui;
 
 import ch.epfl.javions.adsb.Message;
 import ch.epfl.javions.adsb.MessageParser;
@@ -8,6 +8,7 @@ import ch.epfl.javions.demodulation.AdsbDemodulator;
 import ch.epfl.javions.gui.*;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -15,6 +16,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -33,6 +35,9 @@ import static java.lang.Thread.sleep;
 
 public final class Main extends Application {
     private static final String PATH_DATABASE_AIRCRAFT = "/aircraft.zip";
+    private static final String APP_NAME = "Javions";
+    private static final double STAGE_MIN_WIDTH = 800d;
+    private static final double STAGE_MIN_HEIGHT = 600d;
     private static final int INITIAL_ZOOM = 8;
     private static final int INITIAL_X_WEB_MERCATOR = 33_530;
     private static final int INITIAL_Y_WEB_MERCATOR = 23_070;
@@ -40,7 +45,7 @@ public final class Main extends Application {
     private static final String PATH_TILE_CACHE = "tile-cache";
     private static final long PURGE_TIMER_NS = 1_000_000_000;
 
-
+//TODO c'était là pk le commentaire?
     // And From your main() method or any other method
 
 
@@ -49,18 +54,27 @@ public final class Main extends Application {
     }
     @Override
     public void start(Stage primaryStage) throws Exception {
-        final ConcurrentLinkedQueue<RawMessage>  messages = new ConcurrentLinkedQueue<>();
+        final ConcurrentLinkedQueue<RawMessage> messages = new ConcurrentLinkedQueue<>();
         // Creation of the DB
         URL u = getClass().getResource(PATH_DATABASE_AIRCRAFT);
         assert u != null;
         Path p = Path.of(u.toURI());
         AircraftDatabase db = new AircraftDatabase(p.toString());
+
         //creation of the state manager
         AircraftStateManager asm = new AircraftStateManager(db);
+
         //creation of the scene
-        Scene scene = buildInterface(asm);
+        StatusLineController slc = new StatusLineController();
+        slc.aircraftCountProperty().bind(Bindings.size(asm.states()));
+
+        Scene scene = buildInterface(asm, slc);
+        primaryStage.setTitle(APP_NAME);
+        primaryStage.setMinHeight(STAGE_MIN_HEIGHT);
+        primaryStage.setMinWidth(STAGE_MIN_WIDTH);
         primaryStage.setScene(scene);
         primaryStage.show();
+
         //receive messages
         List<String> parameters = getParameters().getRaw();
         if (parameters.isEmpty()){
@@ -85,6 +99,7 @@ public final class Main extends Application {
             System.out.println("To many arguments given");
             System.exit(0);
         }
+
         //animation timer
         new AnimationTimer() {
             private static long lasPurge;
@@ -94,13 +109,18 @@ public final class Main extends Application {
                 for (int i = 0; i < 10; i += 1) {
                     if (messages.isEmpty()) return;
                     Message m = MessageParser.parse(messages.remove());
-                    if (m != null) asm.updateWithMessage(m);
+                    if (m != null) {
+                        asm.updateWithMessage(m);
+                        //TODO un peu crade
+                        slc.messageCountProperty().set(slc.messageCountProperty().get() + 1);
+                    }
                     if (now - lasPurge >= PURGE_TIMER_NS){
                         asm.purge();
                         lasPurge = now;
                     }
 
                 }
+                //TODO retirer
                     /*
                     try {
                         for (int i = 0; i < 10; i += 1) {
@@ -117,7 +137,7 @@ public final class Main extends Application {
 
 
     }
-    private Scene buildInterface(AircraftStateManager asm) throws Exception {
+    private Scene buildInterface(AircraftStateManager asm, StatusLineController slc) {
 
         //creation baseMapController
         Path tileCache = Path.of(PATH_TILE_CACHE);
@@ -125,37 +145,30 @@ public final class Main extends Application {
                 new TileManager(tileCache, TILE_SERVER);
         MapParameters mapParameters =
                 new MapParameters(INITIAL_ZOOM, INITIAL_X_WEB_MERCATOR, INITIAL_Y_WEB_MERCATOR);
-        BaseMapController baseMapController = new BaseMapController(tileManager, mapParameters);
-
-        // Creation of the DB
-        URL u = getClass().getResource(PATH_DATABASE_AIRCRAFT);
-        assert u != null;
-        Path p = Path.of(u.toURI());
+        BaseMapController bmc = new BaseMapController(tileManager, mapParameters);
 
         ObjectProperty<ObservableAircraftState> sap =
                 new SimpleObjectProperty<>();
-
-        //center when plane is selected
-        ChangeListener<GeoPos> centerOnSap = (o, ov, nv)->{
-            baseMapController.centerOn(nv);
-        };
 
         AircraftController ac = new AircraftController(mapParameters, asm.states(), sap);
 
         AircraftTableController atc = new AircraftTableController(asm.states(), sap);
         //TODO c'est un peu crado
         atc.pane().getChildren().get(0).setOnMouseClicked((mouseEvent) -> {
+
             if (mouseEvent.getClickCount() >= 2 && mouseEvent.getButton() == MouseButton.PRIMARY){
                 atc.setOnDoubleClick(sap::set);
-                baseMapController.centerOn(sap.get().getPosition());
+                bmc.centerOn(sap.get().getPosition());
             }
         });
-        //TODO do the borderPane with the stateline and the table
 
         // creation of the scene
+        var map = new StackPane(bmc.pane(), ac.pane());
+        var tableAndSlit = new BorderPane();
+        tableAndSlit.centerProperty().set(atc.pane());
+        tableAndSlit.topProperty().set(slc.pane());
 
-        var map = new StackPane(baseMapController.pane(), ac.pane());
-        var root = new SplitPane(map, atc.pane());
+        var root = new SplitPane(map, tableAndSlit);
         root.setOrientation(Orientation.VERTICAL);
         return new Scene(root);
     }

@@ -15,6 +15,7 @@ public final class StatusLineController {
 
     public StatusLineController(){
         borderPane = new BorderPane();
+        borderPane.getStylesheets().add("status.css");
 
         aircraftCount = new SimpleIntegerProperty();
         messageCount = new SimpleLongProperty();
@@ -30,7 +31,6 @@ public final class StatusLineController {
         borderPane.leftProperty().set(aircraftCountText);
 
         borderPane.rightProperty().set(messageCountText);
-
     }
 
     public Pane pane(){
