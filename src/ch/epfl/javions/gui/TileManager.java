@@ -68,8 +68,9 @@ public final class TileManager {
 
     private boolean isCacheFull(){
         int size = tiles.size();
-        if (size < MAX_TILES_CACHE_MEMORY){
-            System.out.println("Warning: there is more than "+ MAX_TILES_CACHE_MEMORY +" in the cache, it should never happens");
+        if (size > MAX_TILES_CACHE_MEMORY){
+            //log
+            System.out.println("Warning: there is more than "+ MAX_TILES_CACHE_MEMORY +" in the cache ("+size+"), it should never happens");
             return true;
         }
         return size == MAX_TILES_CACHE_MEMORY;
@@ -108,8 +109,6 @@ public final class TileManager {
      */
     private void storeOnDisk(TileId tileId, byte[] bytesTile) throws IOException {
         createDirectoryTile(tileId);
-        System.out.println(pathTileFile(tileId));
-
         try (OutputStream o = new FileOutputStream(pathTileFile(tileId).toFile())){
             o.write(bytesTile);
         }
@@ -118,9 +117,11 @@ public final class TileManager {
         try (InputStream i = new FileInputStream(pathTileFile(tileId).toFile())) {
             storeInCache(tileId, i.readAllBytes());
         } catch (FileNotFoundException e) {
+            //log
             System.out.println("Impossible to find file " + pathTileFile(tileId));
             return null;
         } catch (IOException e) {
+            //log
             System.out.println("IOException");
             return null;
         }
@@ -164,8 +165,7 @@ public final class TileManager {
         URLConnection c = tileURL.openConnection();
         c.setRequestProperty("User-Agent", "Javions");
         try (InputStream i = c.getInputStream()){
-            byte[] bytes = i.readAllBytes();
-            return bytes;
+            return i.readAllBytes();
         }
     }
 
