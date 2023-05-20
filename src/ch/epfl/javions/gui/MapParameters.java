@@ -48,10 +48,8 @@ public final class MapParameters{
      * @param y the change in the ordinate
      */
     public void changePosition(double x, double y){
-        //TODO trouver ssolution pour add qui marche pas
         minX.set(minX.get() + x);
         minY.set(minY.get() + y);
-
     }
 
     /**

@@ -117,6 +117,7 @@ public final class AircraftTableController {
      * when double-clicking on an aircraft's row, the aircraft becomes the followed aircraft
      * @param aircraftStateConsumer gives us the function to apply to the selected aircraft
      */
+    //TODO est-ce que cette méthode devrait être privé?
     public void setOnDoubleClick(Consumer<ObservableAircraftState> aircraftStateConsumer){
         aircraftStateConsumer.accept(tableView.getSelectionModel().getSelectedItem());
     }

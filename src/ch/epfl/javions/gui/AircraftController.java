@@ -164,10 +164,6 @@ public final class AircraftController {
         Group groupTrajectory = (Group) icaoToGroup.get(observableAircraftState.address())
                 .getChildren().filtered((child)->TRAJECTORY_GROUP_ID.equals(child.getId())).get(0);
 
-        //if it already has line, nothing needed (should never appear)
-        //TODO remove this
-        if (groupTrajectory.getChildren().size()!=0) System.out.println("La trajectoire a déjà des enfants, ne devrait jamais arriver!!!");
-
         //creat the previous lines
         for (int i = 2; i < trajectory.size(); i++) {
             if (Objects.isNull(trajectory.get(i-1).position()) || Objects.isNull(trajectory.get(i).position())) continue;
