@@ -41,11 +41,11 @@ class ColorRampTest {
     void atOnNonInterpolatedColor() {
         ColorRamp plasma = ColorRamp.PLASMA;
 
-        assertTrue(colors[0].equals(plasma.at(-1)));
-        assertTrue(colors[colors.length-1].equals(plasma.at(2)));
+        assertEquals(colors[0], plasma.at(-1));
+        assertEquals(colors[colors.length - 1], plasma.at(2));
 
         for (int i = 0; i < colors.length; i++) {
-            assertTrue(colors[i].equals(plasma.at((double) i/ (colors.length-1))));
+            assertEquals(colors[i], plasma.at((double) i / (colors.length - 1)));
         }
     }
 
@@ -62,7 +62,7 @@ class ColorRampTest {
         for (double i = 0; i < 10; i++) {
             actual = ramp.at(i/10);
             expected = c1.interpolate(c2, i /10);
-            assertTrue(actual.equals(expected));
+            assertEquals(actual, expected);
         }
     }
 }

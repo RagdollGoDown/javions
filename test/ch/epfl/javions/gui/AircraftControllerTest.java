@@ -11,17 +11,12 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.lang.System.nanoTime;
-import static java.lang.Thread.sleep;
-import static org.junit.jupiter.api.Assertions.*;
 
 
 public final class AircraftControllerTest extends Application {

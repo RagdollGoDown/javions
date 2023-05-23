@@ -1,15 +1,11 @@
 package ch.epfl.javions.gui;
 
-import ch.epfl.javions.ByteString;
-import ch.epfl.javions.adsb.AircraftStateAccumulator;
 import ch.epfl.javions.adsb.Message;
 import ch.epfl.javions.adsb.MessageParser;
 import ch.epfl.javions.adsb.RawMessage;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class AircraftStateManagerTest {
 

@@ -14,9 +14,9 @@ public final class MapParameters{
     private final static int MAX_ZOOM_INCLUDED = 19;
     private final static int MIN_ZOOM_INCLUDED = 6;
 
-    private IntegerProperty zoom;
-    private DoubleProperty minX;
-    private DoubleProperty minY;
+    private final IntegerProperty zoom;
+    private final DoubleProperty minX;
+    private final DoubleProperty minY;
 
     /**
      *
@@ -61,9 +61,7 @@ public final class MapParameters{
 
         int newZoom = Math2.clamp(MIN_ZOOM_INCLUDED, zoom.get() + z, MAX_ZOOM_INCLUDED);
 
-        if (newZoom == zoom.get()){return;}
-        else {zoom.set(newZoom);}
-
+        if (newZoom != zoom.get()) zoom.set(newZoom);
     }
 
     //------------------------getters

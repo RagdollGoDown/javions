@@ -1,8 +1,6 @@
 
 package ch.epfl.javions.aircraft;
 
-import ch.epfl.javions.ByteString;
-
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;

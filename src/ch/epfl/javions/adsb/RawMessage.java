@@ -6,10 +6,6 @@ import ch.epfl.javions.Crc24;
 import ch.epfl.javions.Preconditions;
 import ch.epfl.javions.aircraft.IcaoAddress;
 
-import javax.swing.*;
-import java.util.Arrays;
-import java.util.HexFormat;
-
 /**
  * records the time stamp and the bytes that contain the real message yet to unencrypted
  * @param timeStampNs the time stamp of the message in nanoseconds

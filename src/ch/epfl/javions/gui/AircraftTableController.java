@@ -7,7 +7,7 @@ import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.Pane;
+import javafx.scene.input.MouseButton;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -32,11 +32,11 @@ public final class AircraftTableController {
     private final static String DESCRIPTION_COLUMN_NAME = "Description";
     private final static String ON_UNKNOWN_TEXT = "";
 
-    private final static String LONGITUDE_NAME = "Longitude";
-    private final static String LATITUDE_NAME = "Latitude";
+    private final static String LONGITUDE_NAME = "Longitude (°)";
+    private final static String LATITUDE_NAME = "Latitude (°)";
     private final static int DECIMALS_LAT_LONG = 4;
-    private final static String ALTITUDE_NAME = "Altitude";
-    private final static String SPEED_NAME = "Speed";
+    private final static String ALTITUDE_NAME = "Altitude (m)";
+    private final static String SPEED_NAME = "Speed (km/h)";
     private final static int DECIMALS_ALT_SPE = 0;
     private final static String NUMERIC_STYLE_CLASS= "numeric";
     private final static NumberFormat LONG_AND_LAT_FORMAT;
@@ -73,14 +73,14 @@ public final class AircraftTableController {
         };
     }
 
-    private final Pane pane;
     private final TableView<ObservableAircraftState> tableView;
+
+    private Consumer<ObservableAircraftState> aircraftStateConsumer;
 
     public AircraftTableController(ObservableSet<ObservableAircraftState> aircraftStates,
                                    ObjectProperty<ObservableAircraftState> followedAircraft){
-        pane = new Pane();
+
         tableView = new TableView<>();
-        pane.getChildren().add(tableView);
         tableView.getStylesheets().add(TABLE_STYLE_CLASS);
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_SUBSEQUENT_COLUMNS);
         tableView.setTableMenuButtonVisible(true);
@@ -104,22 +104,28 @@ public final class AircraftTableController {
             }
             tableView.sort();
                 });
+
+        tableView.setOnMouseClicked((mouseEvent) -> {
+            if (mouseEvent.getClickCount() >= 2 && mouseEvent.getButton() == MouseButton.PRIMARY){
+                followedAircraft.set(tableView.getSelectionModel().getSelectedItem());
+                aircraftStateConsumer.accept(tableView.getSelectionModel().getSelectedItem());
+            }
+        });
     }
 
     /**
      * @return the pane or root node of the tableview
      */
-    public Pane pane() {
-        return pane;
+    public TableView<ObservableAircraftState> pane() {
+        return tableView;
     }
 
     /**
      * when double-clicking on an aircraft's row, the aircraft becomes the followed aircraft
      * @param aircraftStateConsumer gives us the function to apply to the selected aircraft
      */
-    //TODO est-ce que cette méthode devrait être privé?
     public void setOnDoubleClick(Consumer<ObservableAircraftState> aircraftStateConsumer){
-        aircraftStateConsumer.accept(tableView.getSelectionModel().getSelectedItem());
+        this.aircraftStateConsumer = aircraftStateConsumer;
     }
 
     /**

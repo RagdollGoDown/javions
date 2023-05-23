@@ -2,13 +2,8 @@ package ch.epfl.javions.gui;
 
 import ch.epfl.javions.GeoPos;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.LongProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleLongProperty;
-import javafx.event.EventType;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -24,11 +19,11 @@ import javafx.scene.layout.Pane;
 public class BaseMapController {
     private final static int SIZE_TILE = 256;
     private final static int N_TILES_PRELOADED_BORDER = 5;
-    private TileManager tileManager;
-    private MapParameters mapParameters;
+    private final TileManager tileManager;
+    private final MapParameters mapParameters;
 
-    private Canvas canvasMap;
-    private Pane paneMap;
+    private final Canvas canvasMap;
+    private final Pane paneMap;
 
     private  boolean redrawNeeded;
     private MouseEvent previousMouseEvent;

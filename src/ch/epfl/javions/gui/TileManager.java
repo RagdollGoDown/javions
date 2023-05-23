@@ -24,8 +24,8 @@ import java.util.Objects;
 public final class TileManager {
     private final static int MAX_TILES_CACHE_MEMORY = 100;
     private final static String PROTOCOL = "https";
-    private Path pathTiles;
-    private String serverTiles;
+    private final Path pathTiles;
+    private final String serverTiles;
 
     private final Map<TileId, Image> tiles;
 
@@ -35,7 +35,7 @@ public final class TileManager {
      * @param x the x coordinate of the tile
      * @param y the y coordinate of the tile
      */
-    public static record TileId(int zoom, int x, int y){
+    public record TileId(int zoom, int x, int y){
 
         /**
          * tells us if the tile is within the bounds of the possible tiles
@@ -45,8 +45,7 @@ public final class TileManager {
         public static boolean isValid(TileId tileId){
             if (tileId.zoom < 0 || tileId.zoom > 19) return false;
             if (tileId.x < 0 || tileId.x >= 1<<tileId.zoom) return false;
-            if (tileId.y < 0 || tileId.y >= 1<<tileId.zoom) return false;
-            return true;
+            return tileId.y >= 0 && tileId.y < 1 << tileId.zoom;
         }
     }
 
@@ -103,7 +102,7 @@ public final class TileManager {
 
     /**
      * Store the bytes on the disk
-     * @param tileId
+     * @param tileId the tileId of the tile to store
      * @param bytesTile
      * @throws IOException
      */

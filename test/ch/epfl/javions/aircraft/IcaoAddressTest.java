@@ -1,10 +1,6 @@
 package ch.epfl.javions.aircraft;
 
-import ch.epfl.javions.Preconditions;
-import ch.epfl.javions.Units;
 import org.junit.jupiter.api.Test;
-
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -1,7 +1,6 @@
 package ch.epfl.javions.gui;
 
 import ch.epfl.javions.GeoPos;
-import ch.epfl.javions.adsb.AircraftStateAccumulator;
 import ch.epfl.javions.adsb.AircraftStateSetter;
 import ch.epfl.javions.adsb.CallSign;
 import ch.epfl.javions.aircraft.AircraftData;
@@ -10,8 +9,6 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -28,16 +25,16 @@ public final class ObservableAircraftState implements AircraftStateSetter {
 
     private final AircraftData aircraftData;
 
-    private LongProperty lastMessageTimeStampNs;
-    private IntegerProperty category;
-    private StringProperty callSign;
-    private ObjectProperty<GeoPos> position;
+    private final LongProperty lastMessageTimeStampNs;
+    private final IntegerProperty category;
+    private final StringProperty callSign;
+    private final ObjectProperty<GeoPos> position;
     private long lastTrajectoryUpdateTimeStamp;
-    private ObservableList<AirbornePos> modifiableTrajectory;
-    private ObservableList<AirbornePos> unmodifiableTrajectory;
-    private DoubleProperty altitude;
-    private DoubleProperty velocity;
-    private DoubleProperty trackOrHeading;
+    private final ObservableList<AirbornePos> modifiableTrajectory;
+    private final ObservableList<AirbornePos> unmodifiableTrajectory;
+    private final DoubleProperty altitude;
+    private final DoubleProperty velocity;
+    private final DoubleProperty trackOrHeading;
 
     public ObservableAircraftState(IcaoAddress icaoAddress, AircraftData aircraftData){
 

@@ -23,11 +23,5 @@ public record IcaoAddress(String string) {
     public IcaoAddress {
         Preconditions.checkArgument(REGEX.matcher(string).matches());
     }
-
-    /**
-     * Test if an object is equal to this instance of IcaoAdress (compare the string)
-     * @param obj the object to compare
-     * @return true if the object is an IcaoAddress and has the same string
-     */
 }
 

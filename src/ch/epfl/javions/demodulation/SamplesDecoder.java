@@ -38,7 +38,7 @@ public final class SamplesDecoder {
      * Read bytes from the stream
      * @param batch array to fill
      * @return number of bytes read
-     * @throws IOException
+     * @throws IOException in case of problems reading the stream
      * @throws IllegalArgumentException if batch length is not equal to batchsize
      */
     public int readBatch(short[] batch) throws IOException {

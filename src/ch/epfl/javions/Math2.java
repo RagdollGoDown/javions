@@ -25,9 +25,9 @@ public final class Math2 {
     }
 
     /**
-     * Calculate arsinh of a value
-     * @param x
-     * @return the arsinh
+     * Calculate arcsinh of a value
+     * @param x the value to calculate the arcsinh
+     * @return the arcsinh
      */
     public static double asinh(double x){
         return Math.log(x + Math.hypot(1,x));

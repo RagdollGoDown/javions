@@ -11,11 +11,9 @@ import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -26,8 +24,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static java.lang.System.nanoTime;
@@ -154,19 +150,12 @@ public final class Main extends Application {
 
         AircraftTableController atc = new AircraftTableController(asm.states(), sap);
         //TODO c'est un peu crado
-        atc.pane().getChildren().get(0).setOnMouseClicked((mouseEvent) -> {
-
-            if (mouseEvent.getClickCount() >= 2 && mouseEvent.getButton() == MouseButton.PRIMARY){
-                atc.setOnDoubleClick(sap::set);
-                bmc.centerOn(sap.get().getPosition());
-            }
-        });
+        atc.setOnDoubleClick((mouseEvent) -> {bmc.centerOn(sap.get().getPosition());});
 
         // creation of the scene
         var map = new StackPane(bmc.pane(), ac.pane());
-        var tableAndSlit = new BorderPane();
-        tableAndSlit.centerProperty().set(atc.pane());
-        tableAndSlit.topProperty().set(slc.pane());
+        var tableAndSlit = new BorderPane(atc.pane());
+        tableAndSlit.setTop(slc.pane());
 
         var root = new SplitPane(map, tableAndSlit);
         root.setOrientation(Orientation.VERTICAL);

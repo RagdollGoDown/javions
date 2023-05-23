@@ -1,11 +1,7 @@
 package ch.epfl.javions.demodulation;
 
 import ch.epfl.javions.adsb.RawMessage;
-import org.junit.jupiter.api.Test;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import ch.epfl.test.TestRandomizer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AdsbDemodulatorTest {
 
-    private String[] allMessages = new String[]{"RawMessage[timeStampNs=8096200, bytes=8D4B17E5F8210002004BB8B1F1AC]",
+    private final String[] allMessages = new String[]{"RawMessage[timeStampNs=8096200, bytes=8D4B17E5F8210002004BB8B1F1AC]",
             "RawMessage[timeStampNs=75898000, bytes=8D49529958B302E6E15FA352306B]",
             "RawMessage[timeStampNs=100775400, bytes=8D39D300990CE72C70089058AD77]",
             "RawMessage[timeStampNs=116538700, bytes=8D4241A9601B32DA4367C4C3965E]",
@@ -411,7 +407,7 @@ class AdsbDemodulatorTest {
             RawMessage m;
             int i = 0;
             while ((m = d.nextMessage()) != null){
-                assertTrue(m.toString().equals(allMessages[i]));
+                assertEquals(m.toString(), allMessages[i]);
                 i++;
             }
             assertTrue(i>5);

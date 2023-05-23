@@ -161,7 +161,7 @@ class PowerWindowTest {
         int windowSize = 100;
         PowerWindow pw = new PowerWindow(stream, windowSize);
         int[] expected = {73, 292, 65, 745, 98, 4226, 12244, 25722, 36818, 23825};
-        assertEquals(true, pw.isFull());
+        assertTrue(pw.isFull());
     }
     @Test
     void isNotFullTrivial() throws IOException {
@@ -170,7 +170,7 @@ class PowerWindowTest {
         int windowSize = 4;
         PowerWindow pw = new PowerWindow(stream, windowSize);
         pw.advanceBy(5);
-        assertEquals(false, pw.isFull());
+        assertFalse(pw.isFull());
     }
     @Test
     void isNotFullLimit() throws IOException {
@@ -179,9 +179,9 @@ class PowerWindowTest {
         int windowSize = 4;
         PowerWindow pw = new PowerWindow(stream, 4);
         pw.advanceBy(4);
-        assertEquals(true, pw.isFull());
+        assertTrue(pw.isFull());
         pw.advance();
-        assertEquals(false, pw.isFull());
+        assertFalse(pw.isFull());
     }
 
     @Test

@@ -9,9 +9,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 public final class StatusLineController {
-    private BorderPane borderPane;
-    private IntegerProperty aircraftCount;
-    private LongProperty messageCount;
+    private final BorderPane borderPane;
+    private final IntegerProperty aircraftCount;
+    private final LongProperty messageCount;
 
     public StatusLineController(){
         borderPane = new BorderPane();

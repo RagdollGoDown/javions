@@ -5,18 +5,14 @@ import ch.epfl.javions.adsb.MessageParser;
 import ch.epfl.javions.adsb.RawMessage;
 import ch.epfl.javions.aircraft.AircraftDatabase;
 import ch.epfl.javions.gui.*;
-import com.sun.javafx.property.adapter.PropertyDescriptor;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
@@ -25,7 +21,6 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,7 +96,7 @@ public final class JavionApp extends Application {
 
             AircraftTableController atc = new AircraftTableController(asm.states(), sap);
 
-            atc.pane().getChildren().get(0).setOnMouseClicked((mouseEvent) -> {
+            atc.pane().setOnMouseClicked((mouseEvent) -> {
                 if (mouseEvent.getClickCount() >= 2 && mouseEvent.getButton() == MouseButton.PRIMARY){
                     atc.setOnDoubleClick(sap::set);
                     bmc.centerOn(sap.get().getPosition());
