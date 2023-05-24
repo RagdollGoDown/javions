@@ -116,18 +116,6 @@ public final class Main extends Application {
                     }
 
                 }
-                //TODO retirer
-                    /*
-                    try {
-                        for (int i = 0; i < 10; i += 1) {
-                            Message m = MessageParser.parse(mi.next());
-                            if (m != null) asm.updateWithMessage(m);
-                        }
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
-                    }
-
-                     */
             }
         }.start();
 
@@ -149,8 +137,7 @@ public final class Main extends Application {
         AircraftController ac = new AircraftController(mapParameters, asm.states(), sap);
 
         AircraftTableController atc = new AircraftTableController(asm.states(), sap);
-        //TODO c'est un peu crado
-        atc.setOnDoubleClick((mouseEvent) -> {bmc.centerOn(sap.get().getPosition());});
+        atc.setOnDoubleClick((mouseEvent) -> bmc.centerOn(sap.get().getPosition()));
 
         // creation of the scene
         var map = new StackPane(bmc.pane(), ac.pane());

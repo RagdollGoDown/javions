@@ -20,7 +20,7 @@ import java.util.List;
 
 
 public final class AircraftControllerTest extends Application {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args)  {
         launch(args); }
 
     static List<RawMessage> readAllMessages(String fileName)

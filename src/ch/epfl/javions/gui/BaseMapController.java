@@ -64,9 +64,7 @@ public class BaseMapController {
             redrawOnNextPulse();
         });
 
-        paneMap.setOnMousePressed(e -> {
-            previousMouseEvent = e;
-        });
+        paneMap.setOnMousePressed(e -> previousMouseEvent = e);
         paneMap.setOnMouseDragged(e -> {
             mapParameters.changePosition(
                     previousMouseEvent.getX() - e.getX() ,

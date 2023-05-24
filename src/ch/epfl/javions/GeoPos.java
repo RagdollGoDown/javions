@@ -24,7 +24,7 @@ public record GeoPos(int longitudeT32, int latitudeT32)
     }
 
     /**
-     * Checks if the the latitude is between -2^30 (-90°) and 2^30 (90°)
+     * Checks if the latitude is between -2^30 (-90°) and 2^30 (90°)
      * @param latitudeT32 the latitude checked in T32 format
      * @return boolean
      */

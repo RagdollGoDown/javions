@@ -55,20 +55,6 @@ public final class ObservableAircraftState implements AircraftStateSetter {
         trackOrHeading = new SimpleDoubleProperty();
     }
 
-    private void updateTrajectory(){
-        /*if (lastTrajectoryUpdateTimeStamp == lastMessageTimeStampNs.get()){
-            modifiableTrajectory.set(modifiableTrajectory.size() - 1, new AirbornePos(position.get(),altitude.get()));
-        }
-        else if(modifiableTrajectory.size() == 0
-                || modifiableTrajectory.get(modifiableTrajectory.size() - 1).altitude != altitude.get()
-                || modifiableTrajectory.get(modifiableTrajectory.size() - 1).position == null && position != null
-                || (modifiableTrajectory.get(modifiableTrajectory.size() - 1).position != null
-                && modifiableTrajectory.get(modifiableTrajectory.size() - 1).position.equals(position.get()))) {
-            modifiableTrajectory.add(new AirbornePos(position.get(),altitude.get()));
-            lastTrajectoryUpdateTimeStamp = lastMessageTimeStampNs.get();
-        }*/
-    }
-
     /**
      * @return the icaoAddress of the aircraft
      */

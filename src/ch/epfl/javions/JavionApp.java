@@ -34,7 +34,7 @@ public final class JavionApp extends Application {
             start_AircraftController(primaryStage);
         }
 
-        public void start_BaseMap(Stage primaryStage) throws Exception {
+        public void start_BaseMap(Stage primaryStage) {
             Path tileCache = Path.of("tile-cache");
 
             TileManager tm =
@@ -128,17 +128,6 @@ public final class JavionApp extends Application {
                         if (m != null) asm.updateWithMessage(m);
                         asm.purge();
                     }
-                    /*
-                    try {
-                        for (int i = 0; i < 10; i += 1) {
-                            Message m = MessageParser.parse(mi.next());
-                            if (m != null) asm.updateWithMessage(m);
-                        }
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
-                    }
-
-                     */
                 }
             }.start();
     }

@@ -38,7 +38,7 @@ public class AircraftStateAccumulator <T extends AircraftStateSetter>{
     }
 
     /**
-     * takes a message, checks what type of message it is and puts puts the message in the state setter
+     * takes a message, checks what type of message it is and puts the message in the state setter
      * @param message the parsed message
      */
     public void update(Message message){
