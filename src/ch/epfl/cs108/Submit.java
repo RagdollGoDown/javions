@@ -1,6 +1,9 @@
 package ch.epfl.cs108;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -29,9 +32,12 @@ public final class Submit {
     // CONFIGURATION
     // -------------
     // Jeton du premier membre du groupe
-    private static final String TOKEN_1 = "daif6ahW";
+    private static final String TOKEN_1 = "";
     // Jeton du second membre (identique au premier pour les personnes travaillant seules)
-    private static final String TOKEN_2 = "uuthe7Fi";
+    private static final String TOKEN_2 = "";
+    // Noms des éventuels fichiers Java additionnels à inclure (p.ex. "MyClass.java")
+    private static final List<String> ADDITIONAL_FILES =
+            List.of("ControllerUtils");
     // -------------
 
     private static final String ZIP_ENTRY_NAME_PREFIX = "Javions/";
@@ -74,7 +80,10 @@ public final class Submit {
                 }
             }
 
-            var fileList = getFileList(semesterWeek(LocalDate.now()));
+            var fileList = Stream.concat(
+                            getFileList(semesterWeek(LocalDate.now())).stream(),
+                            ADDITIONAL_FILES.stream().map(Path::of))
+                    .toList();
             var paths = filesToSubmit(projectRoot, p -> fileList.stream().anyMatch(p::endsWith));
 
             var zipArchive = createZipArchive(paths);
