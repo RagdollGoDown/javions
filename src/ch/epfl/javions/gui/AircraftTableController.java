@@ -106,8 +106,9 @@ public final class AircraftTableController {
                 });
 
         tableView.setOnMouseClicked((mouseEvent) -> {
+            followedAircraft.set(tableView.getSelectionModel().getSelectedItem());
+
             if (mouseEvent.getClickCount() >= 2 && mouseEvent.getButton() == MouseButton.PRIMARY){
-                followedAircraft.set(tableView.getSelectionModel().getSelectedItem());
                 aircraftStateConsumer.accept(tableView.getSelectionModel().getSelectedItem());
             }
         });
