@@ -56,7 +56,7 @@ public final class AircraftControllerTest extends Application {
         String f = Path.of(dbUrl.toURI()).toString();
         var db = new AircraftDatabase(f);
 
-        AircraftStateManager asm = new AircraftStateManager();
+        AircraftStateManager asm = new AircraftStateManager(new AircraftDatabase("resources/aircraft.zip"));
         ObjectProperty<ObservableAircraftState> sap =
                 new SimpleObjectProperty<>();
         AircraftController ac =

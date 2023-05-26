@@ -25,6 +25,10 @@ public final class AircraftStateManager {
     private final ObservableSet<ObservableAircraftState> unmodifiableKnownPositionAircrafts;
     private long lastMessageNs;
 
+    /**
+     * Builder of the class
+     * @param aircraftDatabase an instance of AircraftDatabase used to get aircraft's information
+     */
     public AircraftStateManager(AircraftDatabase aircraftDatabase){
         this.aircraftDatabase = aircraftDatabase;
         icaoToAircraft = new HashMap<>();
@@ -32,10 +36,6 @@ public final class AircraftStateManager {
         unmodifiableKnownPositionAircrafts = FXCollections.unmodifiableObservableSet(modifiableKnownPositionAircrafts);
         lastMessageNs = 0;
     }
-    public AircraftStateManager() {
-        this(new AircraftDatabase("resources/aircraft.zip"));
-    }
-
     public ObservableSet<ObservableAircraftState> states() {
         return unmodifiableKnownPositionAircrafts;
     }

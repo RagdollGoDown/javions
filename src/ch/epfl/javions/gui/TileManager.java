@@ -64,7 +64,7 @@ public final class TileManager {
             }
         };
     }
-
+    //TODO remove it -> not used
     private boolean isCacheFull(){
         int size = tiles.size();
         if (size > MAX_TILES_CACHE_MEMORY){
