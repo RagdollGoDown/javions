@@ -4,6 +4,10 @@ import ch.epfl.javions.WebMercator;
 import ch.epfl.javions.aircraft.AircraftData;
 
 //TODO question ajout classe public
+
+/**
+ * Contains common function used by controllers
+ */
 public final class ControllerUtils {
 
     private final static int MAX_ALTITUDE_METERS = 12000;

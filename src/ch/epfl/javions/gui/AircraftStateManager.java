@@ -36,6 +36,11 @@ public final class AircraftStateManager {
         unmodifiableKnownPositionAircrafts = FXCollections.unmodifiableObservableSet(modifiableKnownPositionAircrafts);
         lastMessageNs = 0;
     }
+
+    /**
+     * Get the set of known aircrafts
+     * @return the set of known aircrafts
+     */
     public ObservableSet<ObservableAircraftState> states() {
         return unmodifiableKnownPositionAircrafts;
     }

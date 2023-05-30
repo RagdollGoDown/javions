@@ -36,6 +36,11 @@ public final class ObservableAircraftState implements AircraftStateSetter {
     private final DoubleProperty velocity;
     private final DoubleProperty trackOrHeading;
 
+    /**
+     * Create instance of an ObservableAircraftState
+     * @param icaoAddress the icao address
+     * @param aircraftData the aicraft 
+     */
     public ObservableAircraftState(IcaoAddress icaoAddress, AircraftData aircraftData){
 
         this.icaoAddress = Objects.requireNonNull(icaoAddress);

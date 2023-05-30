@@ -24,8 +24,15 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The javion application, display aircraft on a map and there information
+ */
 public final class JavionApp extends Application {
-        public static void main(String[] args) {
+    /**
+     * lauch application
+     * @param args argumen
+     */
+    public static void main(String[] args) {
             launch(args);
         }
 

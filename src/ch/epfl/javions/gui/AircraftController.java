@@ -22,6 +22,9 @@ import java.util.Objects;
 
 import static javafx.scene.paint.CycleMethod.NO_CYCLE;
 
+/**
+ * Display aircraft on the map
+ */
 public final class AircraftController {
     private final static AircraftIcon DEFAULT_ICON = AircraftIcon.AIRLINER;
     private final static int ZOOM_FOR_VISIBLE_ETIQUETTE_LIMIT = 11;

@@ -9,6 +9,9 @@ import java.util.Map;
 
 import static ch.epfl.javions.aircraft.WakeTurbulenceCategory.HEAVY;
 
+/**
+ * Define aircraft's icons
+ */
 public enum AircraftIcon {
     AIRLINER("""
             M 0.01 14.75 c -0.26 0 -0.74 -0.71 -0.86 -1.41 l -3.33 0.86 L -4.5
@@ -402,6 +405,14 @@ public enum AircraftIcon {
         return Map.copyOf(map);
     }
 
+    /**
+     * Give the appropriate icon
+     * @param typeDesignator the typeDesignator of the aircraft
+     * @param typeDescription the type Description of the aircraft
+     * @param category the aircraft's category
+     * @param wakeTurbulenceCategory the aircraft's wakeTurbulenceCategory
+     * @return (AircraftIcon) aircraft's icon
+     */
     public static AircraftIcon iconFor(AircraftTypeDesignator typeDesignator,
                                        AircraftDescription typeDescription,
                                        int category,
@@ -443,10 +454,18 @@ public enum AircraftIcon {
         };
     }
 
+    /**
+     * If the aircraft can rotate
+     * @return (boolean) true if the aircraft can rotate
+     */
     public boolean canRotate() {
         return canRotate;
     }
 
+    /**
+     * Get the svgPath
+     * @return (String) the svgPath
+     */
     public String svgPath() {
         return svgPath;
     }

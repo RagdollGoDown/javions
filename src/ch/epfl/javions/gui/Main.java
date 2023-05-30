@@ -29,7 +29,7 @@ import static java.lang.System.nanoTime;
 import static java.lang.Thread.sleep;
 
 /**
- * Run Javion application
+ * The javion application, display aircraft on a map and there information
  */
 public final class Main extends Application {
     private static final String PATH_DATABASE_AIRCRAFT = "/aircraft.zip";
@@ -42,10 +42,6 @@ public final class Main extends Application {
     private static final String TILE_SERVER = "tile.openstreetmap.org";
     private static final String PATH_TILE_CACHE = "tile-cache";
     private static final long PURGE_TIMER_NS = 1_000_000_000;
-
-//TODO c'était là pk le commentaire?
-    // And From your main() method or any other method
-
 
     /**
      * Launch the application
@@ -122,7 +118,6 @@ public final class Main extends Application {
                     Message m = MessageParser.parse(messages.remove());
                     if (m != null) {
                         asm.updateWithMessage(m);
-                        //TODO un peu crade
                         slc.messageCountProperty().set(slc.messageCountProperty().get() + 1);
                     }
                     if (now - lasPurge >= PURGE_TIMER_NS){
@@ -133,8 +128,6 @@ public final class Main extends Application {
                 }
             }
         }.start();
-
-
     }
 
     /**

@@ -7,7 +7,13 @@ package ch.epfl.javions;
  * @author Emile Schüpbach (3347505)
  */
 public final class Units {
+    /**
+     * Represent 1e-2
+     */
     public static final double CENTI = 1e-2;
+    /**
+     * Represent 1e+3
+     */
     public static final double KILO = 1e+3;
 
     private Units(){}
