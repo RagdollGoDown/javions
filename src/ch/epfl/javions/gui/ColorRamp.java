@@ -3,6 +3,8 @@ package ch.epfl.javions.gui;
 import ch.epfl.javions.Preconditions;
 import javafx.scene.paint.Color;
 
+import java.util.List;
+
 /**
  * Holds methods that allow us to use a gradient
  *
@@ -11,7 +13,8 @@ import javafx.scene.paint.Color;
  */
 public final class ColorRamp {
 
-    private final Color[] colors;
+    private final List<Color> colors;
+    private final int size;
 
     /**
      * Constant for plasma colorRamp
@@ -37,20 +40,22 @@ public final class ColorRamp {
     public ColorRamp(Color... colors){
         Preconditions.checkArgument(colors.length > 1);
 
-        this.colors = colors;
+        this.colors = List.of(colors);
+        size = colors.length;
     }
 
     public Color at(double colorValue){
-        if (colorValue <= 0){ return colors[0];}
-        if (colorValue >= 1){ return colors[colors.length-1];}
+        if (colorValue <= 0){ return colors.get(0);}
+        if (colorValue >= 1){ return colors.get(size-1);}
 
-        int c1Index = (int)Math.floor(colorValue * (colors.length-1));
-        int c2Index = (int)Math.ceil(colorValue * (colors.length-1));
+        int c1Index = (int)Math.floor(colorValue * (size-1));
+        Color c1 = colors.get(c1Index);
+        Color c2 = colors.get((int)Math.ceil(colorValue * (size-1)));
 
-        if (c1Index == c2Index){return colors[c1Index];}
+        if (c1.equals(c2)){return c1;}
 
         double pourcentageOfFirst = colorValue - c1Index;
 
-        return colors[c1Index].interpolate(colors[c2Index], pourcentageOfFirst);
+        return c1.interpolate(c2, pourcentageOfFirst);
     }
 }
