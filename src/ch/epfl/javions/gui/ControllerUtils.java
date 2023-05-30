@@ -3,8 +3,6 @@ package ch.epfl.javions.gui;
 import ch.epfl.javions.WebMercator;
 import ch.epfl.javions.aircraft.AircraftData;
 
-//TODO question ajout classe public
-
 /**
  * Contains common function used by controllers
  */

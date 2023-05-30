@@ -122,7 +122,7 @@ public final class Units {
      * @return value in basic unit
      */
     public static double convertFrom(double value, double fromUnit) {
-        return convert(value, fromUnit, 1); // is it better to use 'value*(1/fromUnit)'? TODO
+        return convert(value, fromUnit, 1);
     }
 
     /**
