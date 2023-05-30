@@ -13,7 +13,6 @@ import java.io.InputStream;
  */
 public class PowerComputer {
     private final SamplesDecoder samplesDecoder;
-    private final InputStream stream;
     private final int batchSize;
     private final short[] queueOfShorts = new short[8];
     private final short[] shorts;
@@ -27,7 +26,6 @@ public class PowerComputer {
     public PowerComputer(InputStream stream, int batchSize){
         Preconditions.checkArgument(batchSize % 8 == 0 && batchSize > 0);
 
-        this.stream = stream;
         this.batchSize = batchSize;
         shorts = new short[batchSize*2];
 

@@ -16,7 +16,6 @@ import java.util.Objects;
  * @author André Cadet (359392)
  * @author Emile Schüpbach (3347505)
  */
-
 public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAddress, int category, CallSign callSign) implements Message {
     private final static int POSITION_START_CA = 48;
     private final static int SIZE_CA = 3;

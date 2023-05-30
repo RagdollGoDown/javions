@@ -18,7 +18,11 @@ import java.util.Objects;
  * @author Emile Schüpbach (3347505)
  */
 public final class ObservableAircraftState implements AircraftStateSetter {
-
+    /**
+     * Record that contains a position and an altitude
+     * @param position (GeoPos) the position
+     * @param altitude (double) the altitude
+     */
     public record AirbornePos(GeoPos position, double altitude){}
 
     private final IcaoAddress icaoAddress;

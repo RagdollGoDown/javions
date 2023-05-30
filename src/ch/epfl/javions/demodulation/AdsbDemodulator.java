@@ -36,10 +36,10 @@ public final class AdsbDemodulator {
      * @throws IOException if there are eny problems reading the stream
      */
     public RawMessage nextMessage() throws IOException{
-        byte DF = 0;
-        int left = 0;
-        int middle = 0;
-        int right = 0;
+        byte DF;
+        int left;
+        int middle;
+        int right;
         
         RawMessage rawMessage = null;
 

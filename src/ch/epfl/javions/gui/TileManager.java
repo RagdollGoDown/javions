@@ -1,7 +1,5 @@
 package ch.epfl.javions.gui;
 
-
-import ch.epfl.javions.Preconditions;
 import javafx.scene.image.Image;
 
 import java.io.*;
@@ -57,22 +55,12 @@ public final class TileManager {
     public TileManager(Path pathTiles, String severTiles){
         this.pathTiles = pathTiles;
         this.serverTiles = severTiles;
-        tiles = new LinkedHashMap<TileId, Image>(MAX_TILES_CACHE_MEMORY, 1.1f,true){
+        tiles = new LinkedHashMap<>(MAX_TILES_CACHE_MEMORY, 1.1f, true) {
             @Override
             protected boolean removeEldestEntry(Map.Entry<TileId, Image> eldest) {
                 return size() > MAX_TILES_CACHE_MEMORY;
             }
         };
-    }
-    //TODO remove it -> not used
-    private boolean isCacheFull(){
-        int size = tiles.size();
-        if (size > MAX_TILES_CACHE_MEMORY){
-            //log
-            System.out.println("Warning: there is more than "+ MAX_TILES_CACHE_MEMORY +" in the cache ("+size+"), it should never happens");
-            return true;
-        }
-        return size == MAX_TILES_CACHE_MEMORY;
     }
     private void storeInCache(TileId tileId, byte[] bytesTile){
         InputStream streamBytesTile = new ByteArrayInputStream(bytesTile);
@@ -103,8 +91,8 @@ public final class TileManager {
     /**
      * Store the bytes on the disk
      * @param tileId the tileId of the tile to store
-     * @param bytesTile
-     * @throws IOException
+     * @param bytesTile the bytes of the tile to store
+     * @throws IOException if io exceptions occurs
      */
     private void storeOnDisk(TileId tileId, byte[] bytesTile) throws IOException {
         createDirectoryTile(tileId);
@@ -112,6 +100,12 @@ public final class TileManager {
             o.write(bytesTile);
         }
     }
+
+    /**
+     * Load a tile from the disk
+     * @param tileId the tile to load
+     * @return (Image) image of the tile
+     */
     private Image loadFromDisk(TileId tileId){
         try (InputStream i = new FileInputStream(pathTileFile(tileId).toFile())) {
             storeInCache(tileId, i.readAllBytes());
@@ -129,9 +123,9 @@ public final class TileManager {
 
     /**
      * Store the bytes on the disk and in the cache
-     * @param tileId
-     * @param bytesTile
-     * @throws IOException
+     * @param tileId the tileId
+     * @param bytesTile the bytes of the tiles
+     * @throws IOException if io exceptions occurs
      */
 
     private void store(TileId tileId, byte[] bytesTile) throws IOException {
@@ -148,19 +142,20 @@ public final class TileManager {
         try {
             return new URL(PROTOCOL,serverTiles, "/" + tileId.zoom() + "/" + tileId.x() + "/" + tileId.y() + ".png");
         }catch (MalformedURLException e){
-            Preconditions.checkArgument(false);
             return null;
         }
     }
 
     /**
      * Download the image of an tileId
-     * @param tileId
+     * @param tileId the tileId
      * @return (byte[]) the bytes of the image downloaded
-     * @throws IOException
+     *          null if impossible to give create url
+     * @throws IOException if io exceptions occurs
      */
     private byte[] downloadTile(TileId tileId) throws IOException {
         URL tileURL = tileURL(tileId);
+        if (Objects.isNull(tileURL)) return null;
         URLConnection c = tileURL.openConnection();
         c.setRequestProperty("User-Agent", "Javions");
         try (InputStream i = c.getInputStream()){
@@ -189,14 +184,11 @@ public final class TileManager {
         byte[] bytesTile;
         try{
             bytesTile = downloadTile(tileId);
+            if (Objects.isNull(bytesTile)) return null;
             store(tileId, bytesTile);
         }catch (IOException e){
             return null;
         }
         return loadFromCache(tileId);
-    }
-
-    private void load(){
-        //TODO load all the images stored from the disk to the cache
     }
 }

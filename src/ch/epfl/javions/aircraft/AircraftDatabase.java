@@ -16,6 +16,10 @@ public final class AircraftDatabase {
 
     private final String fileName;
 
+    /**
+     * Instance of an AircraftDatabase from a file name
+     * @param fileName (String) the file name for the database
+     */
     public AircraftDatabase(String fileName){
         this.fileName = Objects.requireNonNull(fileName);
     }
@@ -27,14 +31,12 @@ public final class AircraftDatabase {
      * @throws IOException if there are any problems when reading the files
      */
     public AircraftData get(IcaoAddress address) throws IOException {
-        String file = fileName;
         String addressString = address.string();
-
         int addressHex = Integer.parseInt(addressString, 16);
 
-        String selectedLine = "";
+        String selectedLine;
 
-        try (ZipFile zipFile = new ZipFile(file);
+        try (ZipFile zipFile = new ZipFile(fileName);
              InputStream stream = zipFile.getInputStream(zipFile.getEntry(addressString.substring(4) + ".csv"));
              Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
              BufferedReader bufferedReader = new BufferedReader(reader)) {

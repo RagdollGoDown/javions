@@ -17,6 +17,9 @@ import ch.epfl.javions.aircraft.IcaoAddress;
 public record RawMessage(long timeStampNs, ByteString bytes) {
     private static final int POSITION_START_ME = 51;
     private static final int SIZE_ME = 5;
+    /**
+     * length of a RawMessage
+     */
     public static final int LENGTH = 14;
     private static final Crc24 crc24 = new Crc24(Crc24.GENERATOR);
 

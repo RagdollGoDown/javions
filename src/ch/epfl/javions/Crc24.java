@@ -7,6 +7,9 @@ package ch.epfl.javions;
  * @author Emile Schüpbach (3347505)
  */
 public final class Crc24 {
+    /**
+     * Default generator for Crc24 (0xFFF409)
+     */
     public static final int GENERATOR = 0xFFF409;
 
     private static final int TABLE_SIZE = 256;
