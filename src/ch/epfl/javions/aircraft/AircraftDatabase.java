@@ -43,7 +43,7 @@ public final class AircraftDatabase {
 
             //iterate through lines
             while ((selectedLine = bufferedReader.readLine()) != null) {
-                // if possibly pass on our searched address
+                // if possible, pass on our searched address
                 if (Integer.parseInt(selectedLine.substring(0,6),16) >= addressHex) {
 
                     // if it is our address, else return null

@@ -197,10 +197,6 @@ public final class AircraftController {
         observableAircraftState.getTrajectory().addListener(listener);
         this.listenerFollowedAircraft = listener;
 
-        //trajectory are invisible if not the one of the followed aircraft
-        groupTrajectory.visibleProperty().bind(Bindings.createBooleanBinding(()->
-                        Objects.nonNull(followedAircraft.get()) && followedAircraft.get() == observableAircraftState,
-                followedAircraft));
     }
 
     /**

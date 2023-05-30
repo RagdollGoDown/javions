@@ -43,9 +43,6 @@ public final class SamplesDecoder {
      */
     public int readBatch(short[] batch) throws IOException {
         Preconditions.checkArgument(batch.length == batchSize);
-
-        //batch correspond au nombre de shorts
-        //donc on a besoin de deux fois ça dans le stream
         int nReadBytes = stream.readNBytes(readBytes,0,batchSize*2) ;
 
         assert (nReadBytes%2) == 0;
