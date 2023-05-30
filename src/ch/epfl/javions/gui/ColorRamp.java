@@ -37,6 +37,12 @@ public final class ColorRamp {
             Color.valueOf("0xfccf25ff"), Color.valueOf("0xf9dd24ff"),
             Color.valueOf("0xf5eb27ff"), Color.valueOf("0xf0f921ff"));
 
+    /**
+     * Constructor for a color ramp that uses a list of colors to make a gradient
+     * from which we can extract a color at a certain position
+     * makes a defensive copy of the array given
+     * @param colors the given array of colors
+     */
     public ColorRamp(Color... colors){
         Preconditions.checkArgument(colors.length > 1);
 
@@ -44,6 +50,11 @@ public final class ColorRamp {
         size = colors.length;
     }
 
+    /**
+     * Finds the color at a position in a gradient made of a list of colors
+     * @param colorValue the position of the desired color in the gradient
+     * @return the color desired
+     */
     public Color at(double colorValue){
         if (colorValue <= 0){ return colors.get(0);}
         if (colorValue >= 1){ return colors.get(size-1);}
