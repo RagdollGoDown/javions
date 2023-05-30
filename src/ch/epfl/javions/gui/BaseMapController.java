@@ -24,7 +24,7 @@ public class BaseMapController {
     private final Canvas canvasMap;
     private final Pane paneMap;
 
-    private  boolean redrawNeeded;
+    private boolean redrawNeeded;
     private MouseEvent previousMouseEvent;
 
 
