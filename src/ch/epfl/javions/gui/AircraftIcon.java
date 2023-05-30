@@ -10,7 +10,9 @@ import java.util.Map;
 import static ch.epfl.javions.aircraft.WakeTurbulenceCategory.HEAVY;
 
 /**
- * Define aircraft's icons
+ * Define aircraft's icon
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach (3347505)
  */
 public enum AircraftIcon {
     AIRLINER("""
