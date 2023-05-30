@@ -42,6 +42,7 @@ public final class Main extends Application {
     private static final String TILE_SERVER = "tile.openstreetmap.org";
     private static final String PATH_TILE_CACHE = "tile-cache";
     private static final long PURGE_TIMER_NS = 1_000_000_000;
+    private static final long NS_TO_MS = 1_000_000;
 
     /**
      * Launch the application
@@ -109,7 +110,7 @@ public final class Main extends Application {
 
         //animation timer
         new AnimationTimer() {
-            private static long lasPurge;
+            private static long lastPurge;
             @Override
             public void handle(long now) {
 
@@ -120,9 +121,9 @@ public final class Main extends Application {
                         asm.updateWithMessage(m);
                         slc.messageCountProperty().set(slc.messageCountProperty().get() + 1);
                     }
-                    if (now - lasPurge >= PURGE_TIMER_NS){
+                    if (now - lastPurge >= PURGE_TIMER_NS){
                         asm.purge();
-                        lasPurge = now;
+                        lastPurge = now;
                     }
 
                 }
@@ -180,7 +181,7 @@ public final class Main extends Application {
             while (bytesRead == RawMessage.LENGTH) {
                 messages.add(RawMessage.of(timeStampNs,bytes));
                 long currentTime = nanoTime();
-                long sleepTime = (timeStampNs - (currentTime - timeBegin))/1000000;
+                long sleepTime = (timeStampNs - (currentTime - timeBegin))/NS_TO_MS;
                 sleep((sleepTime > 0) ?  sleepTime:0);
                 timeStampNs = s.readLong();
                 bytesRead = s.readNBytes(bytes, 0, bytes.length);

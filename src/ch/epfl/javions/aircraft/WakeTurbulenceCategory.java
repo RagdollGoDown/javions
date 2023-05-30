@@ -14,7 +14,7 @@ public enum WakeTurbulenceCategory {
 
     /**
      * Gives the wake turbulence depending on the string
-     * @param string either L,M or H, if it is anything else then it returns unknown
+     * @param string either L, M or H, if it is anything else then it returns unknown
      * @return the corresponding wake turbulence
      */
     public static WakeTurbulenceCategory of(String string){

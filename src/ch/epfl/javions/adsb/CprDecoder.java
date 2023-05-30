@@ -23,9 +23,8 @@ public final class CprDecoder {
      */
     private static double aCalculation (double latitude){
         double latitudeRad = Units.convertFrom(latitude, Units.Angle.TURN);
-        double A = Math.acos(1.0 - ((1.0 - (Math.cos((2.0*Math.PI)/N_LATITUDE_EVEN)))
+        return Math.acos(1.0 - ((1.0 - (Math.cos((2.0*Math.PI)/N_LATITUDE_EVEN)))
                 /(Math.cos(latitudeRad) * Math.cos(latitudeRad))));
-        return A;
     }
 
     /**
