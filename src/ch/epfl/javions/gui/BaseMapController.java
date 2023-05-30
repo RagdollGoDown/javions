@@ -18,7 +18,6 @@ import javafx.scene.layout.Pane;
  */
 public class BaseMapController {
     private final static int SIZE_TILE = 256;
-    private final static int N_TILES_PRELOADED_BORDER = 5;
     private final TileManager tileManager;
     private final MapParameters mapParameters;
 
@@ -29,6 +28,11 @@ public class BaseMapController {
     private MouseEvent previousMouseEvent;
 
 
+    /**
+     * Builder for the class
+     * @param tileManager the ttileManager instance used for the tiles
+     * @param mapParameters the mapParameters for the displayed part of the map
+     */
     public BaseMapController(TileManager tileManager, MapParameters mapParameters){
         this.tileManager = tileManager;
         this.mapParameters = mapParameters;
@@ -46,6 +50,10 @@ public class BaseMapController {
         });
         setupInteractionMousePane();
     }
+
+    /**
+     * Setup the mouse interactions (scroll and click)
+     */
     private void setupInteractionMousePane(){
         LongProperty minScrollTime = new SimpleLongProperty();
 
@@ -102,27 +110,30 @@ public class BaseMapController {
         redrawOnNextPulse();
     }
 
+    /**
+     * Ask to redraw the canvas on the next pulse
+     */
     private void redrawOnNextPulse() {
         redrawNeeded = true;
         Platform.requestNextPulse();
     }
 
+    /**
+     * Redraw the canvas if needed
+     */
     private void redrawIfNeeded() {
         if (!redrawNeeded) return;
         redrawNeeded = false;
         drawCanvas();
     }
 
-    private void handleMouse(MouseEvent mouseEvent){
-        System.out.println(mouseEvent);
-        //mapParameters.changePosition(previousMouseEvent.getX() - mouseEvent.getX(), 0);
-
-    }
-
+    /**
+     * Draw the tiles in the canvas
+     */
     private void drawCanvas(){
         GraphicsContext graphicsContext = canvasMap.getGraphicsContext2D();
         graphicsContext.clearRect(0,0, canvasMap.getWidth(), canvasMap.getHeight());
-        //-1 to preload borders
+        //-1 for the marge
         for (int tileX = -1; tileX <= Math.ceil(canvasMap.getWidth()/SIZE_TILE); tileX++) {
             for (int tileY = -1; tileY <= Math.ceil(canvasMap.getHeight()/SIZE_TILE); tileY++) {
                 Image image = tileManager.imageForTileAt(new TileManager.TileId(

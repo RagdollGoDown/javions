@@ -84,7 +84,7 @@ public final class JavionApp extends Application {
             String f = Path.of(dbUrl.toURI()).toString();
             var db = new AircraftDatabase(f);
 
-            AircraftStateManager asm = new AircraftStateManager();
+            AircraftStateManager asm = new AircraftStateManager(db);
             ObjectProperty<ObservableAircraftState> sap =
                     new SimpleObjectProperty<>();
 

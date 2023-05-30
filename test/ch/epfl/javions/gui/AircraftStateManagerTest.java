@@ -3,6 +3,7 @@ package ch.epfl.javions.gui;
 import ch.epfl.javions.adsb.Message;
 import ch.epfl.javions.adsb.MessageParser;
 import ch.epfl.javions.adsb.RawMessage;
+import ch.epfl.javions.aircraft.AircraftDatabase;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -11,7 +12,7 @@ class AircraftStateManagerTest {
 
     @Test
     void updateWithMessage() throws IOException {
-        AircraftStateManager aircraftStateManager = new AircraftStateManager();
+        AircraftStateManager aircraftStateManager = new AircraftStateManager(new AircraftDatabase("resources/aircraft.zip"));
 
         try (DataInputStream s = new DataInputStream(
                 new BufferedInputStream(

@@ -5,7 +5,6 @@ import ch.epfl.javions.adsb.MessageParser;
 import ch.epfl.javions.adsb.RawMessage;
 import ch.epfl.javions.aircraft.AircraftDatabase;
 import ch.epfl.javions.demodulation.AdsbDemodulator;
-import ch.epfl.javions.gui.*;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
@@ -29,6 +28,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import static java.lang.System.nanoTime;
 import static java.lang.Thread.sleep;
 
+/**
+ * Run Javion application
+ */
 public final class Main extends Application {
     private static final String PATH_DATABASE_AIRCRAFT = "/aircraft.zip";
     private static final String APP_NAME = "Javions";
@@ -45,9 +47,22 @@ public final class Main extends Application {
     // And From your main() method or any other method
 
 
+    /**
+     * Launch the application
+     * @param args the arguments from the command line, from the file given or from the std.in if nothing is given
+     */
     public static void main(String[] args) {
         launch(args);
     }
+
+    /**
+     * The main entry point for Javion application.
+     * @param primaryStage the primary stage for this application, onto which
+     * the application scene can be set.
+     * Applications may create other stages, if needed, but they will not be
+     * primary stages.
+     * @throws Exception exceptions that occurred during the process
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
         final ConcurrentLinkedQueue<RawMessage> messages = new ConcurrentLinkedQueue<>();
@@ -121,6 +136,13 @@ public final class Main extends Application {
 
 
     }
+
+    /**
+     * Build the interface for the application
+     * @param asm instance of AircraftStateManager
+     * @param slc instance of StatusLineController
+     * @return the scene to display
+     */
     private Scene buildInterface(AircraftStateManager asm, StatusLineController slc) {
 
         //creation baseMapController
@@ -149,6 +171,11 @@ public final class Main extends Application {
         return new Scene(root);
     }
 
+    /**
+     * Fetch messages from a file
+     * @param pathFile the path of the file
+     * @param messages the ConcurrentLinkedQueue where the messages have to be stored
+     */
     private void fetchMessagesFromFile(String pathFile, ConcurrentLinkedQueue<RawMessage> messages){
         long timeBegin = nanoTime();
         try (DataInputStream s = new DataInputStream(
@@ -166,14 +193,21 @@ public final class Main extends Application {
                 bytesRead = s.readNBytes(bytes, 0, bytes.length);
             }
         } catch (EOFException e) {
-            //TODO enlever cette saletée d'oups
-            System.out.println("oups");
+            // should be a log
+            System.out.println("End of file reached");
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Fetch messages from std.in and load them in the queue
+     * @param messages the ConcurrentLinkedQueue where the messages have to be stored
+     * @throws IOException if there are eny problems reading the stream
+     */
     private void fetchMessagesSystemIn(ConcurrentLinkedQueue<RawMessage> messages) throws IOException {
         AdsbDemodulator adsbDemodulator = new AdsbDemodulator(System.in);
+        //TODO demnander si c'est pas grave de faire un while true comme ca
         while (true){
             RawMessage message = adsbDemodulator.nextMessage();
             if(Objects.nonNull(message)) messages.add(message);
