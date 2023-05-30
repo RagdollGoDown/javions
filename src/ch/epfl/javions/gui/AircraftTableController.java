@@ -14,6 +14,12 @@ import java.text.ParseException;
 import java.util.Comparator;
 import java.util.function.Consumer;
 
+/**
+ * Creates and correctly binds the table showing the aircraft and their specificities
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach (3347505)
+ */
 public final class AircraftTableController {
 
     private final static String TABLE_STYLE_CLASS = "table.css";
@@ -77,6 +83,12 @@ public final class AircraftTableController {
 
     private Consumer<ObservableAircraftState> aircraftStateConsumer;
 
+    /**
+     * Aircraft table controller constructor
+     * @param aircraftStates these states represent each one element in th table
+     * @param followedAircraft the followed aircraft, made to correspond to the selected
+     *                         aircraft in the table
+     */
     public AircraftTableController(ObservableSet<ObservableAircraftState> aircraftStates,
                                    ObjectProperty<ObservableAircraftState> followedAircraft){
 
