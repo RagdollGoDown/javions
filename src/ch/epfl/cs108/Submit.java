@@ -37,7 +37,7 @@ public final class Submit {
     private static final String TOKEN_2 = "Eeph6aiK";
     // Noms des éventuels fichiers Java additionnels à inclure (p.ex. "MyClass.java")
     private static final List<String> ADDITIONAL_FILES =
-            List.of("ControllerUtils");
+            List.of("src/ch/epfl/javions/gui/ControllerUtils.java");
     // -------------
 
     private static final String ZIP_ENTRY_NAME_PREFIX = "Javions/";

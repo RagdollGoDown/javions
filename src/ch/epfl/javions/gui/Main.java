@@ -201,7 +201,6 @@ public final class Main extends Application {
      */
     private void fetchMessagesSystemIn(ConcurrentLinkedQueue<RawMessage> messages) throws IOException {
         AdsbDemodulator adsbDemodulator = new AdsbDemodulator(System.in);
-        //TODO demnander si c'est pas grave de faire un while true comme ca
         while (true){
             RawMessage message = adsbDemodulator.nextMessage();
             if(Objects.nonNull(message)) messages.add(message);
