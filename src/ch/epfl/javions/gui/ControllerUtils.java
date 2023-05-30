@@ -5,6 +5,9 @@ import ch.epfl.javions.aircraft.AircraftData;
 
 /**
  * Contains common function used by controllers
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach (3347505)
  */
 public final class ControllerUtils {
 

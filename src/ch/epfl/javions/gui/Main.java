@@ -30,6 +30,9 @@ import static java.lang.Thread.sleep;
 
 /**
  * The javion application, display aircraft on a map and there information
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach (3347505)
  */
 public final class Main extends Application {
     private static final String PATH_DATABASE_AIRCRAFT = "/aircraft.zip";

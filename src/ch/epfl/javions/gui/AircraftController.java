@@ -24,6 +24,9 @@ import static javafx.scene.paint.CycleMethod.NO_CYCLE;
 
 /**
  * Display aircraft on the map
+ *
+ * @author André Cadet (359392)
+ * @author Emile Schüpbach (3347505)
  */
 public final class AircraftController {
     private final static AircraftIcon DEFAULT_ICON = AircraftIcon.AIRLINER;
