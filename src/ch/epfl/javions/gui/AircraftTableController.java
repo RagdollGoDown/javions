@@ -118,11 +118,11 @@ public final class AircraftTableController {
                 });
 
         tableView.setOnMouseClicked((mouseEvent) -> {
-            if (tableView.getSelectionModel().getSelectedItem() == null) return;
-
             followedAircraft.set(tableView.getSelectionModel().getSelectedItem());
 
             if (mouseEvent.getClickCount() >= 2 && mouseEvent.getButton() == MouseButton.PRIMARY){
+                if (tableView.getSelectionModel().getSelectedItem() == null) return;
+
                 aircraftStateConsumer.accept(tableView.getSelectionModel().getSelectedItem());
             }
         });
